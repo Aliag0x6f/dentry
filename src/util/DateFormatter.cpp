@@ -10,15 +10,17 @@
 namespace Dentry::Util {
 
     QString DateFormatter::format(const QDateTime &dateTime) {
-        // TODO: implement fixed-width "dd/MM/yyyy HH:mm" formatting
-        Q_UNUSED(dateTime)
-        return QStringLiteral("--/--/---- --:--");
+        if (!dateTime.isValid())
+            return QString();
+
+        return dateTime.toString("MM/dd/yyyy HH:mm");
     }
 
     QString DateFormatter::formatShort(const QDateTime &dateTime) {
-        // TODO: implement fixed-width "dd/MM/yyyy" formatting
-        Q_UNUSED(dateTime)
-        return QStringLiteral("--/--/----");
+        if (!dateTime.isValid())
+            return QString();
+
+        return dateTime.toString("MM/dd/yyyy");
     }
 
 } // namespace Dentry::Util
