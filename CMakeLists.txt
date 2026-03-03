@@ -8,9 +8,8 @@ set(CMAKE_AUTORCC ON)
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
 add_executable(dentry
-    src/main.cpp
-    src/MainWindow.cpp
+        src/main.cpp
+        src/MainWindow.cpp
 )
 
 target_link_libraries(dentry Qt6::Widgets)
-

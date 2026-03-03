@@ -1,0 +1,8 @@
+build/
+doc/html/
+doc/latex/
+.cache/
+*.user
+*.swp
+.DS_Store
+.idea/
