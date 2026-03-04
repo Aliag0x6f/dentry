@@ -59,7 +59,6 @@ public:
      * Useful when the type is already known and handled separately.
      *
      * @param permissions The permission flags to format.
-     * @param isDir       Whether the target is a directory.
      * @return A 9-character string such as "rwxr-xr-x".
      */
     [[nodiscard]] static QString formatRaw(QFile::Permissions permissions);

@@ -1,5 +1,5 @@
 /**
-* @file DateFormatter.h
+ * @file DateFormatter.h
  * @brief Utility for formatting QDateTime values into fixed-width strings.
  *
  * @author Hugo Fabresse
@@ -21,10 +21,10 @@ namespace Dentry::Util {
      *
      * All methods are static. This class is not meant to be instantiated.
      *
-     * Example output:
+     * Example output (US format):
      * @code
-     * DateFormatter::format(dt)      // "14/03/2024 09:05"
-     * DateFormatter::formatShort(dt) // "14/03/2024"
+     * DateFormatter::format(dt)      // "03/14/2024 09:05" (MM/dd/yyyy HH:mm)
+     * DateFormatter::formatShort(dt) // "03/14/2024" (MM/dd/yyyy)
      * @endcode
      */
     class DateFormatter {
@@ -40,7 +40,7 @@ namespace Dentry::Util {
         /**
          * @brief Formats a QDateTime as a fixed-width date and time string.
          *
-         * Output format: "dd/MM/yyyy HH:mm" (16 characters, always).
+         * Output format: "MM/dd/yyyy HH:mm" (16 characters, always).
          * Returns an empty string if the QDateTime is invalid or null.
          *
          * @param dateTime The date and time to format.
@@ -51,7 +51,7 @@ namespace Dentry::Util {
         /**
          * @brief Formats a QDateTime as a date-only string.
          *
-         * Output format: "dd/MM/yyyy" (10 characters, always).
+         * Output format: "MM/dd/yyyy" (10 characters, always).
          * Returns an empty string if the QDateTime is invalid or null.
          *
          * @param dateTime The date and time to format.

@@ -16,10 +16,10 @@ namespace Dentry::Util {
 			return QString();
 		}
 
-		if (info.isDir())
-			result += 'd';
-		else if (info.isSymLink())
+		if (info.isSymLink())
 			result += 'l';
+		else if (info.isDir())
+			result += 'd';
 		else
 			result += '-';
 
