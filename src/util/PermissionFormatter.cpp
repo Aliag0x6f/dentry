@@ -10,15 +10,44 @@
 namespace Dentry::Util {
 
 	QString PermissionFormatter::format(const QFileInfo &info) {
-		// TODO: implement 10-character Unix permission string (e.g. "-rwxr-xr-x")
-		Q_UNUSED(info)
-		return QStringLiteral("----------");
+		QString result;
+
+		if (!info.exists()) {
+			return QString();
+		}
+
+		if (info.isDir())
+			result += 'd';
+		else if (info.isSymLink())
+			result += 'l';
+		else
+			result += '-';
+
+		result += formatRaw(info.permissions());
+
+		return result;
 	}
 
+
 	QString PermissionFormatter::formatRaw(QFile::Permissions permissions) {
-		// TODO: implement 9-character permission string without type prefix
-		Q_UNUSED(permissions)
-		return QStringLiteral("---------");
+		QString result;
+
+		// Owner
+		result += (permissions & QFileDevice::ReadOwner)  ? 'r' : '-';
+		result += (permissions & QFileDevice::WriteOwner) ? 'w' : '-';
+		result += (permissions & QFileDevice::ExeOwner)   ? 'x' : '-';
+
+		// Group
+		result += (permissions & QFileDevice::ReadGroup)  ? 'r' : '-';
+		result += (permissions & QFileDevice::WriteGroup) ? 'w' : '-';
+		result += (permissions & QFileDevice::ExeGroup)   ? 'x' : '-';
+
+		// Others
+		result += (permissions & QFileDevice::ReadOther)  ? 'r' : '-';
+		result += (permissions & QFileDevice::WriteOther) ? 'w' : '-';
+		result += (permissions & QFileDevice::ExeOther)   ? 'x' : '-';
+
+		return result;
 	}
 
 } // namespace Dentry::Util
