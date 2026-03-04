@@ -8,6 +8,7 @@
 #pragma once
 
 #include <QString>
+#include <QLocale>
 
 namespace Dentry::Util {
 

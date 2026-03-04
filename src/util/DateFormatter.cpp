@@ -1,5 +1,5 @@
 /**
-* @file DateFormatter.cpp
+ * @file DateFormatter.cpp
  * @brief Implementation of DateFormatter.
  *
  * @author Hugo Fabresse

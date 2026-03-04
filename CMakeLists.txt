@@ -11,6 +11,7 @@ add_executable(dentry
         src/main.cpp
         src/util/DateFormatter.cpp
         src/util/PermissionFormatter.cpp
+        src/util/SizeFormatter.cpp
 )
 
 target_link_libraries(dentry Qt6::Widgets)

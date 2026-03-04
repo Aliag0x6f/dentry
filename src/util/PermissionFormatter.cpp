@@ -1,5 +1,5 @@
 /**
-* @file PermissionFormatter.cpp
+ * @file PermissionFormatter.cpp
  * @brief Implementation of PermissionFormatter.
  *
  * @author Hugo Fabresse
