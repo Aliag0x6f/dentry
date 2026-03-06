@@ -13,11 +13,11 @@
 
 namespace Dentry::Fs {
 
-	FileInfo::FileInfo(const QString &path) :
-		FileInfo(QFileInfo(path)) {}
+	FileInfo::FileInfo(const QString &path)
+		: FileInfo(QFileInfo(path)) {}
 
-	FileInfo::FileInfo(const QFileInfo &fileInfo) :
-		m_fileInfo(fileInfo) { compute(); }
+	FileInfo::FileInfo(const QFileInfo &fileInfo)
+		: m_fileInfo(fileInfo) { compute(); }
 
 	void FileInfo::compute() {
 		m_name				   = m_fileInfo.fileName();
