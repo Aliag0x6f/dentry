@@ -18,6 +18,7 @@ add_executable(dentry
         src/fs/operations/CopyOperation.cpp
         src/fs/operations/MoveOperation.cpp
         src/fs/operations/DeleteOperation.cpp
+        src/fs/operations/RenameOperation.cpp
 )
 
 target_link_libraries(dentry Qt6::Widgets Qt6::Concurrent)
