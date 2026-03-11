@@ -1,0 +1,43 @@
+/**
+ * @file MimeResolver.cpp
+ * @brief Implementation of MimeResolver.
+ *
+ * @author Hugo Fabresse
+ */
+
+#include "MimeResolver.h"
+#include <QMimeType>
+
+namespace Dentry::Fs {
+
+	const QMimeDatabase &MimeResolver::database() {
+		static QMimeDatabase db;
+		return db;
+	}
+
+	QString MimeResolver::resolve(const QString &path) {
+		return resolve(QFileInfo(path));
+	}
+
+	QString MimeResolver::resolve(const QFileInfo &info) {
+		if (info.isDir())
+			return QStringLiteral("inode/directory");
+
+		const QMimeType mime = database().mimeTypeForFile(info, QMimeDatabase::MatchDefault);
+
+		if (!mime.isValid())
+			return QStringLiteral("application/octet-stream");
+
+		return mime.name();
+	}
+
+	QString MimeResolver::iconName(const QString &mimeType) {
+		const QMimeType mime = database().mimeTypeForName(mimeType);
+
+		if (!mime.isValid())
+			return QStringLiteral("text-x-generic");
+
+		return mime.genericIconName();
+	}
+
+} // namespace Dentry::Fs
