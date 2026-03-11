@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Concurrent)
 
 add_executable(dentry
         src/main.cpp
@@ -15,6 +15,7 @@ add_executable(dentry
         src/fs/MimeResolver.cpp
         src/fs/FileInfo.cpp
         src/fs/AFileOperation.cpp
+        src/fs/operations/CopyOperation.cpp
 )
 
-target_link_libraries(dentry Qt6::Widgets)
+target_link_libraries(dentry Qt6::Widgets Qt6::Concurrent)
