@@ -32,7 +32,7 @@ namespace Dentry::Fs {
  * Dentry::Fs::FileInfo info("/home/user/document.pdf");
  * qDebug() << info.mimeType();       // "application/pdf"
  * qDebug() << info.formattedSize();  // "4.2 M"
- * qDebug() << info.formattedDate();  // "14/03/2024 09:05"
+ * qDebug() << info.formattedDate();  // "03/14/2024 09:05"
  * qDebug() << info.permissions();    // "-rw-r--r--"
  * @endcode
  */

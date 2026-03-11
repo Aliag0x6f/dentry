@@ -10,6 +10,7 @@
 #include "IFileOperation.h"
 #include <QObject>
 #include <QString>
+#include <atomic>
 
 namespace Dentry::Fs {
 
@@ -89,8 +90,8 @@ protected:
     void setRunning(bool running);
 
 private:
-    bool m_running   = false;
-    bool m_cancelled = false;
+    std::atomic_bool m_running   = false;
+    std::atomic_bool m_cancelled = false;
 };
 
 } // namespace Dentry::Fs

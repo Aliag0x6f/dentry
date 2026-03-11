@@ -33,7 +33,7 @@ namespace Dentry::Fs {
                 }
 
                 if (!deleteEntry(target)) {
-                    emit finished(false, QString("Failed to move: %1").arg(target));
+                    emit finished(false, QString("Failed to delete: %1").arg(target));
                     setRunning(false);
                     return;
                 }
