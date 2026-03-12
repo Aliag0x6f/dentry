@@ -1,5 +1,5 @@
 /**
-* @file MoveOperation.cpp
+ * @file MoveOperation.cpp
  * @brief Implementation of MoveOperation.
  *
  * @author Hugo Fabresse

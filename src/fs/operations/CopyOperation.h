@@ -1,5 +1,5 @@
 /**
-* @file CopyOperation.h
+ * @file CopyOperation.h
  * @brief Concrete implementation of a file copy operation.
  *
  * @author Hugo Fabresse

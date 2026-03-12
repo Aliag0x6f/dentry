@@ -21,6 +21,8 @@ add_executable(dentry
         src/fs/operations/RenameOperation.cpp
         src/fs/operations/CreateFileOperation.cpp
         src/fs/operations/CreateFolderOperation.cpp
+        src/model/AFileSystemModel.cpp
+        src/model/FileSystemModel.cpp
 )
 
 target_link_libraries(dentry Qt6::Widgets Qt6::Concurrent)

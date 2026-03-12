@@ -1,5 +1,5 @@
 /**
-* @file RenameOperation.cpp
+ * @file RenameOperation.cpp
  * @brief Implementation of RenameOperation.
  *
  * @author Hugo Fabresse

@@ -1,5 +1,5 @@
 /**
-* @file DeleteOperation.cpp
+ * @file DeleteOperation.cpp
  * @brief Implementation of DeleteOperation.
  *
  * @author Hugo Fabresse

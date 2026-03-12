@@ -1,5 +1,5 @@
 /**
-* @file FileSystemModel.h
+ * @file FileSystemModel.h
  * @brief Concrete filesystem model for local directory browsing.
  *
  * @author Hugo Fabresse
