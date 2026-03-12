@@ -1,5 +1,5 @@
 /**
-* @file CopyOperation.cpp
+ * @file CopyOperation.cpp
  * @brief Implementation of CopyOperation.
  *
  * @author Hugo Fabresse

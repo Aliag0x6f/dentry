@@ -1,5 +1,5 @@
 /**
-* @file CreateFolderOperation.cpp
+ * @file CreateFolderOperation.cpp
  * @brief Implementation of CreateFolderOperation.
  *
  * @author Hugo Fabresse

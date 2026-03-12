@@ -1,5 +1,5 @@
 /**
-* @file CreateFileOperation.cpp
+ * @file CreateFileOperation.cpp
  * @brief Implementation of CreateFileOperation.
  *
  * @author Hugo Fabresse

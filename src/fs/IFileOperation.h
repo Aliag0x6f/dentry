@@ -1,5 +1,5 @@
 /**
-* @file IFileOperation.h
+ * @file IFileOperation.h
  * @brief Interface for all file operations.
  *
  * @author Hugo Fabresse
