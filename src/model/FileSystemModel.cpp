@@ -71,6 +71,11 @@ namespace Dentry::Model {
     }
 
     void FileSystemModel::refresh() {
+        if (m_currentPath.isEmpty()) {
+            emit errorOccurred(QStringLiteral("No directory set to refresh"));
+            return;
+        }
+
         setDirectory(m_currentPath);
     }
 
