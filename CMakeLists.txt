@@ -35,3 +35,7 @@ add_executable(dentry
 )
 
 target_link_libraries(dentry Qt6::Widgets Qt6::Concurrent)
+
+install(TARGETS dentry
+        RUNTIME DESTINATION bin
+)
