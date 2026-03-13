@@ -18,8 +18,11 @@ namespace Dentry::Ui {
      * @class Sidebar
      * @brief Displays a list of quick-access places for fast navigation.
      *
-     * Provides a fixed list of standard locations (Home, Desktop, Documents, etc.)
-     * that the user can click to navigate directly to that directory.
+     * Populates its list of places dynamically from directories under the user's
+     * home directory (including hidden directories), allowing the user to click
+     * an entry to navigate directly to that directory.
+     *
+     * Home is always listed first, Root always last.
      *
      * Example:
      * @code

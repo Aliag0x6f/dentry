@@ -30,6 +30,7 @@ add_executable(dentry
         src/ui/FileListView.cpp
         src/ui/PreviewPanel.cpp
         src/ui/MainWindow.cpp
+        src/ui/resources.qrc
 )
 
 target_link_libraries(dentry Qt6::Widgets Qt6::Concurrent)

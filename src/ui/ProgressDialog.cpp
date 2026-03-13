@@ -61,6 +61,11 @@ namespace Dentry::Ui {
         m_descriptionLabel->setText(QString("Error: %1").arg(error));
         m_progressBar->setValue(0);
         m_cancelButton->setText(tr("Close"));
+
+        disconnect(m_cancelButton, &QPushButton::clicked, this, &ProgressDialog::onCancelled);
+        connect(m_cancelButton, &QPushButton::clicked, this, [this] {
+            reject();
+        });
     }
 
     void ProgressDialog::onCancelled() {

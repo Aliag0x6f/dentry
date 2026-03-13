@@ -15,9 +15,20 @@ namespace Dentry::Ui {
     FileListView::FileListView(QWidget *parent)
         : QTreeView(parent) {
         configure();
+    }
 
-        connect(selectionModel(), &QItemSelectionModel::selectionChanged,
-                this, &FileListView::onSelectionChanged);
+    void FileListView::setModel(QAbstractItemModel *model) {
+        if (QItemSelectionModel *old = selectionModel()) {
+            disconnect(old, &QItemSelectionModel::selectionChanged,
+                       this, &FileListView::onSelectionChanged);
+        }
+
+        QTreeView::setModel(model);
+
+        if (QItemSelectionModel *current = selectionModel()) {
+            connect(current, &QItemSelectionModel::selectionChanged,
+                    this, &FileListView::onSelectionChanged);
+        }
     }
 
     void FileListView::configure() {
@@ -27,7 +38,7 @@ namespace Dentry::Ui {
         setSelectionMode(QAbstractItemView::ExtendedSelection);
         setSortingEnabled(true);
         setEditTriggers(QAbstractItemView::NoEditTriggers);
-        setContextMenuPolicy(Qt::CustomContextMenu);
+        setContextMenuPolicy(Qt::DefaultContextMenu);
         sortByColumn(0, Qt::AscendingOrder);
     }
 

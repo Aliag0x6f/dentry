@@ -19,20 +19,25 @@ namespace Dentry::Ui {
         setMovable(false);
 
         m_backAction = addAction("←");
+        m_backAction->setToolTip("Back");
+        m_backAction->setStatusTip("Go to previous directory");
+
         m_homeAction = addAction("~");
+        m_homeAction->setToolTip("Home");
+        m_homeAction->setStatusTip("Go to home directory");
 
         addSeparator();
 
-        m_pathBar = new QLineEdit(this);
+        m_pathBar = new QLabel(this);
         m_pathBar->setObjectName("pathLabel");
-        m_pathBar->setReadOnly(true);
         m_pathBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-        addWidget(m_pathBar);
 
         addSeparator();
 
         m_hiddenAction = addAction("·");
         m_hiddenAction->setCheckable(true);
+        m_hiddenAction->setToolTip("Show hidden files");
+        m_hiddenAction->setStatusTip("Toggle the visibility of hidden files");
 
         m_searchBar = new QLineEdit(this);
         m_searchBar->setPlaceholderText("⌕ Search");

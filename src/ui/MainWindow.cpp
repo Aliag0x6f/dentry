@@ -9,6 +9,7 @@
 #include <QStandardPaths>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QDir>
 
 namespace Dentry::Ui {
 
@@ -74,6 +75,10 @@ void MainWindow::connectSignals() {
 }
 
 void MainWindow::navigateTo(const QString &path) {
+    QDir dir(path);
+    if (!dir.exists())
+        return;
+
     m_history.push(path);
     m_model->setDirectory(path);
     m_toolbar->setPath(path);

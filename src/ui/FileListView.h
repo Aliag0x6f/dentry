@@ -47,6 +47,12 @@ public:
     FileListView(FileListView &&)                 = delete;
     FileListView &operator=(FileListView &&)      = delete;
 
+    /**
+     * @brief Sets the model and reconnects the selection model signal.
+     * @param model The model to set.
+     */
+    void setModel(QAbstractItemModel *model) override;
+
 signals:
     /**
      * @brief Emitted when the user double-clicks a directory.

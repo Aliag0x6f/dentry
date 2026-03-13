@@ -52,7 +52,10 @@ namespace Dentry::Ui {
          */
         [[nodiscard]] static inline QString sheet() {
             QFile file(":/ui/style.qss");
-            file.open(QIODevice::ReadOnly);
+
+            if (!file.open(QIODevice::ReadOnly))
+                return {};
+
             return QString::fromUtf8(file.readAll());
         }
     };

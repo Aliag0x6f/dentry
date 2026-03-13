@@ -11,6 +11,7 @@
 #include <QLineEdit>
 #include <QString>
 #include <QToolBar>
+#include <QLabel>
 
 namespace Dentry::Ui {
 
@@ -85,7 +86,7 @@ private:
     QAction   *m_homeAction;
     QAction   *m_hiddenAction;
     QLineEdit *m_searchBar;
-    QLineEdit *m_pathBar;
+    QLabel    *m_pathBar;
 };
 
 } // namespace Dentry::Ui
