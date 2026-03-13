@@ -1,5 +1,5 @@
 /**
-* @file Style.h
+ * @file Style.h
  * @brief Loader for the Dentry QSS stylesheet.
  *
  * The stylesheet is defined in style.qss and embedded at compile time

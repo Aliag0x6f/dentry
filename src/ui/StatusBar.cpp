@@ -1,5 +1,5 @@
 /**
-* @file StatusBar.cpp
+ * @file StatusBar.cpp
  * @brief Implementation of StatusBar.
  *
  * @author Hugo Fabresse

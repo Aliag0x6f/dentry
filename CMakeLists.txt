@@ -23,6 +23,7 @@ add_executable(dentry
         src/fs/operations/CreateFolderOperation.cpp
         src/model/AFileSystemModel.cpp
         src/model/FileSystemModel.cpp
+        src/ui/StatusBar.cpp
 )
 
 target_link_libraries(dentry Qt6::Widgets Qt6::Concurrent)
