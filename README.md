@@ -36,8 +36,10 @@ It focuses on clarity, speed, and a consistent dark aesthetic without unnecessar
 ## Requirements
 
 - Qt6 Base (`qt6-base`)
+- Qt6 Concurrent (`qt6-base`)
 - CMake 3.16 or later
 - A C++17-compatible compiler (GCC 9+, Clang 10+)
+- Poppler Qt6 (`poppler-qt6`) — for PDF preview
 
 ---
 
@@ -46,19 +48,19 @@ It focuses on clarity, speed, and a consistent dark aesthetic without unnecessar
 ### Arch Linux / Manjaro
 
 ```bash
-sudo pacman -S qt6-base cmake base-devel
+sudo pacman -S qt6-base cmake base-devel poppler-qt6
 ```
 
 ### Ubuntu 22.04+ / Debian Bookworm+
 
 ```bash
-sudo apt install qt6-base-dev cmake build-essential
+sudo apt install qt6-base-dev cmake build-essential libpoppler-qt6-dev
 ```
 
 ### Fedora
 
 ```bash
-sudo dnf install qt6-qtbase-devel cmake gcc-c++
+sudo dnf install qt6-qtbase-devel cmake gcc-c++ poppler-qt6-devel
 ```
 
 ---
@@ -140,10 +142,44 @@ The button displays a white background when hidden files are visible.
 ```
 dentry/
 ├── CMakeLists.txt
+├── Doxyfile
+├── LICENSE
+├── README.md
+├── doc/
 └── src/
-    ├── main.cpp          # Entry point
-    ├── MainWindow.h      # Window declaration with Doxygen documentation
-    ├── MainWindow.cpp    # UI logic and file operations
-    └── Style.h           # QSS stylesheet (fully separated from logic)
+    ├── main.cpp
+    ├── app/
+    │   ├── Application.h
+    │   └── Application.cpp
+    ├── fs/
+    │   ├── IFileOperation.h          # Interface - pure contract
+    │   ├── AFileOperation.h/.cpp     # Abstract - shared async logic
+    │   ├── FileInfo.h/.cpp
+    │   ├── MimeResolver.h/.cpp
+    │   └── operations/
+    │       ├── CopyOperation.h/.cpp
+    │       ├── MoveOperation.h/.cpp
+    │       ├── DeleteOperation.h/.cpp
+    │       ├── RenameOperation.h/.cpp
+    │       ├── CreateFileOperation.h/.cpp
+    │       └── CreateFolderOperation.h/.cpp
+    ├── model/
+    │   ├── IFileSystemModel.h        # Interface - pure contract
+    │   ├── AFileSystemModel.h/.cpp   # Abstract - shared model logic
+    │   ├── FileSystemModel.h/.cpp    # Concrete implementation
+    │   └── FileItem.h
+    ├── ui/
+    │   ├── MainWindow.h/.cpp
+    │   ├── Sidebar.h/.cpp
+    │   ├── FileListView.h/.cpp
+    │   ├── PreviewPanel.h/.cpp
+    │   ├── Toolbar.h/.cpp
+    │   ├── StatusBar.h/.cpp
+    │   ├── ProgressDialog.h/.cpp
+    │   └── Style.h
+    └── util/
+        ├── SizeFormatter.h/.cpp
+        ├── DateFormatter.h/.cpp
+        └── PermissionFormatter.h/.cpp
 ```
 

@@ -1,29 +1,3 @@
-/**
- * @file Style.h
- * @brief Qt stylesheet (QSS) for the Dentry file manager.
- *
- * Dark theme visually matching the original Python/GTK version.
- * Portable across any Linux desktop environment.
- *
- * Color palette:
- * - Background:  #0a0a0a
- * - Surface:     #080808 / #111111
- * - Text:        #d7d7d7 / #eeeeee
- * - Selection:   #ffffff (bg) / #000000 (fg)
- * - Border:      rgba(255,255,255,0.08-0.15)
- *
- * @author Hugo Fabresse
- */
-
-#pragma once
-
-/**
- * @brief Returns the QSS stylesheet string for the Dentry application.
- * @return A QString containing the full QSS stylesheet.
- */
-inline QString dentryStyle() {
-    return R"(
-
 /* ── Global ── */
 * {
     font-family: "Maple Mono", "JetBrains Mono", "Fira Code", monospace;
@@ -68,7 +42,6 @@ QToolBar QToolButton:hover {
 QToolBar QToolButton:pressed {
     background: #ffffff;
     color: #000000;
-    border-color: #ffffff;
 }
 
 /* ── Search bar ── */
@@ -95,7 +68,7 @@ QLabel#pathLabel {
     color: #eeeeee;
     font-weight: bold;
     font-size: 8pt;
-    padding: 5px 12px;
+    padding: 2px 12px;
 }
 
 /* ── Sidebar title ── */
@@ -133,11 +106,6 @@ QListWidget::item:selected {
     border-radius: 4px;
 }
 
-QListWidget::item:selected:hover {
-    background-color: #eeeeee;
-    color: #000000;
-}
-
 /* ── File tree view ── */
 QTreeView {
     background-color: #0a0a0a;
@@ -163,11 +131,6 @@ QTreeView::item:selected {
     border-radius: 4px;
 }
 
-QTreeView::item:selected:hover {
-    background-color: #eeeeee;
-    color: #000000;
-}
-
 /* ── Column headers ── */
 QHeaderView {
     background-color: #111111;
@@ -179,7 +142,6 @@ QHeaderView::section {
     color: rgba(255, 255, 255, 102);
     border: none;
     border-right: 1px solid rgba(255, 255, 255, 15);
-    border-bottom: none;
     padding: 5px 8px;
     font-size: 8pt;
     font-weight: bold;
@@ -190,15 +152,10 @@ QHeaderView::section:hover {
     color: #ffffff;
 }
 
-QHeaderView::section:last {
-    border-right: none;
-}
-
 /* ── Status bar ── */
 QStatusBar {
     background-color: #080808;
     border-top: 1px solid rgba(255, 255, 255, 20);
-    color: rgba(255, 255, 255, 89);
     font-size: 8pt;
     padding: 3px 12px;
 }
@@ -211,11 +168,8 @@ QStatusBar QLabel {
 }
 
 /* ── Splitter ── */
-QSplitter::handle {
-    background-color: rgba(255, 255, 255, 15);
-}
-
 QSplitter::handle:horizontal {
+    background-color: rgba(255, 255, 255, 15);
     width: 1px;
 }
 
@@ -256,10 +210,6 @@ QScrollBar::handle:horizontal {
     min-width: 20px;
 }
 
-QScrollBar::handle:horizontal:hover {
-    background: rgba(255, 255, 255, 64);
-}
-
 QScrollBar::add-line:horizontal,
 QScrollBar::sub-line:horizontal,
 QScrollBar::add-page:horizontal,
@@ -280,7 +230,6 @@ QMenu {
 QMenu::item {
     padding: 6px 20px;
     border-radius: 4px;
-    background: transparent;
 }
 
 QMenu::item:selected {
@@ -294,7 +243,7 @@ QMenu::separator {
     margin: 3px 8px;
 }
 
-/* ── Input dialogs ── */
+/* ── Dialogs ── */
 QDialog {
     background-color: #0f0f0f;
 }
@@ -310,14 +259,11 @@ QInputDialog QLineEdit {
     border: 1px solid rgba(255, 255, 255, 38);
     border-radius: 4px;
     padding: 6px 10px;
-    margin: 2px;
 }
 
-QInputDialog QLineEdit:focus {
-    border-color: rgba(255, 255, 255, 89);
-}
-
-QInputDialog QPushButton {
+QInputDialog QPushButton,
+QMessageBox QPushButton,
+QDialog QPushButton {
     background: rgba(255, 255, 255, 18);
     color: #d7d7d7;
     border: 1px solid rgba(255, 255, 255, 30);
@@ -326,18 +272,21 @@ QInputDialog QPushButton {
     min-width: 70px;
 }
 
-QInputDialog QPushButton:hover {
+QInputDialog QPushButton:hover,
+QMessageBox QPushButton:hover,
+QDialog QPushButton:hover {
     background: rgba(255, 255, 255, 35);
     color: #ffffff;
 }
 
-QInputDialog QPushButton:default {
+QInputDialog QPushButton:default,
+QMessageBox QPushButton:default,
+QDialog QPushButton:default {
     background: #ffffff;
     color: #000000;
     border: none;
 }
 
-/* ── Message boxes ── */
 QMessageBox {
     background-color: #0f0f0f;
 }
@@ -346,27 +295,6 @@ QMessageBox QLabel {
     color: #d7d7d7;
     background: transparent;
 }
-
-QMessageBox QPushButton {
-    background: rgba(255, 255, 255, 18);
-    color: #d7d7d7;
-    border: 1px solid rgba(255, 255, 255, 30);
-    border-radius: 4px;
-    padding: 6px 16px;
-    min-width: 70px;
-}
-
-QMessageBox QPushButton:hover {
-    background: rgba(255, 255, 255, 35);
-    color: #ffffff;
-}
-
-QMessageBox QPushButton:default {
-    background: #ffffff;
-    color: #000000;
-    border: none;
-}
-
-)";
-}
-
+        )";
+    }
+};
