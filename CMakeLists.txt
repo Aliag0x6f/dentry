@@ -24,6 +24,8 @@ add_executable(dentry
         src/model/AFileSystemModel.cpp
         src/model/FileSystemModel.cpp
         src/ui/StatusBar.cpp
+        src/ui/Sidebar.cpp
+        src/ui/Toolbar.cpp
 )
 
 target_link_libraries(dentry Qt6::Widgets Qt6::Concurrent)
