@@ -26,6 +26,7 @@ add_executable(dentry
         src/ui/StatusBar.cpp
         src/ui/Sidebar.cpp
         src/ui/Toolbar.cpp
+        src/ui/ProgressDialog.cpp
 )
 
 target_link_libraries(dentry Qt6::Widgets Qt6::Concurrent)
