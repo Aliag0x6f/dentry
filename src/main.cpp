@@ -1,7 +1,18 @@
-#include <cstdio>
+/**
+* @file main.cpp
+ * @brief Entry point for the Dentry file manager.
+ *
+ * @author Hugo Fabresse
+ */
 
-int main()
-{
-    std::printf("Hello, World!\n");
-    return 0;
+#include "app/Application.h"
+#include "ui/MainWindow.h"
+
+int main(int argc, char *argv[]) {
+    Dentry::Application app(argc, argv);
+
+    Dentry::Ui::MainWindow window;
+    window.show();
+
+    return app.exec();
 }
