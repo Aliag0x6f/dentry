@@ -295,6 +295,3 @@ QMessageBox QLabel {
     color: #d7d7d7;
     background: transparent;
 }
-        )";
-    }
-};
