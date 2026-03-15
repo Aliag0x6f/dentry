@@ -2,36 +2,31 @@
 
 A minimal, keyboard-driven file manager for Linux built with Qt6.
 
-Dentry — named after the Linux kernel's directory entry cache structure — is a lightweight
-graphical file manager designed for tiling window managers and minimal desktop environments.
-It focuses on clarity, speed, and a consistent dark aesthetic without unnecessary UI chrome.
-
----
+Dentry — named after the Linux kernel's directory entry cache structure — is a lightweight graphical file manager designed for tiling window managers and minimal desktop environments. It focuses on clarity, speed, and a consistent dark aesthetic without unnecessary UI chrome.
 
 ## Features
 
-- Sidebar with quick-access places (Home, Desktop, Documents, Downloads, Pictures, Videos, Music, .config, /)
+- Sidebar with quick-access places populated dynamically from home directory, toggleable hidden folders, Home always first, Root always last
 - File list view with sortable columns: Name, Size, Type, Date Modified, Permissions
-- Toolbar with file operations: create file, create folder, rename, delete
-- Toggle for hidden dot-files with visual indicator
+- Async file operations: Copy, Cut, Paste, Move, Delete, Rename, Create File, Create Folder
+- Progress dialog with cancellation support for all file operations
+- Right-click context menu with full operation support
+- Toggle for hidden dot-files with visual indicator (black = off, white = on)
 - Inline search with real-time filtering
-- Right-click context menu
+- File preview panel for text and images
+- Dark theme — black/white only, zone-based layout with border-radius, no external theme dependency
+- Colored terminal logger with category filtering via `DENTRY_DEBUG` environment variable
 - Full keyboard and mouse support
-- Dark theme with no external theme dependency
-
----
 
 ## Technical Specifications
 
-| Property       | Value                        |
-|----------------|------------------------------|
-| Language       | C++17                        |
-| UI Framework   | Qt6 (Widgets)                |
-| Build System   | CMake 3.16+                  |
-| License        | MIT                          |
-| Tested on      | Arch Linux, Ubuntu 22.04+    |
-
----
+| Property | Value |
+|---|---|
+| Language | C++17 |
+| UI Framework | Qt6 Widgets + Qt6 Concurrent |
+| Build System | CMake 3.16+ |
+| License | GPLv3 |
+| Tested on | Arch Linux |
 
 ## Requirements
 
@@ -39,36 +34,32 @@ It focuses on clarity, speed, and a consistent dark aesthetic without unnecessar
 - Qt6 Concurrent (`qt6-base`)
 - CMake 3.16 or later
 - A C++17-compatible compiler (GCC 9+, Clang 10+)
-- Poppler Qt6 (`poppler-qt6`) — for PDF preview
-
----
 
 ## Installation
 
-### Arch Linux / Manjaro
-
+### Arch Linux (AUR)
 ```bash
-sudo pacman -S qt6-base cmake base-devel poppler-qt6
+yay -S dentry
+# or
+paru -S dentry
+```
+
+### Arch Linux / Manjaro (manual)
+```bash
+sudo pacman -S qt6-base cmake base-devel
 ```
 
 ### Ubuntu 22.04+ / Debian Bookworm+
-
 ```bash
-sudo apt install qt6-base-dev cmake build-essential libpoppler-qt6-dev
+sudo apt install qt6-base-dev cmake build-essential
 ```
 
 ### Fedora
-
 ```bash
-sudo dnf install qt6-qtbase-devel cmake gcc-c++ poppler-qt6-devel
+sudo dnf install qt6-qtbase-devel cmake gcc-c++
 ```
 
----
-
 ## Building
-
-Clone the repository and build with CMake:
-
 ```bash
 git clone https://github.com/Hugo-Fabresse/dentry.git
 cd dentry
@@ -78,82 +69,80 @@ cmake --build build
 
 The compiled binary will be located at `build/dentry`.
 
-### Optional: install system-wide
-
+### Install system-wide
 ```bash
 sudo cmake --install build
 ```
 
-This installs the binary to `/usr/local/bin/dentry`.
-
----
-
 ## Running
-
 ```bash
 ./build/dentry
 ```
 
 Or if installed system-wide:
-
 ```bash
 dentry
 ```
 
----
+### Debug logging
+```bash
+# Enable all logs
+DENTRY_DEBUG=1 dentry
+
+# Filter by category
+DENTRY_DEBUG=1 QT_LOGGING_RULES="*.debug=true;Mime.debug=false;FileInfo.debug=false" dentry
+```
 
 ## Usage
 
 ### Navigation
 
-| Action                        | Method                              |
-|-------------------------------|-------------------------------------|
-| Open folder                   | Double-click or Enter               |
-| Go to parent directory        | Click "Back" or Backspace           |
-| Go to Home                    | Click "Home"                        |
-| Jump to a place               | Click an entry in the sidebar       |
-| Sort by column                | Click a column header               |
+| Action | Method |
+|---|---|
+| Open folder | Double-click or Enter |
+| Go back | Click "←" or Backspace |
+| Go to Home | Click "~" |
+| Jump to a place | Click an entry in the sidebar |
+| Sort by column | Click a column header |
 
 ### File Operations
 
-| Action                        | Method                              |
-|-------------------------------|-------------------------------------|
-| Create file                   | Toolbar "File" button               |
-| Create folder                 | Toolbar "Folder" button             |
-| Rename                        | Toolbar "Rename" or right-click     |
-| Delete                        | Toolbar "Delete" or right-click     |
-| Copy path to clipboard        | Right-click "Copy path"             |
-| Open file                     | Double-click (uses default app)     |
+| Action | Method |
+|---|---|
+| Copy | Right-click → Copy |
+| Cut | Right-click → Cut |
+| Paste | Right-click → Paste |
+| Delete | Right-click → Delete |
+| Rename | Right-click → Rename |
+| New file | Right-click → New File |
+| New folder | Right-click → New Folder |
+| Open file | Double-click (uses default app) |
 
 ### Search
 
-Type in the search bar to filter the current directory in real time.
-The filter applies only to the current directory and clears on navigation.
+Type in the search bar to filter the current directory in real time. The filter applies only to the current directory and clears on navigation.
 
 ### Hidden Files
 
-Click the "Hidden" button in the toolbar to toggle visibility of dot-files.
-The button displays a white background when hidden files are visible.
-
----
+Click the "·" button in the toolbar to toggle visibility of dot-files. Black background = hidden files off. White background = hidden files visible. The sidebar updates accordingly.
 
 ## Project Structure
-
 ```
 dentry/
 ├── CMakeLists.txt
 ├── Doxyfile
 ├── LICENSE
 ├── README.md
+├── dentry.desktop
 ├── doc/
 └── src/
     ├── main.cpp
     ├── app/
-    │   ├── Application.h
-    │   └── Application.cpp
+    │   ├── Application.h/.cpp
+    │   └── Clipboard.h/.cpp
     ├── fs/
-    │   ├── IFileOperation.h          # Interface - pure contract
-    │   ├── AFileOperation.h/.cpp     # Abstract - shared async logic
+    │   ├── IFileOperation.h
+    │   ├── AFileOperation.h/.cpp
     │   ├── FileInfo.h/.cpp
     │   ├── MimeResolver.h/.cpp
     │   └── operations/
@@ -164,9 +153,9 @@ dentry/
     │       ├── CreateFileOperation.h/.cpp
     │       └── CreateFolderOperation.h/.cpp
     ├── model/
-    │   ├── IFileSystemModel.h        # Interface - pure contract
-    │   ├── AFileSystemModel.h/.cpp   # Abstract - shared model logic
-    │   ├── FileSystemModel.h/.cpp    # Concrete implementation
+    │   ├── IFileSystemModel.h
+    │   ├── AFileSystemModel.h/.cpp
+    │   ├── FileSystemModel.h/.cpp
     │   └── FileItem.h
     ├── ui/
     │   ├── MainWindow.h/.cpp
@@ -176,10 +165,16 @@ dentry/
     │   ├── Toolbar.h/.cpp
     │   ├── StatusBar.h/.cpp
     │   ├── ProgressDialog.h/.cpp
-    │   └── Style.h
+    │   ├── Style.h
+    │   ├── style.qss
+    │   └── resources.qrc
     └── util/
+        ├── Logger.h/.cpp
         ├── SizeFormatter.h/.cpp
         ├── DateFormatter.h/.cpp
         └── PermissionFormatter.h/.cpp
 ```
 
+## License
+
+GPLv3 — see [LICENSE](LICENSE).
