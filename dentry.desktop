@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Dentry
+Comment=Minimal keyboard-driven file manager
+Exec=dentry
+Icon=system-file-manager
+Type=Application
+Categories=System;FileTools;FileManager;
+Keywords=file;manager;files;

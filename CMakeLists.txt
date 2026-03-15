@@ -31,7 +31,16 @@ add_executable(dentry
         src/ui/PreviewPanel.cpp
         src/ui/MainWindow.cpp
         src/ui/resources.qrc
+        src/app/Clipboard.cpp
         src/app/Application.cpp
 )
 
 target_link_libraries(dentry Qt6::Widgets Qt6::Concurrent)
+
+install(TARGETS dentry
+    RUNTIME DESTINATION bin
+)
+
+install(FILES dentry.desktop
+    DESTINATION share/applications
+)
