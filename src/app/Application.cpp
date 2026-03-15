@@ -1,5 +1,5 @@
 /**
-* @file Application.cpp
+ * @file Application.cpp
  * @brief Implementation of Application.
  *
  * @author Hugo Fabresse
@@ -7,6 +7,7 @@
 
 #include "Application.h"
 #include "../ui/Style.h"
+#include "../util/Logger.h"
 
 namespace Dentry {
 
@@ -16,9 +17,10 @@ namespace Dentry {
     }
 
     void Application::initialize() {
+        Dentry::Util::Logger::install();
+
         setApplicationName("Dentry");
         setApplicationVersion("1.0.0");
-        setOrganizationName("Aliag0x6f");
 
         setStyleSheet(Dentry::Ui::Style::sheet());
     }
