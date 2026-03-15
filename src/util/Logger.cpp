@@ -79,6 +79,9 @@ static void messageHandler(QtMsgType type,
 // ── Logger ────────────────────────────────────────────────────────────────────
 
 void Logger::install() {
+    if (qgetenv("DENTRY_DEBUG").isEmpty())
+        QLoggingCategory::setFilterRules("*.debug=false");
+
     qInstallMessageHandler(messageHandler);
 }
 

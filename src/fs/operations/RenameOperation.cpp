@@ -6,6 +6,8 @@
  */
 
 #include "RenameOperation.h"
+#include "../../util/Logger.h"
+
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -22,20 +24,24 @@ namespace Dentry::Fs {
 
     void RenameOperation::execute() {
         setRunning(true);
+        LOG_INFO("Op") << "Renaming:" << QFileInfo(m_source).fileName() << "->" << m_newName;
 
         m_future = QtConcurrent::run([this] {
             if (isCancelled()) {
+                LOG_INFO("Op") << "Rename cancelled";
                 emit finished(false, "Operation cancelled");
                 setRunning(false);
                 return;
             }
 
             if (!renameEntry(m_source)) {
+                LOG_ERROR("Op") << "Failed to rename:" << QFileInfo(m_source).fileName();
                 emit finished(false, QString("Failed to rename: %1").arg(m_source));
                 setRunning(false);
                 return;
             }
 
+            LOG_INFO("Op") << "Rename completed successfully";
             emit progress(100);
             emit finished(true, QString());
             setRunning(false);
@@ -46,6 +52,7 @@ namespace Dentry::Fs {
         const QFileInfo info(path);
         const QString destination = info.dir().absolutePath() + "/" + m_newName;
 
+        LOG_DEBUG("Op") << "Renaming:" << path << "->" << destination;
         return QFile::rename(path, destination);
     }
 

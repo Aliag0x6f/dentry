@@ -18,11 +18,15 @@ namespace Dentry {
 
     void Application::initialize() {
         Dentry::Util::Logger::install();
+        LOG_INFO("App") << "Logger installed";
 
         setApplicationName("Dentry");
         setApplicationVersion("1.0.0");
 
+        LOG_INFO("App") << "Dentry" << applicationVersion() << "starting";
+
         setStyleSheet(Dentry::Ui::Style::sheet());
+        LOG_INFO("App") << "Stylesheet loaded";
     }
 
 } // namespace Dentry
