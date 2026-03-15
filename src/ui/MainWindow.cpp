@@ -146,24 +146,37 @@ namespace Dentry::Ui {
         Fs::AFileOperation *op = nullptr;
 
         if (m_clipboard.isCut())
-            op = new Fs::MoveOperation(m_clipboard.paths(), destination, this);
+            op = new Fs::MoveOperation(m_clipboard.paths(), destination, nullptr);
         else
-            op = new Fs::CopyOperation(m_clipboard.paths(), destination, this);
+            op = new Fs::CopyOperation(m_clipboard.paths(), destination, nullptr);
 
         auto *dialog = new ProgressDialog(op, this);
+
+        op->setParent(dialog);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+
         connect(op, &Fs::AFileOperation::finished, this, [this](bool success, const QString &) {
             if (success) {
-                m_clipboard.clear();
                 m_model->refresh();
             }
+
+            if (m_clipboard.isCut()) {
+                 m_clipboard.clear();
+             } else if (success) {
+                 m_clipboard.clear();
+             }
         });
         op->execute();
         dialog->exec();
     }
 
     void MainWindow::onDeleteRequested(const QStringList &paths) {
-        auto *op     = new Fs::DeleteOperation(paths, this);
+        auto *op     = new Fs::DeleteOperation(paths, nullptr);
         auto *dialog = new ProgressDialog(op, this);
+
+        op->setParent(dialog);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+
         connect(op, &Fs::AFileOperation::finished, this, [this](bool success, const QString &) {
             if (success) m_model->refresh();
         });
@@ -181,8 +194,12 @@ namespace Dentry::Ui {
         if (!ok || newName.isEmpty() || newName == oldName)
             return;
 
-        auto *op     = new Fs::RenameOperation(path, newName, this);
+        auto *op     = new Fs::RenameOperation(path, newName, nullptr);
         auto *dialog = new ProgressDialog(op, this);
+
+        op->setParent(dialog);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+
         connect(op, &Fs::AFileOperation::finished, this, [this](bool success, const QString &) {
             if (success) m_model->refresh();
         });
@@ -199,8 +216,12 @@ namespace Dentry::Ui {
         if (!ok || name.isEmpty())
             return;
 
-        auto *op     = new Fs::CreateFileOperation(directory, name, this);
+        auto *op     = new Fs::CreateFileOperation(directory, name, nullptr);
         auto *dialog = new ProgressDialog(op, this);
+
+        op->setParent(dialog);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+
         connect(op, &Fs::AFileOperation::finished, this, [this](bool success, const QString &) {
             if (success) m_model->refresh();
         });
@@ -217,8 +238,12 @@ namespace Dentry::Ui {
         if (!ok || name.isEmpty())
             return;
 
-        auto *op     = new Fs::CreateFolderOperation(directory, name, this);
+        auto *op     = new Fs::CreateFolderOperation(directory, name, nullptr);
         auto *dialog = new ProgressDialog(op, this);
+
+        op->setParent(dialog);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+
         connect(op, &Fs::AFileOperation::finished, this, [this](bool success, const QString &) {
             if (success) m_model->refresh();
         });
