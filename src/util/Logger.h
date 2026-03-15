@@ -50,7 +50,11 @@ public:
     static void install();
 
     /**
-     * @brief Uninstalls the custom message handler and restores Qt default.
+     * @brief Uninstalls the custom message handler.
+     *
+     * Removes the Logger-installed message handler. This does not restore
+     * Qt's global logging filter rules; any filter changes made in
+     * Logger::install() remain in effect.
      */
     static void uninstall();
 };
@@ -58,6 +62,18 @@ public:
 } // namespace Dentry::Util
 
 // ── Logging macros ────────────────────────────────────────────────────────────
+
+/**
+ * @brief Helper to obtain a static QLoggingCategory per call site.
+ *
+ * This avoids constructing a temporary QLoggingCategory on every log call.
+ * The category name is typically passed as a string literal.
+ */
+#define DENTRY_LOG_CATEGORY(category)                        \
+    ([](const char *catName) -> QLoggingCategory & {         \
+        static QLoggingCategory staticCategory(catName);     \
+        return staticCategory;                               \
+    }(category))
 
 /**
  * @brief Logs a debug message with a category tag.
@@ -71,25 +87,25 @@ public:
  * LOG_DEBUG("FileInfo") << "Resolved MIME:" << mime;
  * @endcode
  */
-#define LOG_DEBUG(category)   qCDebug(   QLoggingCategory(category) )
+#define LOG_DEBUG(category)   qCDebug( DENTRY_LOG_CATEGORY(category) )
 
 /**
  * @brief Logs an informational message with a category tag.
  *
  * @param category A short string identifying the source.
  */
-#define LOG_INFO(category)    qCInfo(    QLoggingCategory(category) )
+#define LOG_INFO(category)    qCInfo( DENTRY_LOG_CATEGORY(category) )
 
 /**
  * @brief Logs a warning message with a category tag.
  *
  * @param category A short string identifying the source.
  */
-#define LOG_WARNING(category) qCWarning( QLoggingCategory(category) )
+#define LOG_WARNING(category) qCWarning( DENTRY_LOG_CATEGORY(category) )
 
 /**
  * @brief Logs an error message with a category tag.
  *
  * @param category A short string identifying the source.
  */
-#define LOG_ERROR(category)   qCCritical(QLoggingCategory(category) )
+#define LOG_ERROR(category)   qCCritical( DENTRY_LOG_CATEGORY(category) )

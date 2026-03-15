@@ -12,6 +12,7 @@
 #include <QString>
 
 #include <cstdio>
+#include <cstdlib>
 
 namespace Dentry::Util {
 
