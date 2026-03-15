@@ -10,6 +10,7 @@
 #include "../util/DateFormatter.h"
 #include "../util/PermissionFormatter.h"
 #include "../util/SizeFormatter.h"
+#include "../util/Logger.h"
 
 namespace Dentry::Fs {
 
@@ -28,6 +29,8 @@ namespace Dentry::Fs {
 		m_formattedSize		   = m_fileInfo.isDir() ? QString() : Util::SizeFormatter::format(m_size);
 		m_formattedDate		   = Util::DateFormatter::format(m_lastModified);
 		m_formattedPermissions = Util::PermissionFormatter::format(m_fileInfo);
+
+		LOG_DEBUG("FileInfo") << "Computed:" << m_name << "MIME:" << m_mimeType;
 	}
 
 } // namespace Dentry::Fs

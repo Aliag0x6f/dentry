@@ -11,6 +11,7 @@
 #include <QListWidgetItem>
 #include <QString>
 #include <QWidget>
+#include <QFrame>
 
 namespace Dentry::Ui {
 
@@ -30,7 +31,7 @@ namespace Dentry::Ui {
      * connect(sidebar, &Sidebar::placeSelected, model, &FileSystemModel::setDirectory);
      * @endcode
      */
-    class Sidebar : public QWidget {
+    class Sidebar : public QFrame {
         Q_OBJECT
 
     public:
@@ -46,6 +47,12 @@ namespace Dentry::Ui {
         Sidebar &operator=(const Sidebar &) = delete;
         Sidebar(Sidebar &&)                 = delete;
         Sidebar &operator=(Sidebar &&)      = delete;
+
+        /**
+         * @brief Updates the sidebar to show or hide hidden directories.
+         * @param show True to show hidden directories.
+         */
+        void setShowHidden(bool show);
 
         signals:
             /**
@@ -67,6 +74,10 @@ namespace Dentry::Ui {
 
         /** @brief The list widget displaying the places. */
         QListWidget *m_list;
+
+        /** @brief Whether hidden dot-files are shown. */
+        bool m_showHidden = false;
+
     };
 
 } // namespace Dentry::Ui

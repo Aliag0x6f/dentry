@@ -9,6 +9,7 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Concurrent)
 
 add_executable(dentry
         src/main.cpp
+        src/util/Logger.cpp
         src/util/DateFormatter.cpp
         src/util/PermissionFormatter.cpp
         src/util/SizeFormatter.cpp
@@ -31,6 +32,7 @@ add_executable(dentry
         src/ui/PreviewPanel.cpp
         src/ui/MainWindow.cpp
         src/ui/resources.qrc
+        src/app/Clipboard.cpp
         src/app/Application.cpp
 )
 

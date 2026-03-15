@@ -14,7 +14,7 @@
 namespace Dentry::Ui {
 
     Sidebar::Sidebar(QWidget *parent)
-        : QWidget(parent) {
+        : QFrame(parent) {
         QVBoxLayout *layout = new QVBoxLayout(this);
         layout->setContentsMargins(0, 0, 0, 0);
         layout->setSpacing(0);
@@ -22,6 +22,11 @@ namespace Dentry::Ui {
         QLabel *title = new QLabel("PLACES", this);
         title->setObjectName("sidebarTitle");
         layout->addWidget(title);
+
+        QFrame *separator = new QFrame(this);
+        separator->setFrameShape(QFrame::HLine);
+        separator->setObjectName("sidebarSeparator");
+        layout->addWidget(separator);
 
         m_list = new QListWidget(this);
         m_list->setMinimumWidth(160);
@@ -31,7 +36,6 @@ namespace Dentry::Ui {
         buildPlaces();
 
         connect(m_list, &QListWidget::itemClicked, this, &Sidebar::onItemClicked);
-
     }
 
     void Sidebar::buildPlaces() {
@@ -40,10 +44,12 @@ namespace Dentry::Ui {
         homeItem->setData(Qt::UserRole, homePath);
 
         QDir homeDir(homePath);
-        const QFileInfoList entries = homeDir.entryInfoList(
-            QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden,
-            QDir::Name
-        );
+        QDir::Filters filters = QDir::Dirs | QDir::NoDotAndDotDot;
+
+        if (m_showHidden)
+            filters |= QDir::Hidden;
+
+        const QFileInfoList entries = homeDir.entryInfoList(filters, QDir::Name);
 
         for (const QFileInfo &entry : entries) {
             auto *item = new QListWidgetItem(entry.fileName(), m_list);
@@ -52,6 +58,12 @@ namespace Dentry::Ui {
 
         auto *rootItem = new QListWidgetItem("Root", m_list);
         rootItem->setData(Qt::UserRole, QStringLiteral("/"));
+    }
+
+    void Sidebar::setShowHidden(bool show) {
+        m_showHidden = show;
+        m_list->clear();
+        buildPlaces();
     }
 
     void Sidebar::onItemClicked(QListWidgetItem *item) {

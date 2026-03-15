@@ -12,7 +12,9 @@
 #include "Sidebar.h"
 #include "StatusBar.h"
 #include "Toolbar.h"
+#include "../app/Clipboard.h"
 #include "../model/FileSystemModel.h"
+
 #include <QMainWindow>
 #include <QSplitter>
 #include <QStack>
@@ -68,6 +70,43 @@ private slots:
      */
     void onDirectoryLoaded(const QString &);
 
+    // ── Operations ────────────────────────────────────────────────────────
+
+    /**
+     * @brief Copies the given paths to the clipboard.
+     */
+    void onCopyRequested(const QStringList &paths);
+
+    /**
+     * @brief Cuts the given paths to the clipboard.
+     */
+    void onCutRequested(const QStringList &paths);
+
+    /**
+     * @brief Pastes the clipboard contents into the given directory.
+     */
+    void onPasteRequested(const QString &destination);
+
+    /**
+     * @brief Deletes the given paths.
+     */
+    void onDeleteRequested(const QStringList &paths);
+
+    /**
+     * @brief Prompts for a new name and renames the given path.
+     */
+    void onRenameRequested(const QString &path);
+
+    /**
+     * @brief Prompts for a name and creates a new file in the given directory.
+     */
+    void onCreateFileRequested(const QString &directory);
+
+    /**
+     * @brief Prompts for a name and creates a new folder in the given directory.
+     */
+    void onCreateFolderRequested(const QString &directory);
+
 private:
     /** @brief Builds the main window layout and all widgets. */
     void build();
@@ -75,14 +114,19 @@ private:
     /** @brief Connects all signals and slots between components. */
     void connectSignals();
 
-    Toolbar                 *m_toolbar;
-    Sidebar                 *m_sidebar;
-    FileListView            *m_fileListView;
-    PreviewPanel            *m_previewPanel;
-    StatusBar               *m_statusBar;
-    Model::FileSystemModel  *m_model;
-    QSplitter               *m_splitter;
-    QStack<QString>          m_history;
+    Toolbar                *m_toolbar;
+    Sidebar                *m_sidebar;
+    FileListView           *m_fileListView;
+    // PreviewPanel           *m_previewPanel;
+    StatusBar              *m_statusBar;
+    Model::FileSystemModel *m_model;
+    QSplitter              *m_splitter;
+    QStack<QString>         m_history;
+
+    /**
+     * @brief Internal clipboard for copy/cut/paste operations.
+     */
+    App::Clipboard m_clipboard;
 };
 
 } // namespace Dentry::Ui
