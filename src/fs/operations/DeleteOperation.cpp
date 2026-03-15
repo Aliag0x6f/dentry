@@ -6,6 +6,8 @@
  */
 
 #include "DeleteOperation.h"
+#include "../../util/Logger.h"
+
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -20,6 +22,7 @@ namespace Dentry::Fs {
 
     void DeleteOperation::execute() {
         setRunning(true);
+        LOG_INFO("Op") << "Deleting " << m_targets.count() << " item(s)";
 
         m_future = QtConcurrent::run([this] {
             const int total = m_targets.count();
@@ -27,21 +30,26 @@ namespace Dentry::Fs {
 
             for (const QString &target : m_targets) {
                 if (isCancelled()) {
+                    LOG_INFO("Op") << "Delete cancelled";
                     emit finished(false, "Operation cancelled");
                     setRunning(false);
                     return;
                 }
 
                 if (!deleteEntry(target)) {
+                    LOG_ERROR("Op") << "Failed to delete " << target;
                     emit finished(false, QString("Failed to delete: %1").arg(target));
                     setRunning(false);
                     return;
                 }
 
                 ++completed;
+                LOG_DEBUG("Op") << "Deleted " << target
+                                << "(" << completed << "/" << total << ")";
                 emit progress(static_cast<int>(completed * 100.0 / total));
             }
 
+            LOG_INFO("Op") << "Delete completed successfully";
             emit finished(true, QString());
             setRunning(false);
         });
@@ -51,10 +59,12 @@ namespace Dentry::Fs {
         const QFileInfo info(path);
 
         if (info.isDir()) {
+            LOG_DEBUG("Op") << "Deleting directory:" << path;
             return QDir(path).removeRecursively();
         }
-        QFile::remove(path);
-        return false;
+
+        LOG_DEBUG("Op") << "Deleting file:" << path;
+        return QFile::remove(path);
     }
 
     QString DeleteOperation::description() const {

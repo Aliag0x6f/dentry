@@ -21,6 +21,7 @@
 #include "../fs/operations/DeleteOperation.h"
 #include "../fs/operations/MoveOperation.h"
 #include "../fs/operations/RenameOperation.h"
+#include "../util/Logger.h"
 
 namespace Dentry::Ui {
 
@@ -68,6 +69,8 @@ namespace Dentry::Ui {
         m_splitter->setStretchFactor(2, 0);
 
         layout->addWidget(m_splitter);
+
+        LOG_INFO("Ui") << "MainWindow built";
     }
 
     void MainWindow::connectSignals() {
@@ -90,11 +93,17 @@ namespace Dentry::Ui {
         connect(m_fileListView, &FileListView::pasteRequested,       this,           &MainWindow::onPasteRequested);
 
         connect(m_model, &Model::FileSystemModel::directoryLoaded, this, &MainWindow::onDirectoryLoaded);
+
+        LOG_DEBUG("Ui") << "All signals connected";
     }
 
     void MainWindow::navigateTo(const QString &path) {
-        if (!QDir(path).exists())
+        if (!QDir(path).exists()) {
+            LOG_WARNING("Ui") << "Directory does not exist:" << path;
             return;
+        }
+
+        LOG_INFO("Ui") << "Navigating to:" << path;
 
         m_history.push(path);
         m_model->setDirectory(path);
@@ -108,6 +117,9 @@ namespace Dentry::Ui {
 
         m_history.pop();
         const QString path = m_history.top();
+
+        LOG_INFO("Ui") << "Navigating back to:" << path;
+
         m_model->setDirectory(path);
         m_toolbar->setPath(path);
         m_previewPanel->clear();
@@ -132,16 +144,23 @@ namespace Dentry::Ui {
     }
 
     void MainWindow::onCopyRequested(const QStringList &paths) {
+        LOG_INFO("Ui") << "Copy requested:" << paths.count() << "item(s)";
         m_clipboard.copy(paths);
     }
 
     void MainWindow::onCutRequested(const QStringList &paths) {
+        LOG_INFO("Ui") << "Cut requested:" << paths.count() << "item(s)";
         m_clipboard.cut(paths);
     }
 
     void MainWindow::onPasteRequested(const QString &destination) {
-        if (m_clipboard.isEmpty())
+        if (m_clipboard.isEmpty()) {
+            LOG_WARNING("Ui") << "Paste requested but clipboard is empty";
             return;
+        }
+
+        LOG_INFO("Ui") << "Paste requested into:" << destination
+                       << "(" << (m_clipboard.isCut() ? "move" : "copy") << ")";
 
         Fs::AFileOperation *op = nullptr;
 
@@ -171,6 +190,8 @@ namespace Dentry::Ui {
     }
 
     void MainWindow::onDeleteRequested(const QStringList &paths) {
+        LOG_INFO("Ui") << "Delete requested:" << paths.count() << "item(s)";
+
         auto *op     = new Fs::DeleteOperation(paths, nullptr);
         auto *dialog = new ProgressDialog(op, this);
 
@@ -194,6 +215,8 @@ namespace Dentry::Ui {
         if (!ok || newName.isEmpty() || newName == oldName)
             return;
 
+        LOG_INFO("Ui") << "Rename requested:" << oldName << "->" << newName;
+
         auto *op     = new Fs::RenameOperation(path, newName, nullptr);
         auto *dialog = new ProgressDialog(op, this);
 
@@ -216,6 +239,8 @@ namespace Dentry::Ui {
         if (!ok || name.isEmpty())
             return;
 
+        LOG_INFO("Ui") << "Create file requested:" << name << "in" << directory;
+
         auto *op     = new Fs::CreateFileOperation(directory, name, nullptr);
         auto *dialog = new ProgressDialog(op, this);
 
@@ -237,6 +262,8 @@ namespace Dentry::Ui {
 
         if (!ok || name.isEmpty())
             return;
+
+        LOG_INFO("Ui") << "Create folder requested:" << name << "in" << directory;
 
         auto *op     = new Fs::CreateFolderOperation(directory, name, nullptr);
         auto *dialog = new ProgressDialog(op, this);

@@ -6,6 +6,8 @@
  */
 
 #include "MoveOperation.h"
+#include "../../util/Logger.h"
+
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -22,6 +24,7 @@ namespace Dentry::Fs {
 
     void MoveOperation::execute() {
         setRunning(true);
+        LOG_INFO("Op") << "Moving" << m_sources.count() << "item(s) to" << m_destination;
 
         m_future = QtConcurrent::run([this] {
             const int total = m_sources.count();
@@ -29,6 +32,7 @@ namespace Dentry::Fs {
 
             for (const QString &source : m_sources) {
                 if (isCancelled()) {
+                    LOG_INFO("Op") << "Move cancelled";
                     emit finished(false, "Operation cancelled");
                     setRunning(false);
                     return;
@@ -38,24 +42,31 @@ namespace Dentry::Fs {
                 const QString dest = m_destination + "/" + info.fileName();
 
                 if (!moveEntry(source, dest)) {
+                    LOG_ERROR("Op") << "Failed to move:" << info.fileName();
                     emit finished(false, QString("Failed to move: %1").arg(info.fileName()));
                     setRunning(false);
                     return;
                 }
 
                 ++completed;
+                LOG_DEBUG("Op") << "Moved:" << info.fileName()
+                                << "(" << completed << "/" << total << ")";
                 emit progress(static_cast<int>(completed * 100.0 / total));
             }
 
+            LOG_INFO("Op") << "Move completed successfully";
             emit finished(true, QString());
             setRunning(false);
         });
     }
 
     bool MoveOperation::moveEntry(const QString &source, const QString &destination) {
-        if (QFile::rename(source, destination))
+        if (QFile::rename(source, destination)) {
+            LOG_DEBUG("Op") << "Renamed directly:" << source;
             return true;
+        }
 
+        LOG_DEBUG("Op") << "Rename failed, falling back to copy+delete:" << source;
         return copyThenDelete(source, destination);
     }
 
@@ -63,9 +74,12 @@ namespace Dentry::Fs {
         const QFileInfo info(source);
 
         if (info.isDir()) {
+            LOG_DEBUG("Op") << "Moving directory:" << source << "->" << destination;
             QDir srcDir(source);
-            if (!QDir().mkpath(destination))
+            if (!QDir().mkpath(destination)) {
+                LOG_ERROR("Op") << "Failed to create directory:" << destination;
                 return false;
+            }
 
             const QFileInfoList entries = srcDir.entryInfoList(
                 QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden
@@ -87,8 +101,10 @@ namespace Dentry::Fs {
         if (QFile::exists(destination))
             QFile::remove(destination);
 
-        if (!QFile::copy(source, destination))
+        if (!QFile::copy(source, destination)) {
+            LOG_ERROR("Op") << "Failed to copy file:" << source;
             return false;
+        }
 
         return QFile::remove(source);
     }
