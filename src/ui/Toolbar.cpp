@@ -1,5 +1,5 @@
 /**
-* @file Toolbar.cpp
+ * @file Toolbar.cpp
  * @brief Implementation of Toolbar.
  *
  * @author Hugo Fabresse
@@ -7,6 +7,7 @@
 
 #include "Toolbar.h"
 #include <QLabel>
+#include <QToolButton>
 
 namespace Dentry::Ui {
 
@@ -31,6 +32,7 @@ namespace Dentry::Ui {
         m_pathBar = new QLabel(this);
         m_pathBar->setObjectName("pathLabel");
         m_pathBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        addWidget(m_pathBar);
 
         // addSeparator();
 
@@ -38,6 +40,10 @@ namespace Dentry::Ui {
         m_hiddenAction->setCheckable(true);
         m_hiddenAction->setToolTip("Show hidden files");
         m_hiddenAction->setStatusTip("Toggle the visibility of hidden files");
+
+        QToolButton *hiddenBtn = qobject_cast<QToolButton*>(widgetForAction(m_hiddenAction));
+        if (hiddenBtn)
+            hiddenBtn->setObjectName("hiddenButton");
 
         addSeparator();
 

@@ -117,7 +117,7 @@ private:
     Toolbar                *m_toolbar;
     Sidebar                *m_sidebar;
     FileListView           *m_fileListView;
-    PreviewPanel           *m_previewPanel;
+    // PreviewPanel           *m_previewPanel;
     StatusBar              *m_statusBar;
     Model::FileSystemModel *m_model;
     QSplitter              *m_splitter;

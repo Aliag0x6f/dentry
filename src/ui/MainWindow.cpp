@@ -46,24 +46,29 @@ namespace Dentry::Ui {
         setStatusBar(m_statusBar);
 
         QWidget *central = new QWidget(this);
+        central->setObjectName("centralWidget");
         setCentralWidget(central);
 
         QHBoxLayout *layout = new QHBoxLayout(central);
-        layout->setContentsMargins(0, 0, 0, 0);
-        layout->setSpacing(0);
+        layout->setContentsMargins(6, 6, 6, 6);
+        layout->setSpacing(6);
 
         m_splitter = new QSplitter(Qt::Horizontal, central);
+        m_splitter->setObjectName("mainSplitter");
 
         m_sidebar = new Sidebar(m_splitter);
+        m_sidebar->setObjectName("sidebar");
 
         m_fileListView = new FileListView(m_splitter);
+        m_fileListView->setObjectName("fileList");
         m_fileListView->setModel(m_model);
 
-        m_previewPanel = new PreviewPanel(m_splitter);
+        // m_previewPanel = new PreviewPanel(m_splitter);
+        // m_previewPanel->setObjectName("previewPanel");
 
         m_splitter->addWidget(m_sidebar);
         m_splitter->addWidget(m_fileListView);
-        m_splitter->addWidget(m_previewPanel);
+        // m_splitter->addWidget(m_previewPanel);
         m_splitter->setStretchFactor(0, 0);
         m_splitter->setStretchFactor(1, 1);
         m_splitter->setStretchFactor(2, 0);
@@ -77,12 +82,14 @@ namespace Dentry::Ui {
         connect(m_toolbar, &Toolbar::backRequested,  this,    &MainWindow::navigateBack);
         connect(m_toolbar, &Toolbar::homeRequested,  this,    &MainWindow::navigateHome);
         connect(m_toolbar, &Toolbar::searchChanged,  m_model, &Model::FileSystemModel::setFilter);
-        connect(m_toolbar, &Toolbar::hiddenToggled,  m_model, &Model::FileSystemModel::setShowHidden);
+        connect(m_toolbar, &Toolbar::hiddenToggled, this, [this](bool show) {
+            m_sidebar->setShowHidden(show);
+        });
 
         connect(m_sidebar, &Sidebar::placeSelected,  this,    &MainWindow::navigateTo);
 
         connect(m_fileListView, &FileListView::directoryRequested,   this,           &MainWindow::navigateTo);
-        connect(m_fileListView, &FileListView::fileActivated,        m_previewPanel, &PreviewPanel::preview);
+        // connect(m_fileListView, &FileListView::fileActivated,        m_previewPanel, &PreviewPanel::preview);
         connect(m_fileListView, &FileListView::selectionChanged,     m_statusBar,    &StatusBar::setSelection);
         connect(m_fileListView, &FileListView::deleteRequested,      this,           &MainWindow::onDeleteRequested);
         connect(m_fileListView, &FileListView::renameRequested,      this,           &MainWindow::onRenameRequested);
@@ -108,7 +115,7 @@ namespace Dentry::Ui {
         m_history.push(path);
         m_model->setDirectory(path);
         m_toolbar->setPath(path);
-        m_previewPanel->clear();
+        // m_previewPanel->clear();
     }
 
     void MainWindow::navigateBack() {
@@ -122,7 +129,7 @@ namespace Dentry::Ui {
 
         m_model->setDirectory(path);
         m_toolbar->setPath(path);
-        m_previewPanel->clear();
+        // m_previewPanel->clear();
     }
 
     void MainWindow::navigateHome() {
