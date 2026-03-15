@@ -68,22 +68,38 @@ namespace Dentry::Ui {
 
     void FileListView::contextMenuEvent(QContextMenuEvent *event) {
         const QModelIndex index = indexAt(event->pos());
+        const auto *fsModel = qobject_cast<const Model::AFileSystemModel *>(model());
+
+        if (!fsModel)
+          return;
+
+        QStringList selectedPaths;
+        const QModelIndexList indexes = selectionModel()->selectedRows();
+        for (const QModelIndex &i : indexes)
+          selectedPaths << fsModel->entries().at(i.row()).absolutePath;
 
         QMenu menu(this);
 
-        if (index.isValid()) {
-            menu.addAction("Open");
-            menu.addAction("Rename");
-            menu.addSeparator();
-            menu.addAction("Copy");
-            menu.addAction("Move");
-            menu.addSeparator();
-            menu.addAction("Delete");
-            menu.addSeparator();
+        if (!selectedPaths.isEmpty()) {
+          menu.addAction("Copy",   this, [this, selectedPaths] { emit copyRequested(selectedPaths); });
+          menu.addAction("Cut",    this, [this, selectedPaths] { emit cutRequested(selectedPaths); });
+          menu.addSeparator();
+
+          if (selectedPaths.count() == 1) {
+            menu.addAction("Rename", this, [this, selectedPaths] {
+                emit renameRequested(selectedPaths.first());
+            });
+          }
+
+          menu.addAction("Delete", this, [this, selectedPaths] { emit deleteRequested(selectedPaths); });
+          menu.addSeparator();
         }
 
-        menu.addAction("New File");
-        menu.addAction("New Folder");
+        const QString currentDir = fsModel->currentPath();
+        menu.addAction("Paste",      this, [this, currentDir] { emit pasteRequested(currentDir); });
+        menu.addSeparator();
+        menu.addAction("New File",   this, [this, currentDir] { emit createFileRequested(currentDir); });
+        menu.addAction("New Folder", this, [this, currentDir] { emit createFolderRequested(currentDir); });
 
         menu.exec(event->globalPos());
     }

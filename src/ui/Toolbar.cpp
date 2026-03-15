@@ -32,12 +32,14 @@ namespace Dentry::Ui {
         m_pathBar->setObjectName("pathLabel");
         m_pathBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-        addSeparator();
+        // addSeparator();
 
         m_hiddenAction = addAction("·");
         m_hiddenAction->setCheckable(true);
         m_hiddenAction->setToolTip("Show hidden files");
         m_hiddenAction->setStatusTip("Toggle the visibility of hidden files");
+
+        addSeparator();
 
         m_searchBar = new QLineEdit(this);
         m_searchBar->setPlaceholderText("⌕ Search");

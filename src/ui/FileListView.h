@@ -72,6 +72,50 @@ signals:
      */
     void fileActivated(const Model::FileItem &item);
 
+    // ── Operations ────────────────────────────────────────────────────────
+
+    /**
+     * @brief Emitted when the user requests a copy of the selected items.
+     * @param paths Absolute paths of the items to copy.
+     */
+    void copyRequested(const QStringList &paths);
+
+    /**
+     * @brief Emitted when the user requests a cut of the selected items.
+     * @param paths Absolute paths of the items to cut.
+     */
+    void cutRequested(const QStringList &paths);
+
+    /**
+     * @brief Emitted when the user requests a paste into the current directory.
+     * @param destination Absolute path of the destination directory.
+     */
+    void pasteRequested(const QString &destination);
+
+    /**
+     * @brief Emitted when the user requests deletion of the selected items.
+     * @param paths Absolute paths of the items to delete.
+     */
+    void deleteRequested(const QStringList &paths);
+
+    /**
+     * @brief Emitted when the user requests a rename of a single item.
+     * @param path Absolute path of the item to rename.
+     */
+    void renameRequested(const QString &path);
+
+    /**
+     * @brief Emitted when the user requests a new file in the current directory.
+     * @param directory Absolute path of the directory.
+     */
+    void createFileRequested(const QString &directory);
+
+    /**
+     * @brief Emitted when the user requests a new folder in the current directory.
+     * @param directory Absolute path of the directory.
+     */
+    void createFolderRequested(const QString &directory);
+
 protected:
     /**
      * @brief Handles double-click to navigate into directories or open files.
