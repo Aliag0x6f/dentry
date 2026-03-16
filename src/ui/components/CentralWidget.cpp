@@ -32,8 +32,6 @@ namespace Dentry::Ui {
         m_splitter->setStretchFactor(1, 1);
         m_splitter->setStretchFactor(2, 0);
 
-        m_previewPanel->hide();
-
         m_layout->addWidget(m_splitter);
 
         setupSize();

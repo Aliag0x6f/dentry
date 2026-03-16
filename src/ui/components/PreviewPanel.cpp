@@ -53,11 +53,11 @@ namespace Dentry::Ui {
 
     void PreviewPanel::setupSize() {
         setMinimumWidth(200);
-        setMaximumWidth(320);
     }
 
     void PreviewPanel::setupStyle() {
         setObjectName("previewPanel");
+        setAttribute(Qt::WA_StyledBackground, true);
     }
 
     void PreviewPanel::preview(const Model::FileItem &item) {

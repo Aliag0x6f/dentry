@@ -132,6 +132,24 @@ QWidget#previewPanel {
     margin: 0px 0px 0px 3px;
 }
 
+QWidget#previewPanel QLabel {
+    background: transparent;
+    color: #c8c8c8;
+    padding: 4px;
+}
+
+QWidget#previewPanel QTextEdit {
+    background: #0a0a0a;
+    border: 1px solid #222222;
+    border-radius: 4px;
+    color: #c8c8c8;
+    padding: 4px;
+}
+
+QWidget#previewPanel QStackedWidget {
+    background: transparent;
+}
+
 /* ── Column headers ── */
 QHeaderView {
     background: transparent;

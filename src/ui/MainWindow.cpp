@@ -64,7 +64,12 @@ namespace Dentry::Ui {
         connect(sidebar, &Sidebar::placeSelected, this, &MainWindow::navigateTo);
 
         connect(fileListView, &FileListView::directoryRequested,    this,                   &MainWindow::navigateTo);
-        connect(fileListView, &FileListView::fileActivated,         m_central->previewPanel(), &PreviewPanel::preview);
+        connect(fileListView, &FileListView::selectionChanged, this, [this](const QList<Model::FileItem> &selected) {
+            if (selected.count() == 1 && !selected.first().isDir)
+                m_central->previewPanel()->preview(selected.first());
+            else
+                m_central->previewPanel()->clear();
+        });
         connect(fileListView, &FileListView::selectionChanged,      m_statusBar,            &StatusBar::setSelection);
         connect(fileListView, &FileListView::deleteRequested,       this,        &MainWindow::onDeleteRequested);
         connect(fileListView, &FileListView::renameRequested,       this,        &MainWindow::onRenameRequested);
