@@ -59,6 +59,7 @@ namespace Dentry::Ui {
         connect(m_toolbar, &Toolbar::backRequested, this,    &MainWindow::navigateBack);
         connect(m_toolbar, &Toolbar::homeRequested, this,    &MainWindow::navigateHome);
         connect(m_toolbar, &Toolbar::searchChanged, m_model, &Model::FileSystemModel::setFilter);
+        connect(m_toolbar, &Toolbar::hiddenToggled, m_model, &Model::FileSystemModel::setShowHidden);
         connect(m_toolbar, &Toolbar::hiddenToggled, sidebar, &Sidebar::setShowHidden);
 
         connect(sidebar, &Sidebar::placeSelected, this, &MainWindow::navigateTo);
