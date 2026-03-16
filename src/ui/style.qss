@@ -277,17 +277,32 @@ QStatusBar {
     background: #111111;
     border: 1px solid #222222;
     border-radius: 8px;
-    font-size: 8pt;
-    padding: 6px 10px;
+    font-size: 9pt;
+    color: #888888;
+    padding: 6px 10px 6px 16px;
     margin: 3px 6px 6px 6px;
     min-height: 18px;
 }
 
 QStatusBar QLabel {
-    color: #333333;
-    font-size: 8pt;
+    color: #888888;
+    font-size: 9pt;
     background: transparent;
-    padding: 0px;
+    padding: 0px 6px 0px 12px;
+}
+
+QStatusBar::item {
+    border: none;
+}
+
+/* ── ToolTip ── */
+QToolTip {
+    background: #111111;
+    color: #888888;
+    border: 1px solid #222222;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 8pt;
 }
 
 /* ── Scrollbars ── */
