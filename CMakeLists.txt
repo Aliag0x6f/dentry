@@ -24,12 +24,13 @@ add_executable(dentry
         src/fs/operations/CreateFolderOperation.cpp
         src/model/AFileSystemModel.cpp
         src/model/FileSystemModel.cpp
-        src/ui/StatusBar.cpp
-        src/ui/Sidebar.cpp
-        src/ui/Toolbar.cpp
-        src/ui/ProgressDialog.cpp
-        src/ui/FileListView.cpp
-        src/ui/PreviewPanel.cpp
+        src/ui/components/StatusBar.cpp
+        src/ui/components/Sidebar.cpp
+        src/ui/components/Toolbar.cpp
+        src/ui/components/ProgressDialog.cpp
+        src/ui/components/FileListView.cpp
+        src/ui/components/PreviewPanel.cpp
+        src/ui/components/CentralWidget.cpp
         src/ui/MainWindow.cpp
         src/ui/resources.qrc
         src/app/Clipboard.cpp

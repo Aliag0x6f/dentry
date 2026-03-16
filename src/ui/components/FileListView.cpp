@@ -6,16 +6,39 @@
  */
 
 #include "FileListView.h"
+
 #include <QContextMenuEvent>
-#include <QMouseEvent>
 #include <QMenu>
+#include <QMouseEvent>
 
 namespace Dentry::Ui {
 
     FileListView::FileListView(QWidget *parent)
         : QTreeView(parent) {
-        configure();
+        build();
     }
+
+    void FileListView::build() {
+        setupSize();
+        setupStyle();
+    }
+
+    void FileListView::setupSize() {
+        setSortingEnabled(true);
+        sortByColumn(0, Qt::AscendingOrder);
+    }
+
+    void FileListView::setupStyle() {
+        setRootIsDecorated(false);
+        setAlternatingRowColors(true);
+        setUniformRowHeights(true);
+        setSelectionMode(QAbstractItemView::ExtendedSelection);
+        setEditTriggers(QAbstractItemView::NoEditTriggers);
+        setContextMenuPolicy(Qt::DefaultContextMenu);
+        setObjectName("fileList");
+    }
+
+    // ── Model ─────────────────────────────────────────────────────────────────
 
     void FileListView::setModel(QAbstractItemModel *model) {
         if (QItemSelectionModel *old = selectionModel()) {
@@ -31,16 +54,7 @@ namespace Dentry::Ui {
         }
     }
 
-    void FileListView::configure() {
-        setRootIsDecorated(false);
-        setAlternatingRowColors(true);
-        setUniformRowHeights(true);
-        setSelectionMode(QAbstractItemView::ExtendedSelection);
-        setSortingEnabled(true);
-        setEditTriggers(QAbstractItemView::NoEditTriggers);
-        setContextMenuPolicy(Qt::DefaultContextMenu);
-        sortByColumn(0, Qt::AscendingOrder);
-    }
+    // ── Events ────────────────────────────────────────────────────────────────
 
     void FileListView::mouseDoubleClickEvent(QMouseEvent *event) {
         const QModelIndex index = indexAt(event->pos());
@@ -67,35 +81,34 @@ namespace Dentry::Ui {
     }
 
     void FileListView::contextMenuEvent(QContextMenuEvent *event) {
-        const QModelIndex index = indexAt(event->pos());
         const auto *fsModel = qobject_cast<const Model::AFileSystemModel *>(model());
-
         if (!fsModel)
-          return;
+            return;
 
         QStringList selectedPaths;
         const QModelIndexList indexes = selectionModel()->selectedRows();
         for (const QModelIndex &i : indexes)
-          selectedPaths << fsModel->entries().at(i.row()).absolutePath;
+            selectedPaths << fsModel->entries().at(i.row()).absolutePath;
+
+        const QString currentDir = fsModel->currentPath();
 
         QMenu menu(this);
 
         if (!selectedPaths.isEmpty()) {
-          menu.addAction("Copy",   this, [this, selectedPaths] { emit copyRequested(selectedPaths); });
-          menu.addAction("Cut",    this, [this, selectedPaths] { emit cutRequested(selectedPaths); });
-          menu.addSeparator();
+            menu.addAction("Copy",   this, [this, selectedPaths] { emit copyRequested(selectedPaths); });
+            menu.addAction("Cut",    this, [this, selectedPaths] { emit cutRequested(selectedPaths); });
+            menu.addSeparator();
 
-          if (selectedPaths.count() == 1) {
-            menu.addAction("Rename", this, [this, selectedPaths] {
-                emit renameRequested(selectedPaths.first());
-            });
-          }
+            if (selectedPaths.count() == 1) {
+                menu.addAction("Rename", this, [this, selectedPaths] {
+                    emit renameRequested(selectedPaths.first());
+                });
+            }
 
-          menu.addAction("Delete", this, [this, selectedPaths] { emit deleteRequested(selectedPaths); });
-          menu.addSeparator();
+            menu.addAction("Delete", this, [this, selectedPaths] { emit deleteRequested(selectedPaths); });
+            menu.addSeparator();
         }
 
-        const QString currentDir = fsModel->currentPath();
         menu.addAction("Paste",      this, [this, currentDir] { emit pasteRequested(currentDir); });
         menu.addSeparator();
         menu.addAction("New File",   this, [this, currentDir] { emit createFileRequested(currentDir); });
@@ -104,13 +117,14 @@ namespace Dentry::Ui {
         menu.exec(event->globalPos());
     }
 
+    // ── Selection ─────────────────────────────────────────────────────────────
+
     void FileListView::onSelectionChanged() {
         const auto *fsModel = qobject_cast<const Model::AFileSystemModel *>(model());
         if (!fsModel)
             return;
 
         QList<Model::FileItem> selected;
-
         const QModelIndexList indexes = selectionModel()->selectedRows();
         selected.reserve(indexes.count());
 

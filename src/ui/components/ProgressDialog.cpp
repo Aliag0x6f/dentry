@@ -6,8 +6,9 @@
  */
 
 #include "ProgressDialog.h"
-#include <QVBoxLayout>
+
 #include <QHBoxLayout>
+#include <QVBoxLayout>
 
 namespace Dentry::Ui {
 
@@ -15,16 +16,10 @@ namespace Dentry::Ui {
         : QDialog(parent)
         , m_operation(operation) {
         build();
-
-        connect(m_operation,    &Fs::AFileOperation::progress, this, &ProgressDialog::onProgress);
-        connect(m_operation,    &Fs::AFileOperation::finished, this, &ProgressDialog::onFinished);
-        connect(m_cancelButton, &QPushButton::clicked,         this, &ProgressDialog::onCancelled);
     }
 
     void ProgressDialog::build() {
-        setWindowTitle("Operation in progress");
-        setMinimumWidth(400);
-        setModal(true);
+        setupSize();
 
         QVBoxLayout *layout = new QVBoxLayout(this);
         layout->setSpacing(12);
@@ -46,6 +41,20 @@ namespace Dentry::Ui {
         buttonLayout->addWidget(m_cancelButton);
 
         layout->addLayout(buttonLayout);
+
+        setupConnections();
+    }
+
+    void ProgressDialog::setupSize() {
+        setWindowTitle("Operation in progress");
+        setMinimumWidth(400);
+        setModal(true);
+    }
+
+    void ProgressDialog::setupConnections() {
+        connect(m_operation,    &Fs::AFileOperation::progress, this, &ProgressDialog::onProgress);
+        connect(m_operation,    &Fs::AFileOperation::finished, this, &ProgressDialog::onFinished);
+        connect(m_cancelButton, &QPushButton::clicked,         this, &ProgressDialog::onCancelled);
     }
 
     void ProgressDialog::onProgress(int percent) {
@@ -63,9 +72,7 @@ namespace Dentry::Ui {
         m_cancelButton->setText(tr("Close"));
 
         disconnect(m_cancelButton, &QPushButton::clicked, this, &ProgressDialog::onCancelled);
-        connect(m_cancelButton, &QPushButton::clicked, this, [this] {
-            reject();
-        });
+        connect(m_cancelButton, &QPushButton::clicked, this, [this] { reject(); });
     }
 
     void ProgressDialog::onCancelled() {

@@ -7,16 +7,14 @@
 
 #pragma once
 
-#include "FileListView.h"
-#include "PreviewPanel.h"
-#include "Sidebar.h"
-#include "StatusBar.h"
-#include "Toolbar.h"
+#include "AUIComponent.h"
+#include "components/CentralWidget.h"
+#include "components/StatusBar.h"
+#include "components/Toolbar.h"
 #include "../app/Clipboard.h"
 #include "../model/FileSystemModel.h"
 
 #include <QMainWindow>
-#include <QSplitter>
 #include <QStack>
 #include <QString>
 
@@ -24,10 +22,11 @@ namespace Dentry::Ui {
 
 /**
  * @class MainWindow
- * @brief Orchestrates all UI components and connects them to the model.
+ * @brief Orchestrates UI components and manages navigation and file operations.
  *
- * Builds the main layout, manages navigation history,
- * and wires all signals and slots between components.
+ * Responsible only for window-level concerns: geometry, toolbar/statusbar
+ * registration, navigation history, and wiring signals between components.
+ * Layout and widget ownership are delegated to CentralWidget.
  *
  * Example:
  * @code
@@ -35,7 +34,7 @@ namespace Dentry::Ui {
  * window.show();
  * @endcode
  */
-class MainWindow : public QMainWindow {
+class MainWindow : public QMainWindow, public AUIComponent {
     Q_OBJECT
 
 public:
@@ -47,6 +46,12 @@ public:
     MainWindow &operator=(const MainWindow &) = delete;
     MainWindow(MainWindow &&)                 = delete;
     MainWindow &operator=(MainWindow &&)      = delete;
+
+    void build() override;
+
+protected:
+    void setupSize()        override;
+    void setupConnections() override;
 
 private slots:
     /**
@@ -108,25 +113,12 @@ private slots:
     void onCreateFolderRequested(const QString &directory);
 
 private:
-    /** @brief Builds the main window layout and all widgets. */
-    void build();
-
-    /** @brief Connects all signals and slots between components. */
-    void connectSignals();
-
-    Toolbar                *m_toolbar;
-    Sidebar                *m_sidebar;
-    FileListView           *m_fileListView;
-    // PreviewPanel           *m_previewPanel;
-    StatusBar              *m_statusBar;
     Model::FileSystemModel *m_model;
-    QSplitter              *m_splitter;
+    Toolbar                *m_toolbar;
+    StatusBar              *m_statusBar;
+    CentralWidget          *m_central;
     QStack<QString>         m_history;
-
-    /**
-     * @brief Internal clipboard for copy/cut/paste operations.
-     */
-    App::Clipboard m_clipboard;
+    App::Clipboard          m_clipboard;
 };
 
 } // namespace Dentry::Ui

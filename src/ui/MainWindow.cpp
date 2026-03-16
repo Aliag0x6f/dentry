@@ -6,14 +6,12 @@
  */
 
 #include "MainWindow.h"
-#include "ProgressDialog.h"
+#include "components/ProgressDialog.h"
 
 #include <QDir>
 #include <QFileInfo>
-#include <QHBoxLayout>
 #include <QInputDialog>
 #include <QStandardPaths>
-#include <QWidget>
 
 #include "../fs/operations/CopyOperation.h"
 #include "../fs/operations/CreateFileOperation.h"
@@ -28,81 +26,60 @@ namespace Dentry::Ui {
     MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent) {
         build();
-        connectSignals();
         navigateTo(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     }
 
     void MainWindow::build() {
         setWindowTitle("Dentry");
-        setMinimumSize(800, 500);
-        resize(1100, 650);
+        setupSize();
 
-        m_model = new Model::FileSystemModel(this);
-
-        m_toolbar = new Toolbar(this);
-        addToolBar(m_toolbar);
-
+        m_model     = new Model::FileSystemModel(this);
+        m_toolbar   = new Toolbar(this);
         m_statusBar = new StatusBar(this);
+        m_central   = new CentralWidget(m_model, this);
+
+        addToolBar(m_toolbar);
         setStatusBar(m_statusBar);
+        setCentralWidget(m_central);
 
-        QWidget *central = new QWidget(this);
-        central->setObjectName("centralWidget");
-        setCentralWidget(central);
-
-        QHBoxLayout *layout = new QHBoxLayout(central);
-        layout->setContentsMargins(6, 6, 6, 6);
-        layout->setSpacing(6);
-
-        m_splitter = new QSplitter(Qt::Horizontal, central);
-        m_splitter->setObjectName("mainSplitter");
-
-        m_sidebar = new Sidebar(m_splitter);
-        m_sidebar->setObjectName("sidebar");
-
-        m_fileListView = new FileListView(m_splitter);
-        m_fileListView->setObjectName("fileList");
-        m_fileListView->setModel(m_model);
-
-        // m_previewPanel = new PreviewPanel(m_splitter);
-        // m_previewPanel->setObjectName("previewPanel");
-
-        m_splitter->addWidget(m_sidebar);
-        m_splitter->addWidget(m_fileListView);
-        // m_splitter->addWidget(m_previewPanel);
-        m_splitter->setStretchFactor(0, 0);
-        m_splitter->setStretchFactor(1, 1);
-        m_splitter->setStretchFactor(2, 0);
-
-        layout->addWidget(m_splitter);
+        setupConnections();
 
         LOG_INFO("Ui") << "MainWindow built";
     }
 
-    void MainWindow::connectSignals() {
-        connect(m_toolbar, &Toolbar::backRequested,  this,    &MainWindow::navigateBack);
-        connect(m_toolbar, &Toolbar::homeRequested,  this,    &MainWindow::navigateHome);
-        connect(m_toolbar, &Toolbar::searchChanged,  m_model, &Model::FileSystemModel::setFilter);
-        connect(m_toolbar, &Toolbar::hiddenToggled, this, [this](bool show) {
-            m_sidebar->setShowHidden(show);
-        });
+    void MainWindow::setupSize() {
+        setMinimumSize(800, 500);
+        resize(1100, 650);
+    }
 
-        connect(m_sidebar, &Sidebar::placeSelected,  this,    &MainWindow::navigateTo);
+    void MainWindow::setupConnections() {
+        auto *sidebar      = m_central->sidebar();
+        auto *fileListView = m_central->fileListView();
 
-        connect(m_fileListView, &FileListView::directoryRequested,   this,           &MainWindow::navigateTo);
-        // connect(m_fileListView, &FileListView::fileActivated,        m_previewPanel, &PreviewPanel::preview);
-        connect(m_fileListView, &FileListView::selectionChanged,     m_statusBar,    &StatusBar::setSelection);
-        connect(m_fileListView, &FileListView::deleteRequested,      this,           &MainWindow::onDeleteRequested);
-        connect(m_fileListView, &FileListView::renameRequested,      this,           &MainWindow::onRenameRequested);
-        connect(m_fileListView, &FileListView::createFileRequested,  this,           &MainWindow::onCreateFileRequested);
-        connect(m_fileListView, &FileListView::createFolderRequested,this,           &MainWindow::onCreateFolderRequested);
-        connect(m_fileListView, &FileListView::copyRequested,        this,           &MainWindow::onCopyRequested);
-        connect(m_fileListView, &FileListView::cutRequested,         this,           &MainWindow::onCutRequested);
-        connect(m_fileListView, &FileListView::pasteRequested,       this,           &MainWindow::onPasteRequested);
+        connect(m_toolbar, &Toolbar::backRequested, this,    &MainWindow::navigateBack);
+        connect(m_toolbar, &Toolbar::homeRequested, this,    &MainWindow::navigateHome);
+        connect(m_toolbar, &Toolbar::searchChanged, m_model, &Model::FileSystemModel::setFilter);
+        connect(m_toolbar, &Toolbar::hiddenToggled, sidebar, &Sidebar::setShowHidden);
+
+        connect(sidebar, &Sidebar::placeSelected, this, &MainWindow::navigateTo);
+
+        connect(fileListView, &FileListView::directoryRequested,    this,                   &MainWindow::navigateTo);
+        connect(fileListView, &FileListView::fileActivated,         m_central->previewPanel(), &PreviewPanel::preview);
+        connect(fileListView, &FileListView::selectionChanged,      m_statusBar,            &StatusBar::setSelection);
+        connect(fileListView, &FileListView::deleteRequested,       this,        &MainWindow::onDeleteRequested);
+        connect(fileListView, &FileListView::renameRequested,       this,        &MainWindow::onRenameRequested);
+        connect(fileListView, &FileListView::createFileRequested,   this,        &MainWindow::onCreateFileRequested);
+        connect(fileListView, &FileListView::createFolderRequested, this,        &MainWindow::onCreateFolderRequested);
+        connect(fileListView, &FileListView::copyRequested,         this,        &MainWindow::onCopyRequested);
+        connect(fileListView, &FileListView::cutRequested,          this,        &MainWindow::onCutRequested);
+        connect(fileListView, &FileListView::pasteRequested,        this,        &MainWindow::onPasteRequested);
 
         connect(m_model, &Model::FileSystemModel::directoryLoaded, this, &MainWindow::onDirectoryLoaded);
 
         LOG_DEBUG("Ui") << "All signals connected";
     }
+
+    // ── Navigation ────────────────────────────────────────────────────────────
 
     void MainWindow::navigateTo(const QString &path) {
         if (!QDir(path).exists()) {
@@ -115,7 +92,7 @@ namespace Dentry::Ui {
         m_history.push(path);
         m_model->setDirectory(path);
         m_toolbar->setPath(path);
-        // m_previewPanel->clear();
+        m_central->previewPanel()->clear();
     }
 
     void MainWindow::navigateBack() {
@@ -129,7 +106,7 @@ namespace Dentry::Ui {
 
         m_model->setDirectory(path);
         m_toolbar->setPath(path);
-        // m_previewPanel->clear();
+        m_central->previewPanel()->clear();
     }
 
     void MainWindow::navigateHome() {
@@ -150,6 +127,8 @@ namespace Dentry::Ui {
         m_statusBar->setDirectoryStats(folders, files);
     }
 
+    // ── Operations ────────────────────────────────────────────────────────────
+
     void MainWindow::onCopyRequested(const QStringList &paths) {
         LOG_INFO("Ui") << "Copy requested:" << paths.count() << "item(s)";
         m_clipboard.copy(paths);
@@ -169,12 +148,9 @@ namespace Dentry::Ui {
         LOG_INFO("Ui") << "Paste requested into:" << destination
                        << "(" << (m_clipboard.isCut() ? "move" : "copy") << ")";
 
-        Fs::AFileOperation *op = nullptr;
-
-        if (m_clipboard.isCut())
-            op = new Fs::MoveOperation(m_clipboard.paths(), destination, nullptr);
-        else
-            op = new Fs::CopyOperation(m_clipboard.paths(), destination, nullptr);
+        Fs::AFileOperation *op = m_clipboard.isCut()
+            ? static_cast<Fs::AFileOperation *>(new Fs::MoveOperation(m_clipboard.paths(), destination, nullptr))
+            : static_cast<Fs::AFileOperation *>(new Fs::CopyOperation(m_clipboard.paths(), destination, nullptr));
 
         auto *dialog = new ProgressDialog(op, this);
 
@@ -182,15 +158,8 @@ namespace Dentry::Ui {
         dialog->setAttribute(Qt::WA_DeleteOnClose);
 
         connect(op, &Fs::AFileOperation::finished, this, [this](bool success, const QString &) {
-            if (success) {
-                m_model->refresh();
-            }
-
-            if (m_clipboard.isCut()) {
-                 m_clipboard.clear();
-             } else if (success) {
-                 m_clipboard.clear();
-             }
+            if (success) m_model->refresh();
+            if (m_clipboard.isCut() || success) m_clipboard.clear();
         });
         op->execute();
         dialog->exec();

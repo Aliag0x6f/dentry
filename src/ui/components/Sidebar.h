@@ -7,11 +7,13 @@
 
 #pragma once
 
+#include "../AUIComponent.h"
+
+#include <QFrame>
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QString>
 #include <QWidget>
-#include <QFrame>
 
 namespace Dentry::Ui {
 
@@ -28,10 +30,10 @@ namespace Dentry::Ui {
      * Example:
      * @code
      * auto *sidebar = new Sidebar(this);
-     * connect(sidebar, &Sidebar::placeSelected, model, &FileSystemModel::setDirectory);
+     * connect(sidebar, &Sidebar::placeSelected, this, &MainWindow::navigateTo);
      * @endcode
      */
-    class Sidebar : public QFrame {
+    class Sidebar : public QFrame, public AUIComponent {
         Q_OBJECT
 
     public:
@@ -54,12 +56,19 @@ namespace Dentry::Ui {
          */
         void setShowHidden(bool show);
 
+        void build() override;
+
         signals:
             /**
              * @brief Emitted when the user clicks a place.
              * @param path Absolute path of the selected place.
              */
             void placeSelected(const QString &path);
+
+    protected:
+        void setupSize()        override;
+        void setupStyle()       override;
+        void setupConnections() override;
 
     private slots:
         /**
