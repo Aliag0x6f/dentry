@@ -52,7 +52,7 @@ namespace Dentry::Ui {
     }
 
     void PreviewPanel::setupSize() {
-        setMinimumWidth(200);
+        setMinimumWidth(300);
     }
 
     void PreviewPanel::setupStyle() {

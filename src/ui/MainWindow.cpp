@@ -7,6 +7,7 @@
 
 #include "MainWindow.h"
 #include "components/ProgressDialog.h"
+#include "navigation/NavigationController.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -24,9 +25,10 @@
 namespace Dentry::Ui {
 
     MainWindow::MainWindow(QWidget *parent)
-        : QMainWindow(parent) {
+        : QMainWindow(parent)
+        , m_navigationController(nullptr) {
         build();
-        navigateTo(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+        m_navigationController->navigateTo(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     }
 
     void MainWindow::build() {
@@ -37,6 +39,7 @@ namespace Dentry::Ui {
         m_toolbar   = new Toolbar(this);
         m_statusBar = new StatusBar(this);
         m_central   = new CentralWidget(m_model, this);
+        m_navigationController = new NavigationController(m_model, this);
 
         addToolBar(m_toolbar);
         setStatusBar(m_statusBar);
@@ -56,15 +59,20 @@ namespace Dentry::Ui {
         auto *sidebar      = m_central->sidebar();
         auto *fileListView = m_central->fileListView();
 
-        connect(m_toolbar, &Toolbar::backRequested, this,    &MainWindow::navigateBack);
-        connect(m_toolbar, &Toolbar::homeRequested, this,    &MainWindow::navigateHome);
+        connect(m_navigationController, &NavigationController::pathChanged, m_toolbar, &Toolbar::setPath);
+        connect(m_navigationController, &NavigationController::pathChanged, this, [this](const QString &) {
+            m_central->previewPanel()->clear();
+        });
+
+        connect(m_toolbar, &Toolbar::backRequested, m_navigationController,    &NavigationController::navigateBack);
+        connect(m_toolbar, &Toolbar::homeRequested, m_navigationController,    &NavigationController::navigateHome);
         connect(m_toolbar, &Toolbar::searchChanged, m_model, &Model::FileSystemModel::setFilter);
         connect(m_toolbar, &Toolbar::hiddenToggled, m_model, &Model::FileSystemModel::setShowHidden);
         connect(m_toolbar, &Toolbar::hiddenToggled, sidebar, &Sidebar::setShowHidden);
 
-        connect(sidebar, &Sidebar::placeSelected, this, &MainWindow::navigateTo);
+        connect(sidebar, &Sidebar::placeSelected, m_navigationController, &NavigationController::navigateTo);
 
-        connect(fileListView, &FileListView::directoryRequested,    this,                   &MainWindow::navigateTo);
+        connect(fileListView, &FileListView::directoryRequested,    m_navigationController,                   &NavigationController::navigateTo);
         connect(fileListView, &FileListView::selectionChanged, this, [this](const QList<Model::FileItem> &selected) {
             if (selected.count() == 1 && !selected.first().isDir)
                 m_central->previewPanel()->preview(selected.first());
@@ -83,40 +91,6 @@ namespace Dentry::Ui {
         connect(m_model, &Model::FileSystemModel::directoryLoaded, this, &MainWindow::onDirectoryLoaded);
 
         LOG_DEBUG("Ui") << "All signals connected";
-    }
-
-    // ── Navigation ────────────────────────────────────────────────────────────
-
-    void MainWindow::navigateTo(const QString &path) {
-        if (!QDir(path).exists()) {
-            LOG_WARNING("Ui") << "Directory does not exist:" << path;
-            return;
-        }
-
-        LOG_INFO("Ui") << "Navigating to:" << path;
-
-        m_history.push(path);
-        m_model->setDirectory(path);
-        m_toolbar->setPath(path);
-        m_central->previewPanel()->clear();
-    }
-
-    void MainWindow::navigateBack() {
-        if (m_history.size() <= 1)
-            return;
-
-        m_history.pop();
-        const QString path = m_history.top();
-
-        LOG_INFO("Ui") << "Navigating back to:" << path;
-
-        m_model->setDirectory(path);
-        m_toolbar->setPath(path);
-        m_central->previewPanel()->clear();
-    }
-
-    void MainWindow::navigateHome() {
-        navigateTo(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     }
 
     void MainWindow::onDirectoryLoaded(const QString &) {

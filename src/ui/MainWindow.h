@@ -18,6 +18,8 @@
 #include <QStack>
 #include <QString>
 
+#include "navigation/NavigationController.h"
+
 namespace Dentry::Ui {
 
 /**
@@ -54,21 +56,6 @@ protected:
     void setupConnections() override;
 
 private slots:
-    /**
-     * @brief Navigates to the given directory and pushes it to history.
-     * @param path Absolute path of the directory to navigate to.
-     */
-    void navigateTo(const QString &path);
-
-    /**
-     * @brief Navigates back to the previous directory.
-     */
-    void navigateBack();
-
-    /**
-     * @brief Navigates to the home directory.
-     */
-    void navigateHome();
 
     /**
      * @brief Updates the status bar directory stats from the model.
@@ -117,8 +104,8 @@ private:
     Toolbar                *m_toolbar;
     StatusBar              *m_statusBar;
     CentralWidget          *m_central;
-    QStack<QString>         m_history;
     App::Clipboard          m_clipboard;
+    NavigationController   *m_navigationController;
 };
 
 } // namespace Dentry::Ui
