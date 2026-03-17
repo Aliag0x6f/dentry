@@ -12,7 +12,7 @@
 
 #include "../../util/Logger.h"
 
-namespace Dentry::Ui {
+namespace Dentry::App {
 
     NavigationController::NavigationController(Model::FileSystemModel *model, QObject *parent)
         : QObject(parent)
@@ -68,4 +68,4 @@ namespace Dentry::Ui {
         navigateTo(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     }
 
-} // namespace Dentry::Ui
+} // namespace Dentry::App

@@ -13,7 +13,7 @@
 #include <QStack>
 #include <QString>
 
-namespace Dentry::Ui {
+namespace Dentry::App {
 
 /**
  * @class NavigationController
@@ -107,4 +107,4 @@ private:
     QStack<QString>         m_history;
 };
 
-} // namespace Dentry::Ui
+} // namespace Dentry::App

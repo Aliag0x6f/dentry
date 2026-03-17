@@ -31,7 +31,8 @@ add_executable(dentry
         src/ui/components/FileListView.cpp
         src/ui/components/PreviewPanel.cpp
         src/ui/components/CentralWidget.cpp
-        src/ui/navigation/NavigationController.cpp
+        src/app/controllers/NavigationController.cpp
+        src/app/controllers/FileOperationController.cpp
         src/ui/MainWindow.cpp
         src/ui/resources.qrc
         src/app/Clipboard.cpp
