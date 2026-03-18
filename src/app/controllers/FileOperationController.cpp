@@ -28,7 +28,8 @@ namespace Dentry::App {
         connect(operation, &Fs::AFileOperation::finished, this, [onFinished](bool success, const QString &) {
             onFinished(success);
         });
-        connect(operation, &Fs::AFileOperation::finished, operation, &QObject::deleteLater);
+        // Keep operation alive while the dialog can still interact with it.
+        connect(dialog, &QObject::destroyed, operation, &QObject::deleteLater);
 
         operation->execute();
         dialog->exec();
