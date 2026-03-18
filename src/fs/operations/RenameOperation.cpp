@@ -29,22 +29,22 @@ namespace Dentry::Fs {
         m_future = QtConcurrent::run([this] {
             if (isCancelled()) {
                 LOG_INFO("Op") << "Rename cancelled";
-                emit finished(false, "Operation cancelled");
                 setRunning(false);
+                emit finished(false, "Operation cancelled");
                 return;
             }
 
             if (!renameEntry(m_source)) {
                 LOG_ERROR("Op") << "Failed to rename:" << QFileInfo(m_source).fileName();
-                emit finished(false, QString("Failed to rename: %1").arg(m_source));
                 setRunning(false);
+                emit finished(false, QString("Failed to rename: %1").arg(m_source));
                 return;
             }
 
             LOG_INFO("Op") << "Rename completed successfully";
             emit progress(100);
-            emit finished(true, QString());
             setRunning(false);
+            emit finished(true, QString());
         });
     }
 

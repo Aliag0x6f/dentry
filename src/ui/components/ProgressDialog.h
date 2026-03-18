@@ -53,6 +53,7 @@ namespace Dentry::Ui {
         void build() override;
 
     protected:
+        void reject() override;
         void setupSize()        override;
         void setupConnections() override;
 
@@ -74,7 +75,7 @@ namespace Dentry::Ui {
         void onFinished(bool success, const QString &error);
 
         /**
-         * @brief Cancels the operation and closes the dialog.
+         * @brief Requests cancellation and waits for finished() before closing.
          */
         void onCancelled();
 
@@ -83,6 +84,7 @@ namespace Dentry::Ui {
         QLabel             *m_descriptionLabel;
         QProgressBar       *m_progressBar;
         QPushButton        *m_cancelButton;
+        bool                m_cancelRequested = false;
     };
 
 } // namespace Dentry::Ui

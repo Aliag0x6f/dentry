@@ -51,6 +51,15 @@ namespace Dentry::Ui {
         setModal(true);
     }
 
+    void ProgressDialog::reject() {
+        if (!m_cancelRequested && m_operation->isRunning()) {
+            onCancelled();
+            return;
+        }
+
+        QDialog::reject();
+    }
+
     void ProgressDialog::setupConnections() {
         connect(m_operation,    &Fs::AFileOperation::progress, this, &ProgressDialog::onProgress);
         connect(m_operation,    &Fs::AFileOperation::finished, this, &ProgressDialog::onFinished);
@@ -62,13 +71,21 @@ namespace Dentry::Ui {
     }
 
     void ProgressDialog::onFinished(bool success, const QString &error) {
+        if (m_cancelRequested) {
+            QDialog::reject();
+            return;
+        }
+
         if (success) {
             accept();
             return;
         }
 
         m_descriptionLabel->setText(QString("Error: %1").arg(error));
+        m_progressBar->setRange(0, 100);
         m_progressBar->setValue(0);
+
+        m_cancelButton->setEnabled(true);
         m_cancelButton->setText(tr("Close"));
 
         disconnect(m_cancelButton, &QPushButton::clicked, this, &ProgressDialog::onCancelled);
@@ -76,8 +93,15 @@ namespace Dentry::Ui {
     }
 
     void ProgressDialog::onCancelled() {
+        if (m_cancelRequested)
+            return;
+
+        m_cancelRequested = true;
         m_operation->cancel();
-        reject();
+
+        m_descriptionLabel->setText(tr("Cancelling..."));
+        m_cancelButton->setEnabled(false);
+        m_progressBar->setRange(0, 0);
     }
 
 } // namespace Dentry::Ui

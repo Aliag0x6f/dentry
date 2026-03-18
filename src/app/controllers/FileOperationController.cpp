@@ -21,6 +21,19 @@
 
 namespace Dentry::App {
 
+    void FileOperationController::runOperation(Fs::AFileOperation *operation, const std::function<void(bool)> &onFinished) {
+        auto *dialog = new Ui::ProgressDialog(operation, m_dialogParent);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+
+        connect(operation, &Fs::AFileOperation::finished, this, [onFinished](bool success, const QString &) {
+            onFinished(success);
+        });
+        connect(operation, &Fs::AFileOperation::finished, operation, &QObject::deleteLater);
+
+        operation->execute();
+        dialog->exec();
+    }
+
     FileOperationController::FileOperationController(Model::FileSystemModel *model,
                                                      QWidget               *dialogParent,
                                                      QObject               *parent)
@@ -52,33 +65,22 @@ namespace Dentry::App {
             ? static_cast<Fs::AFileOperation *>(new Fs::MoveOperation(m_clipboard.paths(), destination, nullptr))
             : static_cast<Fs::AFileOperation *>(new Fs::CopyOperation(m_clipboard.paths(), destination, nullptr));
 
-        auto *dialog = new Ui::ProgressDialog(op, m_dialogParent);
-
-        op->setParent(dialog);
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-
-        connect(op, &Fs::AFileOperation::finished, this, [this](bool success, const QString &) {
-            if (success) m_model->refresh();
-            if (m_clipboard.isCut() || success) m_clipboard.clear();
+        runOperation(op, [this](bool success) {
+            if (success)
+                m_model->refresh();
+            if (m_clipboard.isCut() || success)
+                m_clipboard.clear();
         });
-        op->execute();
-        dialog->exec();
     }
 
     void FileOperationController::onDeleteRequested(const QStringList &paths) {
         LOG_INFO("FileOps") << "Delete requested:" << paths.count() << "item(s)";
 
-        auto *op     = new Fs::DeleteOperation(paths, nullptr);
-        auto *dialog = new Ui::ProgressDialog(op, m_dialogParent);
-
-        op->setParent(dialog);
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-
-        connect(op, &Fs::AFileOperation::finished, this, [this](bool success, const QString &) {
-            if (success) m_model->refresh();
+        auto *op = new Fs::DeleteOperation(paths, nullptr);
+        runOperation(op, [this](bool success) {
+            if (success)
+                m_model->refresh();
         });
-        op->execute();
-        dialog->exec();
     }
 
     void FileOperationController::onRenameRequested(const QString &path) {
@@ -93,17 +95,11 @@ namespace Dentry::App {
 
         LOG_INFO("FileOps") << "Rename requested:" << oldName << "->" << newName;
 
-        auto *op     = new Fs::RenameOperation(path, newName, nullptr);
-        auto *dialog = new Ui::ProgressDialog(op, m_dialogParent);
-
-        op->setParent(dialog);
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-
-        connect(op, &Fs::AFileOperation::finished, this, [this](bool success, const QString &) {
-            if (success) m_model->refresh();
+        auto *op = new Fs::RenameOperation(path, newName, nullptr);
+        runOperation(op, [this](bool success) {
+            if (success)
+                m_model->refresh();
         });
-        op->execute();
-        dialog->exec();
     }
 
     void FileOperationController::onCreateFileRequested(const QString &directory) {
@@ -117,17 +113,11 @@ namespace Dentry::App {
 
         LOG_INFO("FileOps") << "Create file requested:" << name << "in" << directory;
 
-        auto *op     = new Fs::CreateFileOperation(directory, name, nullptr);
-        auto *dialog = new Ui::ProgressDialog(op, m_dialogParent);
-
-        op->setParent(dialog);
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-
-        connect(op, &Fs::AFileOperation::finished, this, [this](bool success, const QString &) {
-            if (success) m_model->refresh();
+        auto *op = new Fs::CreateFileOperation(directory, name, nullptr);
+        runOperation(op, [this](bool success) {
+            if (success)
+                m_model->refresh();
         });
-        op->execute();
-        dialog->exec();
     }
 
     void FileOperationController::onCreateFolderRequested(const QString &directory) {
@@ -141,17 +131,11 @@ namespace Dentry::App {
 
         LOG_INFO("FileOps") << "Create folder requested:" << name << "in" << directory;
 
-        auto *op     = new Fs::CreateFolderOperation(directory, name, nullptr);
-        auto *dialog = new Ui::ProgressDialog(op, m_dialogParent);
-
-        op->setParent(dialog);
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-
-        connect(op, &Fs::AFileOperation::finished, this, [this](bool success, const QString &) {
-            if (success) m_model->refresh();
+        auto *op = new Fs::CreateFolderOperation(directory, name, nullptr);
+        runOperation(op, [this](bool success) {
+            if (success)
+                m_model->refresh();
         });
-        op->execute();
-        dialog->exec();
     }
 
 } // namespace Dentry::App

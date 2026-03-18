@@ -27,8 +27,8 @@ namespace Dentry::Fs {
         m_future = QtConcurrent::run([this] {
             if (isCancelled()) {
                 LOG_INFO("Op") << "Create folder cancelled";
-                emit finished(false, "Operation cancelled");
                 setRunning(false);
+                emit finished(false, "Operation cancelled");
                 return;
             }
 
@@ -36,15 +36,15 @@ namespace Dentry::Fs {
 
             if (!dir.mkdir(m_name)) {
                 LOG_ERROR("Op") << "Failed to create directory: " << m_name;
-                emit finished(false, QString("Failed to create folder: %1").arg(m_name));
                 setRunning(false);
+                emit finished(false, QString("Failed to create folder: %1").arg(m_name));
                 return;
             }
 
             LOG_INFO("Op") << "Folder created successfully:" << m_directory + "/" + m_name;
             emit progress(100);
-            emit finished(true, QString());
             setRunning(false);
+            emit finished(true, QString());
         });
     }
 

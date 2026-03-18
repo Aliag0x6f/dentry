@@ -27,8 +27,8 @@ namespace Dentry::Fs {
         m_future = QtConcurrent::run([this] {
             if (isCancelled()) {
                 LOG_INFO("Op") << "Create file cancelled";
-                emit finished(false, "Operation cancelled");
                 setRunning(false);
+                emit finished(false, "Operation cancelled");
                 return;
             }
 
@@ -38,16 +38,16 @@ namespace Dentry::Fs {
 
             if (!file.open(QIODevice::WriteOnly)) {
                 LOG_ERROR("Op") << "Failed to create file:" << m_name;
-                emit finished(false, QString("Failed to create: %1").arg(m_name));
                 setRunning(false);
+                emit finished(false, QString("Failed to create: %1").arg(m_name));
                 return;
             }
 
             file.close();
             LOG_INFO("Op") << "File created successfully:" << path;
             emit progress(100);
-            emit finished(true, QString());
             setRunning(false);
+            emit finished(true, QString());
         });
     }
 
