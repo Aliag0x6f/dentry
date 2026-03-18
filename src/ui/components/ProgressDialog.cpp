@@ -40,6 +40,12 @@ namespace Dentry::Ui {
         m_cancelButton = new QPushButton(tr("Cancel"), this);
         buttonLayout->addWidget(m_cancelButton);
 
+        m_finishedButton = new QPushButton(tr("Finished"), this);
+        m_finishedButton->setEnabled(false);
+        m_finishedButton->setDefault(true);
+        m_finishedButton->setAutoDefault(true);
+        buttonLayout->addWidget(m_finishedButton);
+
         layout->addLayout(buttonLayout);
 
         setupConnections();
@@ -52,17 +58,15 @@ namespace Dentry::Ui {
     }
 
     void ProgressDialog::reject() {
-        if (!m_cancelRequested && m_operation->isRunning()) {
+        if (m_operation->isRunning() && !m_cancelRequested) {
             onCancelled();
-            return;
         }
-
-        QDialog::reject();
     }
 
     void ProgressDialog::setupConnections() {
         connect(m_operation,    &Fs::AFileOperation::progress, this, &ProgressDialog::onProgress);
         connect(m_operation,    &Fs::AFileOperation::finished, this, &ProgressDialog::onFinished);
+        connect(m_finishedButton, &QPushButton::clicked,         this, &ProgressDialog::onFinishedClicked);
         connect(m_cancelButton, &QPushButton::clicked,         this, &ProgressDialog::onCancelled);
     }
 
@@ -71,28 +75,16 @@ namespace Dentry::Ui {
     }
 
     void ProgressDialog::onFinished(bool success, const QString &error) {
-        if (m_cancelRequested) {
+        completeAndRequireChoice(success, error);
+    }
+
+    void ProgressDialog::onCancelled() {
+        if (!m_operation->isRunning()) {
+            m_finishedState = true;
             QDialog::reject();
             return;
         }
 
-        if (success) {
-            accept();
-            return;
-        }
-
-        m_descriptionLabel->setText(QString("Error: %1").arg(error));
-        m_progressBar->setRange(0, 100);
-        m_progressBar->setValue(0);
-
-        m_cancelButton->setEnabled(true);
-        m_cancelButton->setText(tr("Close"));
-
-        disconnect(m_cancelButton, &QPushButton::clicked, this, &ProgressDialog::onCancelled);
-        connect(m_cancelButton, &QPushButton::clicked, this, [this] { reject(); });
-    }
-
-    void ProgressDialog::onCancelled() {
         if (m_cancelRequested)
             return;
 
@@ -101,7 +93,45 @@ namespace Dentry::Ui {
 
         m_descriptionLabel->setText(tr("Cancelling..."));
         m_cancelButton->setEnabled(false);
+        m_finishedButton->setEnabled(false);
         m_progressBar->setRange(0, 0);
+    }
+
+    void ProgressDialog::onFinishedClicked() {
+        if (!m_finishedState)
+            return;
+
+        accept();
+    }
+
+    void ProgressDialog::completeAndRequireChoice(bool success, const QString &error) {
+        if (m_cancelRequested) {
+            m_descriptionLabel->setText(tr("Operation cancelled."));
+            m_progressBar->setRange(0, 100);
+            m_progressBar->setValue(0);
+        } else if (success) {
+            m_descriptionLabel->setText(tr("Operation finished successfully."));
+            m_progressBar->setRange(0, 100);
+            m_progressBar->setValue(100);
+        } else {
+            m_descriptionLabel->setText(QString("Error: %1").arg(error));
+            m_progressBar->setRange(0, 100);
+            m_progressBar->setValue(0);
+        }
+
+        m_finishedButton->setText(tr("Finished"));
+        m_cancelButton->setText(tr("Canceled"));
+
+        unlockChoiceUi();
+    }
+
+    void ProgressDialog::unlockChoiceUi() {
+        m_finishedState = true;
+
+        m_finishedButton->setEnabled(true);
+        m_finishedButton->setFocus(Qt::TabFocusReason);
+
+        m_cancelButton->setEnabled(true);
     }
 
 } // namespace Dentry::Ui

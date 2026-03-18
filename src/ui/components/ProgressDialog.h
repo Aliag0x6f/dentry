@@ -79,12 +79,39 @@ namespace Dentry::Ui {
          */
         void onCancelled();
 
+        /**
+         * @brief Closes the dialog as a successful user acknowledgment.
+         */
+        void onFinishedClicked();
+
     private:
         Fs::AFileOperation *m_operation;
         QLabel             *m_descriptionLabel;
         QProgressBar       *m_progressBar;
+        QPushButton        *m_finishedButton;
         QPushButton        *m_cancelButton;
         bool                m_cancelRequested = false;
+        bool                m_finishedState   = false;
+
+        /**
+         * @brief Updates dialog UI to show completion state and enable user choice.
+         *
+         * Called when the operation finishes. Sets appropriate description and
+         * progress bar state based on success/cancellation/error, then enables
+         * the Finished and Canceled buttons for user acknowledgment.
+         *
+         * @param success True if the operation completed without error.
+         * @param error   Human-readable error message, empty on success.
+         */
+        void completeAndRequireChoice(bool success, const QString &error);
+
+        /**
+         * @brief Enables the Finished and Canceled buttons for user interaction.
+         *
+         * Sets focus to Finished button and marks the operation as ready
+         * for user choice.
+         */
+        void unlockChoiceUi();
     };
 
 } // namespace Dentry::Ui
