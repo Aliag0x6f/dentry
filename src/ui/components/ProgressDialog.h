@@ -22,7 +22,11 @@ namespace Dentry::Ui {
      * @brief Modal dialog that tracks and displays a file operation's progress.
      *
      * Connects to an AFileOperation's signals to update the progress bar
-     * and description label. Provides a cancel button to abort the operation.
+     * and description label.
+     *
+     * During execution, Cancel requests operation cancellation. Once the
+     * operation reaches a terminal state (success/cancel/error), the dialog
+     * remains open until the user explicitly chooses Finished or Canceled.
      *
      * Example:
      * @code
@@ -53,6 +57,12 @@ namespace Dentry::Ui {
         void build() override;
 
     protected:
+        /**
+         * @brief Intercepts close/escape requests.
+         *
+         * While running, close requests are treated as cancellation requests.
+         * The dialog only closes through explicit Finished/Canceled buttons.
+         */
         void reject() override;
         void setupSize()        override;
         void setupConnections() override;
@@ -67,7 +77,8 @@ namespace Dentry::Ui {
         /**
          * @brief Handles operation completion.
          *
-         * Closes the dialog on success or displays an error message on failure.
+         * Updates the dialog state for success/cancel/error and enables
+         * explicit user acknowledgment buttons.
          *
          * @param success True if the operation completed without error.
          * @param error   Human-readable error message, empty on success.
@@ -75,7 +86,7 @@ namespace Dentry::Ui {
         void onFinished(bool success, const QString &error);
 
         /**
-         * @brief Requests cancellation and waits for finished() before closing.
+         * @brief Requests cancellation, or acknowledges canceled state if done.
          */
         void onCancelled();
 
