@@ -11,6 +11,12 @@ namespace Dentry::Ui {
 
     StatusBar::StatusBar(QWidget *parent)
         : QStatusBar(parent) {
+        build();
+    }
+
+    void StatusBar::build() {
+        setupSize();
+
         m_statsLabel     = new QLabel(this);
         m_selectionLabel = new QLabel(this);
 
@@ -18,9 +24,13 @@ namespace Dentry::Ui {
         addPermanentWidget(m_selectionLabel);
     }
 
+    void StatusBar::setupSize() {
+        return;
+    }
+
     void StatusBar::setDirectoryStats(int folderCount, int fileCount) {
         m_folderCount = folderCount;
-        m_fileCount = fileCount;
+        m_fileCount   = fileCount;
         updateDisplay();
     }
 
@@ -30,8 +40,8 @@ namespace Dentry::Ui {
     }
 
     void StatusBar::clear() {
-        m_folderCount = 0;
-        m_fileCount = 0;
+        m_folderCount    = 0;
+        m_fileCount      = 0;
         m_selectionCount = 0;
         updateDisplay();
     }

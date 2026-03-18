@@ -7,8 +7,10 @@
 
 #pragma once
 
-#include "../model/AFileSystemModel.h"
-#include "../model/FileItem.h"
+#include "../AUIComponent.h"
+#include "../../model/AFileSystemModel.h"
+#include "../../model/FileItem.h"
+
 #include <QList>
 #include <QTreeView>
 
@@ -26,18 +28,14 @@ namespace Dentry::Ui {
  * @code
  * auto *view = new FileListView(this);
  * view->setModel(model);
- * connect(view, &FileListView::directoryRequested, model, &FileSystemModel::setDirectory);
+ * connect(view, &FileListView::directoryRequested, this, &MainWindow::navigateTo);
  * connect(view, &FileListView::selectionChanged,   statusBar, &StatusBar::setSelection);
  * @endcode
  */
-class FileListView : public QTreeView {
+class FileListView : public QTreeView, public AUIComponent {
     Q_OBJECT
 
 public:
-    /**
-     * @brief Constructs the FileListView.
-     * @param parent Optional Qt parent widget.
-     */
     explicit FileListView(QWidget *parent = nullptr);
 
     ~FileListView() override = default;
@@ -52,6 +50,8 @@ public:
      * @param model The model to set.
      */
     void setModel(QAbstractItemModel *model) override;
+
+    void build() override;
 
 signals:
     /**
@@ -129,15 +129,14 @@ protected:
      */
     void contextMenuEvent(QContextMenuEvent *event) override;
 
+    void setupSize()  override;
+    void setupStyle() override;
+
 private slots:
     /**
      * @brief Handles selection changes in the view.
      */
     void onSelectionChanged();
-
-private:
-    /** @brief Configures the view properties. */
-    void configure();
 };
 
 } // namespace Dentry::Ui

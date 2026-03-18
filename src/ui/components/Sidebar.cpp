@@ -6,15 +6,20 @@
  */
 
 #include "Sidebar.h"
-#include <QVBoxLayout>
+
+#include <QDir>
 #include <QLabel>
 #include <QStandardPaths>
-#include <QDir>
+#include <QVBoxLayout>
 
 namespace Dentry::Ui {
 
     Sidebar::Sidebar(QWidget *parent)
         : QFrame(parent) {
+        build();
+    }
+
+    void Sidebar::build() {
         QVBoxLayout *layout = new QVBoxLayout(this);
         layout->setContentsMargins(0, 0, 0, 0);
         layout->setSpacing(0);
@@ -29,28 +34,39 @@ namespace Dentry::Ui {
         layout->addWidget(separator);
 
         m_list = new QListWidget(this);
-        m_list->setMinimumWidth(160);
-        m_list->setMaximumWidth(220);
         layout->addWidget(m_list);
 
+        setupSize();
+        setupStyle();
         buildPlaces();
+        setupConnections();
+    }
 
+    void Sidebar::setupSize() {
+        m_list->setMinimumWidth(160);
+        m_list->setMaximumWidth(220);
+    }
+
+    void Sidebar::setupStyle() {
+        setObjectName("sidebar");
+    }
+
+    void Sidebar::setupConnections() {
         connect(m_list, &QListWidget::itemClicked, this, &Sidebar::onItemClicked);
     }
 
     void Sidebar::buildPlaces() {
         const QString homePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+
         auto *homeItem = new QListWidgetItem("Home", m_list);
         homeItem->setData(Qt::UserRole, homePath);
 
         QDir homeDir(homePath);
         QDir::Filters filters = QDir::Dirs | QDir::NoDotAndDotDot;
-
         if (m_showHidden)
             filters |= QDir::Hidden;
 
         const QFileInfoList entries = homeDir.entryInfoList(filters, QDir::Name);
-
         for (const QFileInfo &entry : entries) {
             auto *item = new QListWidgetItem(entry.fileName(), m_list);
             item->setData(Qt::UserRole, entry.absoluteFilePath());
@@ -68,7 +84,6 @@ namespace Dentry::Ui {
 
     void Sidebar::onItemClicked(QListWidgetItem *item) {
         const QString path = item->data(Qt::UserRole).toString();
-
         if (!path.isEmpty())
             emit placeSelected(path);
     }

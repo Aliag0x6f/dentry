@@ -7,11 +7,14 @@
 
 #pragma once
 
-#include "../model/FileItem.h"
+#include "../AUIComponent.h"
+#include "../../model/FileItem.h"
+
 #include <QLabel>
 #include <QStackedWidget>
 #include <QTextEdit>
 #include <QWidget>
+#include <QVBoxLayout>
 
 namespace Dentry::Ui {
 
@@ -28,7 +31,7 @@ namespace Dentry::Ui {
      * connect(view, &FileListView::fileActivated, preview, &PreviewPanel::preview);
      * @endcode
      */
-    class PreviewPanel : public QWidget {
+    class PreviewPanel : public QWidget, public AUIComponent {
         Q_OBJECT
 
     public:
@@ -40,6 +43,8 @@ namespace Dentry::Ui {
         PreviewPanel &operator=(const PreviewPanel &) = delete;
         PreviewPanel(PreviewPanel &&)                 = delete;
         PreviewPanel &operator=(PreviewPanel &&)      = delete;
+
+        void build() override;
 
     public slots:
         /**
@@ -53,10 +58,11 @@ namespace Dentry::Ui {
          */
         void clear();
 
-    private:
-        /** @brief Builds the panel layout. */
-        void build();
+    protected:
+        void setupSize()  override;
+        void setupStyle() override;
 
+    private:
         /** @brief Shows a text preview of the given file. */
         void showText(const QString &path);
 
@@ -71,6 +77,7 @@ namespace Dentry::Ui {
         QLabel         *m_imageLabel;
         QTextEdit      *m_textEdit;
         QStackedWidget *m_stack;
+        QVBoxLayout    *m_layout;
     };
 
 } // namespace Dentry::Ui

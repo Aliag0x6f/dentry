@@ -21,7 +21,7 @@ namespace Dentry {
         LOG_INFO("App") << "Logger installed";
 
         setApplicationName("Dentry");
-        setApplicationVersion("1.0.0");
+        setApplicationVersion("1.1.0");
 
         LOG_INFO("App") << "Dentry" << applicationVersion() << "starting";
 
