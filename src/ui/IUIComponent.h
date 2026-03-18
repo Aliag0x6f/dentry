@@ -22,7 +22,7 @@ namespace Dentry::Ui {
  *
  * Inherit from this alongside the Qt widget base class:
  * @code
- * class StatusBar : public QStatusBar, public UIComponent { ... };
+ * class StatusBar : public QStatusBar, public IUIComponent { ... };
  * @endcode
  *
  * The constructor must call build():
