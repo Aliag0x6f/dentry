@@ -127,7 +127,7 @@ namespace Dentry::Ui {
         }
 
         m_finishedButton->setText(tr("Finished"));
-        m_cancelButton->setText(tr("Canceled"));
+        m_cancelButton->setText(tr("Cancelled"));
 
         unlockChoiceUi();
     }
