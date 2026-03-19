@@ -33,8 +33,8 @@ namespace Dentry::Fs {
             for (const QString &source : m_sources) {
                 if (isCancelled()) {
                     LOG_INFO("Op") << "Move cancelled";
-                    emit finished(false, "Operation cancelled");
                     setRunning(false);
+                    emit finished(false, "Operation cancelled");
                     return;
                 }
 
@@ -43,8 +43,8 @@ namespace Dentry::Fs {
 
                 if (!moveEntry(source, dest)) {
                     LOG_ERROR("Op") << "Failed to move:" << info.fileName();
-                    emit finished(false, QString("Failed to move: %1").arg(info.fileName()));
                     setRunning(false);
+                    emit finished(false, QString("Failed to move: %1").arg(info.fileName()));
                     return;
                 }
 
@@ -55,8 +55,8 @@ namespace Dentry::Fs {
             }
 
             LOG_INFO("Op") << "Move completed successfully";
-            emit finished(true, QString());
             setRunning(false);
+            emit finished(true, QString());
         });
     }
 

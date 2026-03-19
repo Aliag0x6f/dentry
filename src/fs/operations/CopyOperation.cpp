@@ -33,8 +33,8 @@ namespace Dentry::Fs {
             for (const QString &source : m_sources) {
                 if (isCancelled()) {
                     LOG_INFO("Op") << "Copy cancelled";
-                    emit finished(false, "Operation cancelled");
                     setRunning(false);
+                    emit finished(false, "Operation cancelled");
                     return;
                 }
 
@@ -53,8 +53,8 @@ namespace Dentry::Fs {
 
                 if (!success) {
                     LOG_ERROR("Op") << "Failed to copy:" << info.fileName();
-                    emit finished(false, "Could not copy file " + dest);
                     setRunning(false);
+                    emit finished(false, "Could not copy file " + dest);
                     return;
                 }
 
@@ -65,8 +65,8 @@ namespace Dentry::Fs {
             }
 
             LOG_INFO("Op") << "Copy completed successfully";
-            emit finished(true, QString());
             setRunning(false);
+            emit finished(true, QString());
         });
     }
 

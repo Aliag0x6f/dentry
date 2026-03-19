@@ -15,6 +15,12 @@
 #include <QStringList>
 #include <QWidget>
 
+#include <functional>
+
+namespace Dentry::Fs {
+class AFileOperation;
+}
+
 namespace Dentry::App {
 
 /**
@@ -96,6 +102,8 @@ public slots:
     void onCreateFolderRequested(const QString &directory);
 
 private:
+    void runOperation(Fs::AFileOperation *operation, const std::function<void(bool)> &onFinished);
+
     Model::FileSystemModel *m_model;
     QWidget                *m_dialogParent;
     Clipboard               m_clipboard;

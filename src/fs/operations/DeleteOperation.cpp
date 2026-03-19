@@ -31,15 +31,15 @@ namespace Dentry::Fs {
             for (const QString &target : m_targets) {
                 if (isCancelled()) {
                     LOG_INFO("Op") << "Delete cancelled";
-                    emit finished(false, "Operation cancelled");
                     setRunning(false);
+                    emit finished(false, "Operation cancelled");
                     return;
                 }
 
                 if (!deleteEntry(target)) {
                     LOG_ERROR("Op") << "Failed to delete " << target;
-                    emit finished(false, QString("Failed to delete: %1").arg(target));
                     setRunning(false);
+                    emit finished(false, QString("Failed to delete: %1").arg(target));
                     return;
                 }
 
@@ -50,8 +50,8 @@ namespace Dentry::Fs {
             }
 
             LOG_INFO("Op") << "Delete completed successfully";
-            emit finished(true, QString());
             setRunning(false);
+            emit finished(true, QString());
         });
     }
 
