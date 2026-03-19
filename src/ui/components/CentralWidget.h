@@ -14,6 +14,7 @@
 #include "../../model/FileSystemModel.h"
 
 #include <QHBoxLayout>
+#include <QPointer>
 #include <QSplitter>
 #include <QWidget>
 
@@ -28,10 +29,11 @@ namespace Dentry::Ui {
  *
  * Example:
  * @code
- * auto *central = new CentralWidget(model, this);
- * setCentralWidget(central);
- * connect(central->sidebar(),      &Sidebar::placeSelected,         this, &MainWindow::navigateTo);
+ * auto central = std::make_unique<CentralWidget>(model, this);
+ * setCentralWidget(central.get());
+ * connect(central->sidebar(),      &Sidebar::placeSelected,          this, &MainWindow::navigateTo);
  * connect(central->fileListView(), &FileListView::directoryRequested, this, &MainWindow::navigateTo);
+ * central.release(); // QMainWindow now owns the central widget.
  * @endcode
  */
 class CentralWidget : public QWidget, public AUIComponent {
@@ -68,12 +70,12 @@ protected:
     void setupStyle() override;
 
 private:
-    Model::FileSystemModel *m_model;
-    QHBoxLayout            *m_layout;
-    QSplitter              *m_splitter;
-    Sidebar                *m_sidebar;
-    FileListView           *m_fileListView;
-    PreviewPanel           *m_previewPanel;
+    QPointer<Model::FileSystemModel> m_model;
+    QPointer<QHBoxLayout>            m_layout;
+    QPointer<QSplitter>              m_splitter;
+    QPointer<Sidebar>                m_sidebar;
+    QPointer<FileListView>           m_fileListView;
+    QPointer<PreviewPanel>           m_previewPanel;
 };
 
 } // namespace Dentry::Ui

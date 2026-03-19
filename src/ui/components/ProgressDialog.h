@@ -12,6 +12,7 @@
 
 #include <QDialog>
 #include <QLabel>
+#include <QPointer>
 #include <QProgressBar>
 #include <QPushButton>
 
@@ -30,10 +31,10 @@ namespace Dentry::Ui {
      *
      * Example:
      * @code
-     * auto *op = new CopyOperation(sources, destination, this);
-     * auto *dialog = new ProgressDialog(op, this);
+     * auto op = std::make_unique<CopyOperation>(sources, destination);
+     * ProgressDialog dialog(op.get(), this);
      * op->execute();
-     * dialog->exec();
+     * dialog.exec();
      * @endcode
      */
     class ProgressDialog : public QDialog, public AUIComponent {
@@ -96,13 +97,14 @@ namespace Dentry::Ui {
         void onFinishedClicked();
 
     private:
-        Fs::AFileOperation *m_operation;
-        QLabel             *m_descriptionLabel;
-        QProgressBar       *m_progressBar;
-        QPushButton        *m_finishedButton;
-        QPushButton        *m_cancelButton;
-        bool                m_cancelRequested = false;
-        bool                m_finishedState   = false;
+        // Non-owning observer. Ownership is provided externally (typically by Qt parent-child).
+        QPointer<Fs::AFileOperation> m_operation;
+        QPointer<QLabel>             m_descriptionLabel;
+        QPointer<QProgressBar>       m_progressBar;
+        QPointer<QPushButton>        m_finishedButton;
+        QPointer<QPushButton>        m_cancelButton;
+        bool                m_cancelRequested  = false;
+        bool                m_finishedState    = false;
 
         /**
          * @brief Updates dialog UI to show completion state and enable user choice.

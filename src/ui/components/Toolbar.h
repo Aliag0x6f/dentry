@@ -12,6 +12,7 @@
 #include <QAction>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPointer>
 #include <QString>
 #include <QToolBar>
 
@@ -26,12 +27,13 @@ namespace Dentry::Ui {
      *
      * Example:
      * @code
-     * auto *toolbar = new Toolbar(this);
-     * addToolBar(toolbar);
-     * connect(toolbar, &Toolbar::backRequested, this, &MainWindow::navigateBack);
-     * connect(toolbar, &Toolbar::homeRequested, this, &MainWindow::navigateHome);
-     * connect(toolbar, &Toolbar::searchChanged, model, &FileSystemModel::setFilter);
-     * connect(toolbar, &Toolbar::hiddenToggled, sidebar, &Sidebar::setShowHidden);
+     * auto toolbar = std::make_unique<Toolbar>(this);
+     * addToolBar(toolbar.get());
+     * connect(toolbar.get(), &Toolbar::backRequested,  this,    &MainWindow::navigateBack);
+     * connect(toolbar.get(), &Toolbar::homeRequested,  this,    &MainWindow::navigateHome);
+     * connect(toolbar.get(), &Toolbar::searchChanged,  model,   &FileSystemModel::setFilter);
+     * connect(toolbar.get(), &Toolbar::hiddenToggled,  sidebar, &Sidebar::setShowHidden);
+     * toolbar.release(); // QMainWindow now owns the toolbar.
      * @endcode
      */
     class Toolbar : public QToolBar, public AUIComponent {
@@ -88,11 +90,11 @@ namespace Dentry::Ui {
         void setupConnections() override;
 
     private:
-        QAction   *m_backAction;
-        QAction   *m_homeAction;
-        QAction   *m_hiddenAction;
-        QLineEdit *m_searchBar;
-        QLabel    *m_pathBar;
+        QPointer<QAction>   m_backAction;
+        QPointer<QAction>   m_homeAction;
+        QPointer<QAction>   m_hiddenAction;
+        QPointer<QLineEdit> m_searchBar;
+        QPointer<QLabel>    m_pathBar;
     };
 
 } // namespace Dentry::Ui

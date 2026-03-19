@@ -6,21 +6,14 @@
  */
 
 #include "MainWindow.h"
+#include "../util/Logger.h"
 
 #include <QApplication>
-
-#include "../util/Logger.h"
 
 namespace Dentry::Ui {
 
     MainWindow::MainWindow(QWidget *parent)
-        : QMainWindow(parent)
-        , m_model(nullptr)
-        , m_toolbar(nullptr)
-        , m_statusBar(nullptr)
-        , m_central(nullptr)
-        , m_fileOperationController(nullptr)
-        , m_navigationController(nullptr) {
+        : QMainWindow(parent) {
         build();
     }
 

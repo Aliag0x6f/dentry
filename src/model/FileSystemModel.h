@@ -22,9 +22,10 @@ namespace Dentry::Model {
      *
      * Example:
      * @code
-     * auto *model = new FileSystemModel(parent);
-     * treeView->setModel(model);
+     * auto model = std::make_unique<FileSystemModel>(parent);
+     * treeView->setModel(model.get());
      * model->setDirectory(QDir::homePath());
+     * model.release(); // Qt parent now owns the model.
      * @endcode
      */
     class FileSystemModel final : public AFileSystemModel {

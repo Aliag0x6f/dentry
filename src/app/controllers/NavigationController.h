@@ -10,6 +10,7 @@
 #include "../../model/FileSystemModel.h"
 
 #include <QObject>
+#include <QPointer>
 #include <QStack>
 #include <QString>
 
@@ -25,13 +26,14 @@ namespace Dentry::App {
  *
  * Example:
  * @code
- * auto *nav = new NavigationController(model, this);
+ * auto nav = std::make_unique<NavigationController>(model, this);
  *
- * connect(toolbar,     &Toolbar::backRequested,           nav, &NavigationController::navigateBack);
- * connect(toolbar,     &Toolbar::homeRequested,           nav, &NavigationController::navigateHome);
- * connect(sidebar,     &Sidebar::placeSelected,           nav, &NavigationController::navigateTo);
- * connect(fileList,    &FileListView::directoryRequested, nav, &NavigationController::navigateTo);
- * connect(nav,         &NavigationController::pathChanged, toolbar, &Toolbar::setPath);
+ * connect(toolbar,     &Toolbar::backRequested,            nav.get(), &NavigationController::navigateBack);
+ * connect(toolbar,     &Toolbar::homeRequested,            nav.get(), &NavigationController::navigateHome);
+ * connect(sidebar,     &Sidebar::placeSelected,            nav.get(), &NavigationController::navigateTo);
+ * connect(fileList,    &FileListView::directoryRequested,  nav.get(), &NavigationController::navigateTo);
+ * connect(nav.get(),   &NavigationController::pathChanged, toolbar,   &Toolbar::setPath);
+ * nav.release(); // Qt parent now owns the controller.
  * @endcode
  */
 class NavigationController : public QObject {
@@ -103,8 +105,8 @@ signals:
     void canGoBackChanged(bool canGoBack);
 
 private:
-    Model::FileSystemModel *m_model;
-    QStack<QString>         m_history;
+    QPointer<Model::FileSystemModel> m_model;
+    QStack<QString>                  m_history;
 };
 
 } // namespace Dentry::App

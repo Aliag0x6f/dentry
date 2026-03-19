@@ -23,10 +23,11 @@ namespace Dentry::Fs {
  *
  * Example:
  * @code
- * auto *op = new DeleteOperation(targets, parent);
- * connect(op, &DeleteOperation::progress, progressDialog, &ProgressDialog::onProgress);
- * connect(op, &DeleteOperation::finished, this, &MainWindow::onOperationFinished);
+ * auto op = std::make_unique<DeleteOperation>(targets, this);
+ * connect(op.get(), &DeleteOperation::progress, progressDialog, &ProgressDialog::onProgress);
+ * connect(op.get(), &DeleteOperation::finished, this, &MainWindow::onOperationFinished);
  * op->execute();
+ * op.release(); // Qt parent now owns the operation.
  * @endcode
  */
 class DeleteOperation final : public AFileOperation {

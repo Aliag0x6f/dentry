@@ -8,6 +8,7 @@
 #include "ProgressDialog.h"
 
 #include <QHBoxLayout>
+#include <QtGlobal>
 #include <QVBoxLayout>
 
 namespace Dentry::Ui {
@@ -21,6 +22,7 @@ namespace Dentry::Ui {
     ProgressDialog::ProgressDialog(Fs::AFileOperation *operation, QWidget *parent)
         : QDialog(parent)
         , m_operation(operation) {
+        Q_ASSERT(m_operation != nullptr);
         build();
     }
 
