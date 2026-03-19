@@ -39,7 +39,7 @@ namespace Dentry::Fs {
                 }
 
                 const QFileInfo info(source);
-                const QString dest = m_destination + "/" + info.fileName();
+                const QString dest = QDir(m_destination).filePath(info.fileName());
 
                 bool success = false;
 
@@ -89,7 +89,7 @@ namespace Dentry::Fs {
             if (isCancelled())
                 return false;
 
-            const QString destPath = destination + "/" + entry.fileName();
+            const QString destPath = QDir(destination).filePath(entry.fileName());
 
             if (entry.isDir()) {
                 if (!copyDir(entry.absoluteFilePath(), destPath))

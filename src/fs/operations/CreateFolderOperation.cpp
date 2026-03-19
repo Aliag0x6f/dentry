@@ -41,7 +41,7 @@ namespace Dentry::Fs {
                 return;
             }
 
-            LOG_INFO("Op") << "Folder created successfully:" << m_directory + "/" + m_name;
+            LOG_INFO("Op") << "Folder created successfully:" << QDir(m_directory).filePath(m_name);
             emit progress(100);
             setRunning(false);
             emit finished(true, QString());

@@ -39,7 +39,7 @@ namespace Dentry::Fs {
                 }
 
                 const QFileInfo info(source);
-                const QString dest = m_destination + "/" + info.fileName();
+                const QString dest = QDir(m_destination).filePath(info.fileName());
 
                 if (!moveEntry(source, dest)) {
                     LOG_ERROR("Op") << "Failed to move:" << info.fileName();
@@ -89,14 +89,14 @@ namespace Dentry::Fs {
                 if (isCancelled())
                     return false;
 
-                const QString destPath = destination + "/" + entry.fileName();
+                const QString destPath = QDir(destination).filePath(entry.fileName());
 
                 if (!copyThenDelete(entry.absoluteFilePath(), destPath))
                     return false;
-            }
+                }
 
-            return QDir(source).removeRecursively();
-        }
+                return QDir(source).removeRecursively();
+            }
 
         if (QFile::exists(destination))
             QFile::remove(destination);
