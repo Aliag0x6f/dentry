@@ -21,18 +21,25 @@
 
 namespace Dentry::App {
 
-    void FileOperationController::runOperation(Fs::AFileOperation *operation, const std::function<void(bool)> &onFinished) {
-        auto *dialog = new Ui::ProgressDialog(operation, m_dialogParent);
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
+    void FileOperationController::runOperation(std::unique_ptr<Fs::AFileOperation> operation,
+                                               const std::function<void(bool)>     &onFinished) {
+        if (!operation)
+            return;
 
-        connect(operation, &Fs::AFileOperation::finished, this, [onFinished](bool success, const QString &) {
+        Fs::AFileOperation *op = operation.release();
+        Ui::ProgressDialog dialog(op, m_dialogParent);
+
+        // not working for the moment
+        /*connect(op, &Fs::AFileOperation::finished, op, [op](bool, const QString &) {
+            op->deleteLater();
+        });*/
+
+        connect(op, &Fs::AFileOperation::finished, this, [onFinished](bool success, const QString &) {
             onFinished(success);
         });
 
-        connect(dialog, &QObject::destroyed, operation, &QObject::deleteLater);
-
-        operation->execute();
-        dialog->exec();
+        op->execute();
+        dialog.exec();
     }
 
     FileOperationController::FileOperationController(Model::FileSystemModel *model,
@@ -62,12 +69,15 @@ namespace Dentry::App {
         LOG_INFO("FileOps") << "Paste requested into:" << destination
                             << "(" << (m_clipboard.isCut() ? "move" : "copy") << ")";
 
-        Fs::AFileOperation *op = m_clipboard.isCut()
-            ? static_cast<Fs::AFileOperation *>(new Fs::MoveOperation(m_clipboard.paths(), destination, nullptr))
-            : static_cast<Fs::AFileOperation *>(new Fs::CopyOperation(m_clipboard.paths(), destination, nullptr));
+        std::unique_ptr<Fs::AFileOperation> op;
+        if (m_clipboard.isCut()) {
+            op = std::make_unique<Fs::MoveOperation>(m_clipboard.paths(), destination, nullptr);
+        } else {
+            op = std::make_unique<Fs::CopyOperation>(m_clipboard.paths(), destination, nullptr);
+        }
 
-        runOperation(op, [this](bool success) {
-            if (success)
+        runOperation(std::move(op), [this](bool success) {
+            if (success && m_model)
                 m_model->refresh();
             if (m_clipboard.isCut() || success)
                 m_clipboard.clear();
@@ -77,9 +87,9 @@ namespace Dentry::App {
     void FileOperationController::onDeleteRequested(const QStringList &paths) {
         LOG_INFO("FileOps") << "Delete requested:" << paths.count() << "item(s)";
 
-        auto *op = new Fs::DeleteOperation(paths, nullptr);
-        runOperation(op, [this](bool success) {
-            if (success)
+        auto op = std::make_unique<Fs::DeleteOperation>(paths, nullptr);
+        runOperation(std::move(op), [this](bool success) {
+            if (success && m_model)
                 m_model->refresh();
         });
     }
@@ -96,9 +106,9 @@ namespace Dentry::App {
 
         LOG_INFO("FileOps") << "Rename requested:" << oldName << "->" << newName;
 
-        auto *op = new Fs::RenameOperation(path, newName, nullptr);
-        runOperation(op, [this](bool success) {
-            if (success)
+        auto op = std::make_unique<Fs::RenameOperation>(path, newName, nullptr);
+        runOperation(std::move(op), [this](bool success) {
+            if (success && m_model)
                 m_model->refresh();
         });
     }
@@ -114,9 +124,9 @@ namespace Dentry::App {
 
         LOG_INFO("FileOps") << "Create file requested:" << name << "in" << directory;
 
-        auto *op = new Fs::CreateFileOperation(directory, name, nullptr);
-        runOperation(op, [this](bool success) {
-            if (success)
+        auto op = std::make_unique<Fs::CreateFileOperation>(directory, name, nullptr);
+        runOperation(std::move(op), [this](bool success) {
+            if (success && m_model)
                 m_model->refresh();
         });
     }
@@ -132,9 +142,9 @@ namespace Dentry::App {
 
         LOG_INFO("FileOps") << "Create folder requested:" << name << "in" << directory;
 
-        auto *op = new Fs::CreateFolderOperation(directory, name, nullptr);
-        runOperation(op, [this](bool success) {
-            if (success)
+        auto op = std::make_unique<Fs::CreateFolderOperation>(directory, name, nullptr);
+        runOperation(std::move(op), [this](bool success) {
+            if (success && m_model)
                 m_model->refresh();
         });
     }

@@ -27,10 +27,11 @@ namespace Dentry::Fs {
  *
  * Example:
  * @code
- * auto *op = new MoveOperation(sources, destination, parent);
- * connect(op, &MoveOperation::progress, progressDialog, &ProgressDialog::onProgress);
- * connect(op, &MoveOperation::finished, this, &MainWindow::onOperationFinished);
+ * auto op = std::make_unique<MoveOperation>(sources, destination, this);
+ * connect(op.get(), &MoveOperation::progress, progressDialog, &ProgressDialog::onProgress);
+ * connect(op.get(), &MoveOperation::finished, this, &MainWindow::onOperationFinished);
  * op->execute();
+ * op.release(); // Qt parent now owns the operation.
  * @endcode
  */
 class MoveOperation final : public AFileOperation {

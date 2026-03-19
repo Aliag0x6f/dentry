@@ -22,10 +22,11 @@ namespace Dentry::Fs {
  *
  * Example:
  * @code
- * auto *op = new RenameOperation(source, newName, parent);
- * connect(op, &RenameOperation::progress, progressDialog, &ProgressDialog::onProgress);
- * connect(op, &RenameOperation::finished, this, &MainWindow::onOperationFinished);
+ * auto op = std::make_unique<RenameOperation>(source, newName, this);
+ * connect(op.get(), &RenameOperation::progress, progressDialog, &ProgressDialog::onProgress);
+ * connect(op.get(), &RenameOperation::finished, this, &MainWindow::onOperationFinished);
  * op->execute();
+ * op.release(); // Qt parent now owns the operation.
  * @endcode
  */
 class RenameOperation final : public AFileOperation {

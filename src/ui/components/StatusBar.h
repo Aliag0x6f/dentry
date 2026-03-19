@@ -12,6 +12,7 @@
 
 #include <QLabel>
 #include <QList>
+#include <QPointer>
 #include <QStatusBar>
 #include <QString>
 
@@ -26,10 +27,11 @@ namespace Dentry::Ui {
      *
      * Example:
      * @code
-     * auto *statusBar = new StatusBar(this);
-     * setStatusBar(statusBar);
+     * auto statusBar = std::make_unique<StatusBar>(this);
+     * setStatusBar(statusBar.get());
      * statusBar->setDirectoryStats(4, 12);
      * statusBar->setSelection({ item1, item2 });
+     * statusBar.release(); // QMainWindow now owns the status bar.
      * @endcode
      */
     class StatusBar : public QStatusBar, public AUIComponent {
@@ -77,10 +79,10 @@ namespace Dentry::Ui {
         void updateDisplay();
 
         /** @brief Label displaying folder and file counts. */
-        QLabel *m_statsLabel;
+        QPointer<QLabel> m_statsLabel;
 
         /** @brief Label displaying selection count. */
-        QLabel *m_selectionLabel;
+        QPointer<QLabel> m_selectionLabel;
 
         int m_folderCount    = 0;
         int m_fileCount      = 0;

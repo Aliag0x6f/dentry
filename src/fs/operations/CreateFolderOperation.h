@@ -22,9 +22,10 @@ namespace Dentry::Fs {
  *
  * Example:
  * @code
- * auto *op = new CreateFolderOperation(directory, name, parent);
- * connect(op, &CreateFolderOperation::finished, this, &MainWindow::onOperationFinished);
+ * auto op = std::make_unique<CreateFolderOperation>(directory, name, this);
+ * connect(op.get(), &CreateFolderOperation::finished, this, &MainWindow::onOperationFinished);
  * op->execute();
+ * op.release(); // Qt parent now owns the operation.
  * @endcode
  */
 class CreateFolderOperation final : public AFileOperation {

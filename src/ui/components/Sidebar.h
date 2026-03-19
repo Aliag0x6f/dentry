@@ -12,6 +12,7 @@
 #include <QFrame>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QPointer>
 #include <QString>
 #include <QWidget>
 
@@ -29,8 +30,9 @@ namespace Dentry::Ui {
      *
      * Example:
      * @code
-     * auto *sidebar = new Sidebar(this);
-     * connect(sidebar, &Sidebar::placeSelected, this, &MainWindow::navigateTo);
+     * auto sidebar = std::make_unique<Sidebar>(this);
+     * connect(sidebar.get(), &Sidebar::placeSelected, this, &MainWindow::navigateTo);
+     * sidebar.release(); // Qt parent now owns the sidebar.
      * @endcode
      */
     class Sidebar : public QFrame, public AUIComponent {
@@ -82,7 +84,7 @@ namespace Dentry::Ui {
         void buildPlaces();
 
         /** @brief The list widget displaying the places. */
-        QListWidget *m_list;
+        QPointer<QListWidget> m_list;
 
         /** @brief Whether hidden dot-files are shown. */
         bool m_showHidden = false;

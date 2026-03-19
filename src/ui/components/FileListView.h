@@ -26,10 +26,11 @@ namespace Dentry::Ui {
  *
  * Example:
  * @code
- * auto *view = new FileListView(this);
+ * auto view = std::make_unique<FileListView>(this);
  * view->setModel(model);
- * connect(view, &FileListView::directoryRequested, this, &MainWindow::navigateTo);
- * connect(view, &FileListView::selectionChanged,   statusBar, &StatusBar::setSelection);
+ * connect(view.get(), &FileListView::directoryRequested, this, &MainWindow::navigateTo);
+ * connect(view.get(), &FileListView::selectionChanged,   statusBar, &StatusBar::setSelection);
+ * view.release(); // Qt parent now owns the view.
  * @endcode
  */
 class FileListView : public QTreeView, public AUIComponent {

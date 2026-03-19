@@ -6,11 +6,11 @@
  */
 
 #include "NavigationController.h"
+#include "../../util/Logger.h"
 
 #include <QDir>
 #include <QStandardPaths>
 
-#include "../../util/Logger.h"
 
 namespace Dentry::App {
 
@@ -28,6 +28,9 @@ namespace Dentry::App {
     }
 
     void NavigationController::navigateTo(const QString &path) {
+        if (!m_model)
+            return;
+
         if (!QDir(path).exists()) {
             LOG_WARNING("Navigation") << "Directory does not exist:" << path;
             return;
@@ -50,6 +53,9 @@ namespace Dentry::App {
     }
 
     void NavigationController::navigateBack() {
+        if (!m_model)
+            return;
+
         if (!canGoBack())
             return;
 

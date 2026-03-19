@@ -16,6 +16,7 @@
 #include "../app/controllers/NavigationController.h"
 
 #include <QMainWindow>
+#include <QPointer>
 #include <QStack>
 #include <QString>
 
@@ -62,12 +63,12 @@ private slots:
     void onDirectoryLoaded(const QString &);
 
 private:
-    Model::FileSystemModel      *m_model;
-    Toolbar                     *m_toolbar;
-    StatusBar                   *m_statusBar;
-    CentralWidget               *m_central;
-    App::FileOperationController *m_fileOperationController;
-    App::NavigationController    *m_navigationController;
+    QPointer<Model::FileSystemModel>       m_model;
+    QPointer<Toolbar>                      m_toolbar;
+    QPointer<StatusBar>                    m_statusBar;
+    QPointer<CentralWidget>                m_central;
+    QPointer<App::FileOperationController> m_fileOperationController;
+    QPointer<App::NavigationController>    m_navigationController;
 };
 
 } // namespace Dentry::Ui

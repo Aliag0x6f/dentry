@@ -11,6 +11,7 @@
 #include "../../model/FileItem.h"
 
 #include <QLabel>
+#include <QPointer>
 #include <QStackedWidget>
 #include <QTextEdit>
 #include <QWidget>
@@ -27,8 +28,9 @@ namespace Dentry::Ui {
      *
      * Example:
      * @code
-     * auto *preview = new PreviewPanel(this);
-     * connect(view, &FileListView::fileActivated, preview, &PreviewPanel::preview);
+     * auto preview = std::make_unique<PreviewPanel>(this);
+     * connect(view, &FileListView::fileActivated, preview.get(), &PreviewPanel::preview);
+     * preview.release(); // Qt parent now owns the panel.
      * @endcode
      */
     class PreviewPanel : public QWidget, public AUIComponent {
@@ -72,12 +74,12 @@ namespace Dentry::Ui {
         /** @brief Shows file metadata. */
         void showMetadata(const Model::FileItem &item);
 
-        QLabel         *m_nameLabel;
-        QLabel         *m_metaLabel;
-        QLabel         *m_imageLabel;
-        QTextEdit      *m_textEdit;
-        QStackedWidget *m_stack;
-        QVBoxLayout    *m_layout;
+        QPointer<QLabel>         m_nameLabel;
+        QPointer<QLabel>         m_metaLabel;
+        QPointer<QLabel>         m_imageLabel;
+        QPointer<QTextEdit>      m_textEdit;
+        QPointer<QStackedWidget> m_stack;
+        QPointer<QVBoxLayout>    m_layout;
     };
 
 } // namespace Dentry::Ui

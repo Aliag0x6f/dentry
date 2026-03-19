@@ -11,11 +11,12 @@
 #include "../../model/FileSystemModel.h"
 
 #include <QObject>
+#include <QPointer>
 #include <QString>
 #include <QStringList>
 #include <QWidget>
-
 #include <functional>
+#include <memory>
 
 namespace Dentry::Fs {
 class AFileOperation;
@@ -33,15 +34,16 @@ namespace Dentry::App {
  *
  * Example:
  * @code
- * auto *fileOps = new FileOperationController(model, parentWidget, this);
+ * auto fileOps = std::make_unique<FileOperationController>(model, parentWidget, this);
  *
- * connect(fileListView, &FileListView::copyRequested,         fileOps, &FileOperationController::onCopyRequested);
- * connect(fileListView, &FileListView::cutRequested,          fileOps, &FileOperationController::onCutRequested);
- * connect(fileListView, &FileListView::pasteRequested,        fileOps, &FileOperationController::onPasteRequested);
- * connect(fileListView, &FileListView::deleteRequested,       fileOps, &FileOperationController::onDeleteRequested);
- * connect(fileListView, &FileListView::renameRequested,       fileOps, &FileOperationController::onRenameRequested);
- * connect(fileListView, &FileListView::createFileRequested,   fileOps, &FileOperationController::onCreateFileRequested);
- * connect(fileListView, &FileListView::createFolderRequested, fileOps, &FileOperationController::onCreateFolderRequested);
+ * connect(fileListView, &FileListView::copyRequested,         fileOps.get(), &FileOperationController::onCopyRequested);
+ * connect(fileListView, &FileListView::cutRequested,          fileOps.get(), &FileOperationController::onCutRequested);
+ * connect(fileListView, &FileListView::pasteRequested,        fileOps.get(), &FileOperationController::onPasteRequested);
+ * connect(fileListView, &FileListView::deleteRequested,       fileOps.get(), &FileOperationController::onDeleteRequested);
+ * connect(fileListView, &FileListView::renameRequested,       fileOps.get(), &FileOperationController::onRenameRequested);
+ * connect(fileListView, &FileListView::createFileRequested,   fileOps.get(), &FileOperationController::onCreateFileRequested);
+ * connect(fileListView, &FileListView::createFolderRequested, fileOps.get(), &FileOperationController::onCreateFolderRequested);
+ * fileOps.release(); // Qt parent now owns the controller.
  * @endcode
  */
 class FileOperationController : public QObject {
@@ -102,11 +104,12 @@ public slots:
     void onCreateFolderRequested(const QString &directory);
 
 private:
-    void runOperation(Fs::AFileOperation *operation, const std::function<void(bool)> &onFinished);
+    void runOperation(std::unique_ptr<Fs::AFileOperation> operation,
+                      const std::function<void(bool)>     &onFinished);
 
-    Model::FileSystemModel *m_model;
-    QWidget                *m_dialogParent;
-    Clipboard               m_clipboard;
+    QPointer<Model::FileSystemModel> m_model;
+    QPointer<QWidget>                m_dialogParent;
+    Clipboard                        m_clipboard;
 };
 
 } // namespace Dentry::App

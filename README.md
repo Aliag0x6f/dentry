@@ -28,6 +28,26 @@ Dentry — named after the Linux kernel's directory entry cache structure — is
 | License | GPLv3 |
 | Tested on | Arch Linux |
 
+## Ownership and RAII Policy
+
+To keep lifetimes explicit and safe, Dentry follows these ownership rules:
+
+- `QObject` lifetimes are managed by Qt parent-child ownership.
+- Non-Qt ownership uses `std::unique_ptr`.
+- Raw pointers are non-owning observers only.
+- Business code must not rely on unmanaged `new`/`delete` ownership pairs.
+
+Practical examples:
+
+- File operations in controllers are created via `std::unique_ptr`, then detached for async execution and deleted on `finished`.
+- UI members that reference widgets/components use `QPointer` for safe, non-owning access to parent-owned objects.
+
+References:
+
+- RAII: https://en.cppreference.com/w/cpp/language/raii
+- `std::unique_ptr`: https://en.cppreference.com/w/cpp/memory/unique_ptr
+- Qt object trees: https://doc.qt.io/qt-6/objecttrees.html
+
 ## Requirements
 
 - Qt6 Base (`qt6-base`)
