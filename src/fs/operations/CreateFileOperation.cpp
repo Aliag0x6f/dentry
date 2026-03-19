@@ -8,7 +8,9 @@
 #include "CreateFileOperation.h"
 #include "../../util/Logger.h"
 
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QtConcurrent>
 
 namespace Dentry::Fs {
@@ -32,7 +34,15 @@ namespace Dentry::Fs {
                 return;
             }
 
-            const QString path = m_directory + "/" + m_name;
+            const QString safeName = QFileInfo(m_name).fileName();
+            if (safeName.isEmpty()) {
+                LOG_ERROR("Op") << "Invalid file name:" << m_name;
+                setRunning(false);
+                emit finished(false, "Invalid file name");
+                return;
+            }
+
+            const QString path = QDir(m_directory).filePath(m_name);
 
             QFile file(path);
 

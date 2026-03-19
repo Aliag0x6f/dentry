@@ -50,7 +50,14 @@ namespace Dentry::Fs {
 
     bool RenameOperation::renameEntry(const QString &path) {
         const QFileInfo info(path);
-        const QString destination = info.dir().absolutePath() + "/" + m_newName;
+        const QFileInfo newNameInfo(m_newName);
+
+        const QString sanitizedNewName = newNameInfo.fileName();
+        if (sanitizedNewName.isEmpty()) {
+            LOG_ERROR("Op") << "Invalid new name for rename operation:" << m_newName;
+            return false;
+        }
+        const QString destination = QDir(info.dir().absolutePath()).filePath(sanitizedNewName);
 
         LOG_DEBUG("Op") << "Renaming:" << path << "->" << destination;
         return QFile::rename(path, destination);
