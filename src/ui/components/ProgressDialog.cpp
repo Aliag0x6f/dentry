@@ -121,7 +121,7 @@ namespace Dentry::Ui {
             m_progressBar->setRange(0, 100);
             m_progressBar->setValue(0);
         }  else {
-            m_descriptionLabel->setText(QString("Error: %1").arg(error));
+            m_descriptionLabel->setText(tr("Error: %1").arg(error));
             m_progressBar->setRange(0, 100);
             m_progressBar->setValue(0);
         }
