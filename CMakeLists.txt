@@ -56,8 +56,8 @@ target_link_libraries(dentry
 
 target_compile_definitions(dentry
     PRIVATE
-        DENTRY_APP_NAME="Dentry"
-        DENTRY_APP_VERSION="${PROJECT_VERSION}"
+        "DENTRY_APP_NAME=\"Dentry\""
+        "DENTRY_APP_VERSION=\"${PROJECT_VERSION}\""
 )
 
 if(DENTRY_ENABLE_WARNINGS)
