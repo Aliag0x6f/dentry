@@ -24,6 +24,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets Concurrent)
 
+
 file(GLOB_RECURSE DENTRY_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.qrc"
@@ -51,6 +52,12 @@ target_link_libraries(dentry
     PRIVATE
         Qt6::Widgets
         Qt6::Concurrent
+)
+
+target_compile_definitions(dentry
+    PRIVATE
+        "DENTRY_APP_NAME=\"Dentry\""
+        "DENTRY_APP_VERSION=\"${PROJECT_VERSION}\""
 )
 
 if(DENTRY_ENABLE_WARNINGS)
