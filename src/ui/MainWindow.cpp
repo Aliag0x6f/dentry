@@ -7,6 +7,8 @@
 
 #include "MainWindow.h"
 
+#include <QApplication>
+
 #include "../util/Logger.h"
 
 namespace Dentry::Ui {
@@ -23,7 +25,7 @@ namespace Dentry::Ui {
     }
 
     void MainWindow::build() {
-        setWindowTitle("Dentry");
+        setWindowTitle(QApplication::applicationDisplayName());
         setupSize();
 
         m_model     = new Model::FileSystemModel(this);
