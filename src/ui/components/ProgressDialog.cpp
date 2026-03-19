@@ -12,6 +12,12 @@
 
 namespace Dentry::Ui {
 
+    bool ProgressDialog::isCancelledResult(bool success, const QString &error) {
+        return !success
+            && (error.compare(QStringLiteral("Operation cancelled"), Qt::CaseInsensitive) == 0
+                || error.compare(QStringLiteral("Operation canceled"), Qt::CaseInsensitive) == 0);
+    }
+
     ProgressDialog::ProgressDialog(Fs::AFileOperation *operation, QWidget *parent)
         : QDialog(parent)
         , m_operation(operation) {
@@ -75,7 +81,8 @@ namespace Dentry::Ui {
     }
 
     void ProgressDialog::onFinished(bool success, const QString &error) {
-        completeAndRequireChoice(success, error);
+        const bool cancelled = isCancelledResult(success, error);
+        completeAndRequireChoice(success, cancelled, error);
     }
 
     void ProgressDialog::onCancelled() {
@@ -104,16 +111,16 @@ namespace Dentry::Ui {
         accept();
     }
 
-    void ProgressDialog::completeAndRequireChoice(bool success, const QString &error) {
-        if (m_cancelRequested) {
-            m_descriptionLabel->setText(tr("Operation cancelled."));
-            m_progressBar->setRange(0, 100);
-            m_progressBar->setValue(0);
-        } else if (success) {
+    void ProgressDialog::completeAndRequireChoice(bool success, bool cancelled, const QString &error) {
+        if (success) {
             m_descriptionLabel->setText(tr("Operation finished successfully."));
             m_progressBar->setRange(0, 100);
             m_progressBar->setValue(100);
-        } else {
+        } else if (cancelled) {
+            m_descriptionLabel->setText(tr("Operation cancelled."));
+            m_progressBar->setRange(0, 100);
+            m_progressBar->setValue(0);
+        }  else {
             m_descriptionLabel->setText(QString("Error: %1").arg(error));
             m_progressBar->setRange(0, 100);
             m_progressBar->setValue(0);

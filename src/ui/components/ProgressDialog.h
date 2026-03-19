@@ -111,10 +111,11 @@ namespace Dentry::Ui {
          * progress bar state based on success/cancellation/error, then enables
          * the Finished and Canceled buttons for user acknowledgment.
          *
-         * @param success True if the operation completed without error.
-         * @param error   Human-readable error message, empty on success.
+         * @param success   True if the operation completed without error.
+         * @param cancelled True if the operation ended due to cancellation.
+         * @param error     Human-readable error message, empty on success.
          */
-        void completeAndRequireChoice(bool success, const QString &error);
+        void completeAndRequireChoice(bool success, bool cancelled, const QString &error);
 
         /**
          * @brief Enables the Finished and Canceled buttons for user interaction.
@@ -123,6 +124,18 @@ namespace Dentry::Ui {
          * for user choice.
          */
         void unlockChoiceUi();
+
+        /**
+         * @brief Determines whether a finished() result represents cancellation.
+         *
+         * Interprets the terminal operation outcome from the emitted
+         * finished(success, error) arguments, independent from UI intent flags.
+         *
+         * @param success True if the operation reported success.
+         * @param error   Terminal error message emitted by the operation.
+         * @return True when the outcome corresponds to a cancellation result.
+         */
+        static bool isCancelledResult(bool success, const QString &error);
     };
 
 } // namespace Dentry::Ui
