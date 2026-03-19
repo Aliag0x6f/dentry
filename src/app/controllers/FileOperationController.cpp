@@ -26,13 +26,19 @@ namespace Dentry::App {
         if (!operation)
             return;
 
-        Ui::ProgressDialog dialog(operation.get(), m_dialogParent);
+        Fs::AFileOperation *op = operation.release();
+        Ui::ProgressDialog dialog(op, m_dialogParent);
 
-        connect(operation.get(), &Fs::AFileOperation::finished, this, [onFinished](bool success, const QString &) {
+        // not working for the moment
+        /*connect(op, &Fs::AFileOperation::finished, op, [op](bool, const QString &) {
+            op->deleteLater();
+        });*/
+
+        connect(op, &Fs::AFileOperation::finished, this, [onFinished](bool success, const QString &) {
             onFinished(success);
         });
 
-        operation->execute();
+        op->execute();
         dialog.exec();
     }
 

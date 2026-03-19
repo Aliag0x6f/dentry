@@ -39,9 +39,8 @@ To keep lifetimes explicit and safe, Dentry follows these ownership rules:
 
 Practical examples:
 
-- File operations in controllers are created with `std::unique_ptr`.
-- Once an operation is bound to a UI dialog, ownership is transferred to Qt via `setParent(...)`.
-- UI members stored as raw pointers are parent-owned widgets/components.
+- File operations in controllers are created via `std::unique_ptr`, then detached for async execution and deleted on `finished`.
+- UI members that reference widgets/components use `QPointer` for safe, non-owning access to parent-owned objects.
 
 References:
 
