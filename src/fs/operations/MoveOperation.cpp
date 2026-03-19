@@ -93,10 +93,10 @@ namespace Dentry::Fs {
 
                 if (!copyThenDelete(entry.absoluteFilePath(), destPath))
                     return false;
-                }
-
-                return QDir(source).removeRecursively();
             }
+
+            return QDir(source).removeRecursively();
+        }
 
         if (QFile::exists(destination))
             QFile::remove(destination);

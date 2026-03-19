@@ -10,6 +10,7 @@
 
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QtConcurrent>
 
 namespace Dentry::Fs {
@@ -30,6 +31,14 @@ namespace Dentry::Fs {
                 LOG_INFO("Op") << "Create file cancelled";
                 setRunning(false);
                 emit finished(false, "Operation cancelled");
+                return;
+            }
+
+            const QString safeName = QFileInfo(m_name).fileName();
+            if (safeName.isEmpty()) {
+                LOG_ERROR("Op") << "Invalid file name:" << m_name;
+                setRunning(false);
+                emit finished(false, "Invalid file name");
                 return;
             }
 
