@@ -11,6 +11,7 @@
 #include <QFuture>
 #include <QString>
 #include <QStringList>
+#include <QStringView>
 
 namespace Dentry::Fs {
 
@@ -71,7 +72,7 @@ private:
      * @param path Absolute path of the entry to delete.
      * @return True on success, false on any error.
      */
-    bool deleteEntry(const QString &path);
+    bool deleteEntry(QStringView path);
 
     QStringList   m_targets;
     QFuture<void> m_future;

@@ -60,8 +60,8 @@ namespace Dentry::Fs {
         });
     }
 
-    bool MoveOperation::moveEntry(const QString &source, const QString &destination) {
-        if (QFile::rename(source, destination)) {
+    bool MoveOperation::moveEntry(QStringView source, QStringView destination) {
+        if (QFile::rename(source.toString(), destination.toString())) {
             LOG_DEBUG("Op") << "Renamed directly:" << source;
             return true;
         }
@@ -70,13 +70,13 @@ namespace Dentry::Fs {
         return copyThenDelete(source, destination);
     }
 
-    bool MoveOperation::copyThenDelete(const QString &source, const QString &destination) {
-        const QFileInfo info(source);
+    bool MoveOperation::copyThenDelete(QStringView source, QStringView destination) {
+        const QFileInfo info(source.toString());
 
         if (info.isDir()) {
             LOG_DEBUG("Op") << "Moving directory:" << source << "->" << destination;
-            QDir srcDir(source);
-            if (!QDir().mkpath(destination)) {
+            QDir srcDir(source.toString());
+            if (!QDir().mkpath(destination.toString())) {
                 LOG_ERROR("Op") << "Failed to create directory:" << destination;
                 return false;
             }
@@ -89,24 +89,24 @@ namespace Dentry::Fs {
                 if (isCancelled())
                     return false;
 
-                const QString destPath = QDir(destination).filePath(entry.fileName());
+                const QString destPath = QDir(destination.toString()).filePath(entry.fileName());
 
                 if (!copyThenDelete(entry.absoluteFilePath(), destPath))
                     return false;
             }
 
-            return QDir(source).removeRecursively();
+            return QDir(source.toString()).removeRecursively();
         }
 
-        if (QFile::exists(destination))
-            QFile::remove(destination);
+        if (QFile::exists(destination.toString()))
+            QFile::remove(destination.toString());
 
-        if (!QFile::copy(source, destination)) {
+        if (!QFile::copy(source.toString(), destination.toString())) {
             LOG_ERROR("Op") << "Failed to copy file:" << source;
             return false;
         }
 
-        return QFile::remove(source);
+        return QFile::remove(source.toString());
     }
 
     QString MoveOperation::description() const {

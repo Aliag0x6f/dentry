@@ -10,6 +10,7 @@
 #include <QFileInfo>
 #include <QMimeDatabase>
 #include <QString>
+#include <QStringView>
 
 namespace Dentry::Fs {
 
@@ -76,7 +77,7 @@ public:
      * @param mimeType A MIME type string such as "image/jpeg".
      * @return A freedesktop icon name such as "image-x-generic".
      */
-    [[nodiscard]] static QString iconName(const QString &mimeType);
+    [[nodiscard]] static QString iconName(QStringView mimeType);
 
 private:
     /**

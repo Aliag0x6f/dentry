@@ -9,6 +9,7 @@
 
 #include <QFileInfo>
 #include <QString>
+#include <QStringView>
 
 namespace Dentry::Fs {
 
@@ -45,7 +46,7 @@ public:
      *
      * @param path Absolute path to the file or directory.
      */
-    explicit FileInfo(const QString &path);
+    explicit FileInfo(QStringView path);
 
     /**
      * @brief Constructs a FileInfo from an existing QFileInfo.

@@ -48,8 +48,8 @@ namespace Dentry::Fs {
         });
     }
 
-    bool RenameOperation::renameEntry(const QString &path) {
-        const QFileInfo info(path);
+    bool RenameOperation::renameEntry(QStringView path) {
+        const QFileInfo info(path.toString());
         const QFileInfo newNameInfo(m_newName);
 
         const QString sanitizedNewName = newNameInfo.fileName();
@@ -60,7 +60,7 @@ namespace Dentry::Fs {
         const QString destination = QDir(info.dir().absolutePath()).filePath(sanitizedNewName);
 
         LOG_DEBUG("Op") << "Renaming:" << path << "->" << destination;
-        return QFile::rename(path, destination);
+        return QFile::rename(path.toString(), destination);
     }
 
     QString RenameOperation::description() const {

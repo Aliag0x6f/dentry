@@ -70,13 +70,13 @@ namespace Dentry::Fs {
         });
     }
 
-    bool CopyOperation::copyDir(const QString &source, const QString &destination) {
+    bool CopyOperation::copyDir(QStringView source, QStringView destination) {
         LOG_DEBUG("Op") << "Copying directory:" << source << "->" << destination;
 
-        QDir srcDir(source);
+        QDir srcDir(source.toString());
         QDir dstDir;
 
-        if (!dstDir.mkpath(destination)) {
+        if (!dstDir.mkpath(destination.toString())) {
             LOG_ERROR("Op") << "Failed to create directory:" << destination;
             return false;
         }
@@ -89,7 +89,7 @@ namespace Dentry::Fs {
             if (isCancelled())
                 return false;
 
-            const QString destPath = QDir(destination).filePath(entry.fileName());
+            const QString destPath = QDir(destination.toString()).filePath(entry.fileName());
 
             if (entry.isDir()) {
                 if (!copyDir(entry.absoluteFilePath(), destPath))

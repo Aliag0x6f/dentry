@@ -10,6 +10,7 @@
 #include "../AFileOperation.h"
 #include <QFuture>
 #include <QString>
+#include <QStringView>
 
 namespace Dentry::Fs {
 
@@ -70,7 +71,7 @@ private:
      * @param path Absolute path of the entry to rename.
      * @return True on success, false on any error.
      */
-    bool renameEntry(const QString &path);
+    bool renameEntry(QStringView path);
 
     QString       m_source;
     QString       m_newName;

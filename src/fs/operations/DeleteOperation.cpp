@@ -55,16 +55,16 @@ namespace Dentry::Fs {
         });
     }
 
-    bool DeleteOperation::deleteEntry(const QString &path) {
-        const QFileInfo info(path);
+    bool DeleteOperation::deleteEntry(QStringView path) {
+        const QFileInfo info(path.toString());
 
         if (info.isDir()) {
             LOG_DEBUG("Op") << "Deleting directory:" << path;
-            return QDir(path).removeRecursively();
+            return QDir(path.toString()).removeRecursively();
         }
 
         LOG_DEBUG("Op") << "Deleting file:" << path;
-        return QFile::remove(path);
+        return QFile::remove(path.toString());
     }
 
     QString DeleteOperation::description() const {

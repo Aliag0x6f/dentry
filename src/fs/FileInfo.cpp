@@ -14,8 +14,8 @@
 
 namespace Dentry::Fs {
 
-	FileInfo::FileInfo(const QString &path)
-		: FileInfo(QFileInfo(path)) {}
+	FileInfo::FileInfo(QStringView path)
+		: FileInfo(QFileInfo(path.toString())) {}
 
 	FileInfo::FileInfo(const QFileInfo &fileInfo)
 		: m_fileInfo(fileInfo) { compute(); }

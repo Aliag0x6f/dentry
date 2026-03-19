@@ -11,6 +11,7 @@
 #include <QFuture>
 #include <QString>
 #include <QStringList>
+#include <QStringView>
 
 namespace Dentry::Fs {
 
@@ -78,7 +79,7 @@ private:
      * @param destination Absolute path of the destination.
      * @return True on success, false on any error or cancellation.
      */
-    bool moveEntry(const QString &source, const QString &destination);
+    bool moveEntry(QStringView source, QStringView destination);
 
     /**
      * @brief Recursively copies a directory then deletes the source.
@@ -89,7 +90,7 @@ private:
      * @param destination Absolute path of the destination directory.
      * @return True on success, false on any error or cancellation.
      */
-    bool copyThenDelete(const QString &source, const QString &destination);
+    bool copyThenDelete(QStringView source, QStringView destination);
 
     QStringList   m_sources;
     QString       m_destination;

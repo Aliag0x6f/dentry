@@ -8,8 +8,10 @@
 #pragma once
 
 #include "../AFileOperation.h"
+
 #include <QString>
 #include <QStringList>
+#include <QStringView>
 #include <QFuture>
 
 namespace Dentry::Fs {
@@ -58,7 +60,7 @@ namespace Dentry::Fs {
          * @param destination Absolute path of the destination directory.
          * @return True on success, false on any error or cancellation.
          */
-        bool copyDir(const QString &source, const QString &destination);
+        bool copyDir(QStringView source, QStringView destination);
 
         QStringList   m_sources;
         QString       m_destination;

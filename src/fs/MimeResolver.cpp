@@ -36,8 +36,8 @@ namespace Dentry::Fs {
 		return mime.name();
 	}
 
-	QString MimeResolver::iconName(const QString &mimeType) {
-		const QMimeType mime = database().mimeTypeForName(mimeType);
+	QString MimeResolver::iconName(QStringView mimeType) {
+		const QMimeType mime = database().mimeTypeForName(mimeType.toString());
 
 		if (!mime.isValid()) {
 			LOG_WARNING("Mime") << "Invalid MIME type for icon lookup:" << mimeType;
