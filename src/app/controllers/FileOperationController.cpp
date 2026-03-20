@@ -17,7 +17,7 @@
 #include "../../fs/operations/DeleteOperation.h"
 #include "../../fs/operations/MoveOperation.h"
 #include "../../fs/operations/RenameOperation.h"
-#include "../../util/Logger.h"
+#include "../../log/Logger.h"
 
 namespace Dentry::App {
 
@@ -51,23 +51,23 @@ namespace Dentry::App {
     }
 
     void FileOperationController::onCopyRequested(const QStringList &paths) {
-        LOG_INFO("FileOps") << "Copy requested:" << paths.count() << "item(s)";
+        log::info("FileOps") << "Copy requested:" << paths.count() << "item(s)";
         m_clipboard.copy(paths);
     }
 
     void FileOperationController::onCutRequested(const QStringList &paths) {
-        LOG_INFO("FileOps") << "Cut requested:" << paths.count() << "item(s)";
+        log::info("FileOps") << "Cut requested:" << paths.count() << "item(s)";
         m_clipboard.cut(paths);
     }
 
     void FileOperationController::onPasteRequested(const QString &destination) {
         if (m_clipboard.isEmpty()) {
-            LOG_WARNING("FileOps") << "Paste requested but clipboard is empty";
+            log::warn("FileOps") << "Paste requested but clipboard is empty";
             return;
         }
 
-        LOG_INFO("FileOps") << "Paste requested into:" << destination
-                            << "(" << (m_clipboard.isCut() ? "move" : "copy") << ")";
+        log::info("FileOps") << "Paste requested into:" << destination
+                              << "(" << (m_clipboard.isCut() ? "move" : "copy") << ")";
 
         std::unique_ptr<Fs::AFileOperation> op;
         if (m_clipboard.isCut()) {
@@ -85,7 +85,7 @@ namespace Dentry::App {
     }
 
     void FileOperationController::onDeleteRequested(const QStringList &paths) {
-        LOG_INFO("FileOps") << "Delete requested:" << paths.count() << "item(s)";
+        log::info("FileOps") << "Delete requested:" << paths.count() << "item(s)";
 
         auto op = std::make_unique<Fs::DeleteOperation>(paths, nullptr);
         runOperation(std::move(op), [this](bool success) {
@@ -104,7 +104,7 @@ namespace Dentry::App {
         if (!ok || newName.isEmpty() || newName == oldName)
             return;
 
-        LOG_INFO("FileOps") << "Rename requested:" << oldName << "->" << newName;
+        log::info("FileOps") << "Rename requested:" << oldName << "->" << newName;
 
         auto op = std::make_unique<Fs::RenameOperation>(path, newName, nullptr);
         runOperation(std::move(op), [this](bool success) {
@@ -122,7 +122,7 @@ namespace Dentry::App {
         if (!ok || name.isEmpty())
             return;
 
-        LOG_INFO("FileOps") << "Create file requested:" << name << "in" << directory;
+        log::info("FileOps") << "Create file requested:" << name << "in" << directory;
 
         auto op = std::make_unique<Fs::CreateFileOperation>(directory, name, nullptr);
         runOperation(std::move(op), [this](bool success) {
@@ -140,7 +140,7 @@ namespace Dentry::App {
         if (!ok || name.isEmpty())
             return;
 
-        LOG_INFO("FileOps") << "Create folder requested:" << name << "in" << directory;
+        log::info("FileOps") << "Create folder requested:" << name << "in" << directory;
 
         auto op = std::make_unique<Fs::CreateFolderOperation>(directory, name, nullptr);
         runOperation(std::move(op), [this](bool success) {

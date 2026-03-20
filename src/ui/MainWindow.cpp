@@ -6,7 +6,7 @@
  */
 
 #include "MainWindow.h"
-#include "../util/Logger.h"
+#include "../log/Logger.h"
 
 #include <QApplication>
 
@@ -35,7 +35,7 @@ namespace Dentry::Ui {
         setupConnections();
         m_navigationController->navigateHome();
 
-        LOG_INFO("Ui") << "MainWindow built";
+        log::info("Ui") << "MainWindow built";
     }
 
     void MainWindow::setupSize() {
@@ -78,7 +78,7 @@ namespace Dentry::Ui {
 
         connect(m_model, &Model::FileSystemModel::directoryLoaded, this, &MainWindow::onDirectoryLoaded);
 
-        LOG_DEBUG("Ui") << "All signals connected";
+        log::debug("Ui") << "All signals connected";
     }
 
     void MainWindow::onDirectoryLoaded(const QString &) {

@@ -7,7 +7,7 @@
 
 #include "FileSystemModel.h"
 #include "../fs/FileInfo.h"
-#include "../util/Logger.h"
+#include "../log/Logger.h"
 
 #include <QDir>
 
@@ -18,12 +18,12 @@ namespace Dentry::Model {
 
     void FileSystemModel::setDirectory(const QString &path) {
         if (!QDir(path).exists()) {
-            LOG_ERROR("Model") << "Directory does not exist:" << path;
+            log::error("Model") << "Directory does not exist:" << path;
             emit errorOccurred(QString("Directory does not exist: %1").arg(path));
             return;
         }
 
-        LOG_INFO("Model") << "Loading directory:" << path;
+        log::info("Model") << "Loading directory:" << path;
 
         m_currentPath = path;
 
@@ -72,18 +72,18 @@ namespace Dentry::Model {
         m_entries = std::move(entries);
         endResetModel();
 
-        LOG_INFO("Model") << "Loaded" << m_entries.count() << "entries in" << path;
+        log::info("Model") << "Loaded" << m_entries.count() << "entries in" << path;
         emit directoryLoaded(m_currentPath);
     }
 
     void FileSystemModel::refresh() {
         if (m_currentPath.isEmpty()) {
-            LOG_WARNING("Model") << "refresh() called with empty path";
+            log::warn("Model") << "refresh() called with empty path";
             emit errorOccurred(QStringLiteral("No directory set to refresh"));
             return;
         }
 
-        LOG_DEBUG("Model") << "Refreshing:" << m_currentPath;
+        log::debug("Model") << "Refreshing:" << m_currentPath;
         setDirectory(m_currentPath);
     }
 

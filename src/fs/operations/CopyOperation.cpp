@@ -6,7 +6,7 @@
  */
 
 #include "CopyOperation.h"
-#include "../../util/Logger.h"
+#include "../../log/Logger.h"
 
 #include <QDir>
 #include <QFile>
@@ -24,7 +24,7 @@ namespace Dentry::Fs {
 
     void CopyOperation::execute() {
         setRunning(true);
-        LOG_INFO("Op") << "Copying" << m_sources.count() << "item(s) to" << m_destination;
+        log::info("Op") << "Copying" << m_sources.count() << "item(s) to" << m_destination;
 
         m_future = QtConcurrent::run([this] {
             const int total = m_sources.count();
@@ -32,7 +32,7 @@ namespace Dentry::Fs {
 
             for (const QString &source : m_sources) {
                 if (isCancelled()) {
-                    LOG_INFO("Op") << "Copy cancelled";
+                    log::info("Op") << "Copy cancelled";
                     setRunning(false);
                     emit finished(false, "Operation cancelled");
                     return;
@@ -52,32 +52,32 @@ namespace Dentry::Fs {
                 }
 
                 if (!success) {
-                    LOG_ERROR("Op") << "Failed to copy:" << info.fileName();
+                    log::error("Op") << "Failed to copy:" << info.fileName();
                     setRunning(false);
                     emit finished(false, "Could not copy file " + dest);
                     return;
                 }
 
                 ++completed;
-                LOG_DEBUG("Op") << "Copied:" << info.fileName()
-                                << "(" << completed << "/" << total << ")";
+                log::debug("Op") << "Copied:" << info.fileName()
+                                 << "(" << completed << "/" << total << ")";
                 emit progress(static_cast<int>(completed * 100.0 / total));
             }
 
-            LOG_INFO("Op") << "Copy completed successfully";
+            log::info("Op") << "Copy completed successfully";
             setRunning(false);
             emit finished(true, QString());
         });
     }
 
     bool CopyOperation::copyDir(const QString &source, const QString &destination) {
-        LOG_DEBUG("Op") << "Copying directory:" << source << "->" << destination;
+        log::debug("Op") << "Copying directory:" << source << "->" << destination;
 
         QDir srcDir(source);
         QDir dstDir;
 
         if (!dstDir.mkpath(destination)) {
-            LOG_ERROR("Op") << "Failed to create directory:" << destination;
+            log::error("Op") << "Failed to create directory:" << destination;
             return false;
         }
 
@@ -98,7 +98,7 @@ namespace Dentry::Fs {
                 if (QFile::exists(destPath))
                     QFile::remove(destPath);
                 if (!QFile::copy(entry.absoluteFilePath(), destPath)) {
-                    LOG_ERROR("Op") << "Failed to copy file:" << entry.fileName();
+                    log::error("Op") << "Failed to copy file:" << entry.fileName();
                     return false;
                 }
             }

@@ -6,7 +6,7 @@
  */
 
 #include "RenameOperation.h"
-#include "../../util/Logger.h"
+#include "../../log/Logger.h"
 
 #include <QDir>
 #include <QFile>
@@ -24,24 +24,24 @@ namespace Dentry::Fs {
 
     void RenameOperation::execute() {
         setRunning(true);
-        LOG_INFO("Op") << "Renaming:" << QFileInfo(m_source).fileName() << "->" << m_newName;
+        log::info("Op") << "Renaming:" << QFileInfo(m_source).fileName() << "->" << m_newName;
 
         m_future = QtConcurrent::run([this] {
             if (isCancelled()) {
-                LOG_INFO("Op") << "Rename cancelled";
+                log::info("Op") << "Rename cancelled";
                 setRunning(false);
                 emit finished(false, "Operation cancelled");
                 return;
             }
 
             if (!renameEntry(m_source)) {
-                LOG_ERROR("Op") << "Failed to rename:" << QFileInfo(m_source).fileName();
+                log::error("Op") << "Failed to rename:" << QFileInfo(m_source).fileName();
                 setRunning(false);
                 emit finished(false, QString("Failed to rename: %1").arg(m_source));
                 return;
             }
 
-            LOG_INFO("Op") << "Rename completed successfully";
+            log::info("Op") << "Rename completed successfully";
             emit progress(100);
             setRunning(false);
             emit finished(true, QString());
@@ -54,12 +54,12 @@ namespace Dentry::Fs {
 
         const QString sanitizedNewName = newNameInfo.fileName();
         if (sanitizedNewName.isEmpty()) {
-            LOG_ERROR("Op") << "Invalid new name for rename operation:" << m_newName;
+            log::error("Op") << "Invalid new name for rename operation:" << m_newName;
             return false;
         }
         const QString destination = QDir(info.dir().absolutePath()).filePath(sanitizedNewName);
 
-        LOG_DEBUG("Op") << "Renaming:" << path << "->" << destination;
+        log::debug("Op") << "Renaming:" << path << "->" << destination;
         return QFile::rename(path, destination);
     }
 
