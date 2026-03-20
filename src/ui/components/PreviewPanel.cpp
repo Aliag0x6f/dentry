@@ -13,7 +13,7 @@
 #include <QTextStream>
 #include <QVBoxLayout>
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
     PreviewPanel::PreviewPanel(QWidget *parent)
         : QWidget(parent) {
@@ -60,7 +60,7 @@ namespace Dentry::Ui {
         setAttribute(Qt::WA_StyledBackground, true);
     }
 
-    void PreviewPanel::preview(const Model::FileItem &item) {
+    void PreviewPanel::preview(const model::FileItem &item) {
         showMetadata(item);
 
         if (item.mimeType.startsWith("image/"))
@@ -102,7 +102,7 @@ namespace Dentry::Ui {
         m_stack->show();
     }
 
-    void PreviewPanel::showMetadata(const Model::FileItem &item) {
+    void PreviewPanel::showMetadata(const model::FileItem &item) {
         m_nameLabel->setText(item.name);
         m_metaLabel->setText(
             QString("%1\n%2\n%3")
@@ -112,4 +112,4 @@ namespace Dentry::Ui {
         );
     }
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

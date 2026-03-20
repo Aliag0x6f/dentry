@@ -9,7 +9,7 @@
 
 #include <QToolButton>
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
     Toolbar::Toolbar(QWidget *parent)
         : QToolBar(parent) {
@@ -72,4 +72,4 @@ namespace Dentry::Ui {
         m_pathBar->setText(path);
     }
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

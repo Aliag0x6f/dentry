@@ -10,7 +10,7 @@
 #include "../ui/Style.h"
 #include "../log/Logger.h"
 
-namespace Dentry {
+namespace dentry {
 
     Application::Application(int &argc, char **argv)
         : QApplication(argc, argv) {
@@ -18,14 +18,14 @@ namespace Dentry {
     }
 
     void Application::initialize() {
-        Dentry::log::install();
+        dentry::log::install();
 
-        setApplicationName(Metadata::AppName);
-        setApplicationDisplayName(Metadata::AppDisplayName);
-        setApplicationVersion(Metadata::AppVersion);
-        setStyleSheet(Dentry::Ui::Style::sheet());
+        setApplicationName(metadata::AppName);
+        setApplicationDisplayName(metadata::AppDisplayName);
+        setApplicationVersion(metadata::AppVersion);
+        setStyleSheet(dentry::ui::Style::sheet());
 
-        log::info("App") << Metadata::AppDisplayName << Metadata::AppVersion << "initialized";
+        log::info("App") << metadata::AppDisplayName << metadata::AppVersion << "initialized";
     }
 
-} // namespace Dentry
+} // namespace dentry

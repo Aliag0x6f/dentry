@@ -16,7 +16,7 @@
 #include <QString>
 #include <QWidget>
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
     /**
      * @class Sidebar
@@ -91,4 +91,4 @@ namespace Dentry::Ui {
 
     };
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

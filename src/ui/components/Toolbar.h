@@ -16,7 +16,7 @@
 #include <QString>
 #include <QToolBar>
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
     /**
      * @class Toolbar
@@ -97,4 +97,4 @@ namespace Dentry::Ui {
         QPointer<QLabel>    m_pathBar;
     };
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

@@ -7,7 +7,7 @@
 
 #include "PermissionFormatter.h"
 
-namespace Dentry::formatter {
+namespace dentry::formatter {
 
 	QString formatPermissions(const QFileInfo &info) {
 		QString result;
@@ -50,4 +50,4 @@ namespace Dentry::formatter {
 		return result;
 	}
 
-} // namespace Dentry::formatter
+} // namespace dentry::formatter

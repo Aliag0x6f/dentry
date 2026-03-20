@@ -7,7 +7,7 @@
 
 #include "StatusBar.h"
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
     StatusBar::StatusBar(QWidget *parent)
         : QStatusBar(parent) {
@@ -34,7 +34,7 @@ namespace Dentry::Ui {
         updateDisplay();
     }
 
-    void StatusBar::setSelection(const QList<Model::FileItem> &selected) {
+    void StatusBar::setSelection(const QList<model::FileItem> &selected) {
         m_selectionCount = selected.count();
         updateDisplay();
     }
@@ -57,4 +57,4 @@ namespace Dentry::Ui {
             m_selectionLabel->clear();
     }
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

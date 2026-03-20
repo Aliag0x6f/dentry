@@ -14,7 +14,7 @@
 #include <QList>
 #include <QTreeView>
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
 /**
  * @class FileListView
@@ -65,13 +65,13 @@ signals:
      * @brief Emitted when the selection changes.
      * @param selected List of currently selected FileItems.
      */
-    void selectionChanged(const QList<Model::FileItem> &selected);
+    void selectionChanged(const QList<model::FileItem> &selected);
 
     /**
      * @brief Emitted when the user double-clicks a file.
      * @param item The FileItem that was activated.
      */
-    void fileActivated(const Model::FileItem &item);
+    void fileActivated(const model::FileItem &item);
 
     // ── Operations ────────────────────────────────────────────────────────
 
@@ -140,4 +140,4 @@ private slots:
     void onSelectionChanged();
 };
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

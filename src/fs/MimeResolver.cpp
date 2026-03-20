@@ -10,7 +10,7 @@
 
 #include <QMimeType>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
 	const QMimeDatabase &MimeResolver::database() {
 		static QMimeDatabase db;
@@ -47,4 +47,4 @@ namespace Dentry::Fs {
 		return mime.genericIconName();
 	}
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

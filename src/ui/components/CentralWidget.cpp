@@ -7,9 +7,9 @@
 
 #include "CentralWidget.h"
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
-    CentralWidget::CentralWidget(Model::FileSystemModel *model, QWidget *parent)
+    CentralWidget::CentralWidget(model::FileSystemModel *model, QWidget *parent)
         : QWidget(parent)
         , m_model(model) {
         build();
@@ -48,4 +48,4 @@ namespace Dentry::Ui {
         m_splitter->setObjectName("mainSplitter");
     }
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

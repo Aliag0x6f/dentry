@@ -12,7 +12,7 @@
 #include <QString>
 #include <QStringList>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
 /**
  * @class DeleteOperation
@@ -78,4 +78,4 @@ private:
     QFuture<void> m_future;
 };
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

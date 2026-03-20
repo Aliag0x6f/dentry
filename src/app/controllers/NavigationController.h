@@ -14,7 +14,7 @@
 #include <QStack>
 #include <QString>
 
-namespace Dentry::App {
+namespace dentry::app {
 
 /**
  * @class NavigationController
@@ -45,7 +45,7 @@ public:
      * @param model  The file system model to update on navigation.
      * @param parent Optional Qt parent object.
      */
-    explicit NavigationController(Model::FileSystemModel *model, QObject *parent = nullptr);
+    explicit NavigationController(model::FileSystemModel *model, QObject *parent = nullptr);
 
     ~NavigationController() override = default;
 
@@ -105,8 +105,8 @@ signals:
     void canGoBackChanged(bool canGoBack);
 
 private:
-    QPointer<Model::FileSystemModel> m_model;
+    QPointer<model::FileSystemModel> m_model;
     QStack<QString>                  m_history;
 };
 
-} // namespace Dentry::App
+} // namespace dentry::app

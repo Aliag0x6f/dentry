@@ -11,7 +11,7 @@
 #include <QtGlobal>
 #include <QVBoxLayout>
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
     bool ProgressDialog::isCancelledResult(bool success, const QString &error) {
         return !success
@@ -19,7 +19,7 @@ namespace Dentry::Ui {
                 || error.compare(QStringLiteral("Operation canceled"), Qt::CaseInsensitive) == 0);
     }
 
-    ProgressDialog::ProgressDialog(Fs::AFileOperation *operation, QWidget *parent)
+    ProgressDialog::ProgressDialog(fs::AFileOperation *operation, QWidget *parent)
         : QDialog(parent)
         , m_operation(operation) {
         Q_ASSERT(m_operation != nullptr);
@@ -72,8 +72,8 @@ namespace Dentry::Ui {
     }
 
     void ProgressDialog::setupConnections() {
-        connect(m_operation,    &Fs::AFileOperation::progress, this, &ProgressDialog::onProgress);
-        connect(m_operation,    &Fs::AFileOperation::finished, this, &ProgressDialog::onFinished);
+        connect(m_operation,    &fs::AFileOperation::progress, this, &ProgressDialog::onProgress);
+        connect(m_operation,    &fs::AFileOperation::finished, this, &ProgressDialog::onFinished);
         connect(m_finishedButton, &QPushButton::clicked,         this, &ProgressDialog::onFinishedClicked);
         connect(m_cancelButton, &QPushButton::clicked,         this, &ProgressDialog::onCancelled);
     }
@@ -143,4 +143,4 @@ namespace Dentry::Ui {
         m_cancelButton->setEnabled(true);
     }
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

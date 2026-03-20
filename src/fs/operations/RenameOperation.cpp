@@ -13,7 +13,7 @@
 #include <QFileInfo>
 #include <QtConcurrent>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
     RenameOperation::RenameOperation(const QString &source,
                                      const QString &newName,
@@ -69,4 +69,4 @@ namespace Dentry::Fs {
             .arg(m_newName);
     }
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

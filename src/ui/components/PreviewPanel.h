@@ -17,7 +17,7 @@
 #include <QWidget>
 #include <QVBoxLayout>
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
     /**
      * @class PreviewPanel
@@ -53,7 +53,7 @@ namespace Dentry::Ui {
          * @brief Previews the given file.
          * @param item The FileItem to preview.
          */
-        void preview(const Model::FileItem &item);
+        void preview(const model::FileItem &item);
 
         /**
          * @brief Clears the preview panel.
@@ -72,7 +72,7 @@ namespace Dentry::Ui {
         void showImage(const QString &path);
 
         /** @brief Shows file metadata. */
-        void showMetadata(const Model::FileItem &item);
+        void showMetadata(const model::FileItem &item);
 
         QPointer<QLabel>         m_nameLabel;
         QPointer<QLabel>         m_metaLabel;
@@ -82,4 +82,4 @@ namespace Dentry::Ui {
         QPointer<QVBoxLayout>    m_layout;
     };
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

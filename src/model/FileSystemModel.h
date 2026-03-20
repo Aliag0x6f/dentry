@@ -10,13 +10,13 @@
 #include "AFileSystemModel.h"
 #include <QString>
 
-namespace Dentry::Model {
+namespace dentry::model {
 
     /**
      * @class FileSystemModel
      * @brief Concrete model that reads the local filesystem.
      *
-     * Uses QDir and Dentry::Fs::FileInfo to populate entries.
+     * Uses QDir and dentry::fs::FileInfo to populate entries.
      * Supports hidden file filtering, search filtering, and sorting
      * with directories always listed before files.
      *
@@ -61,4 +61,4 @@ namespace Dentry::Model {
         void refresh() override;
     };
 
-} // namespace Dentry::Model
+} // namespace dentry::model

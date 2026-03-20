@@ -26,7 +26,7 @@
 
 #include "IUIComponent.h"
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
     /**
      * @class AUIComponent
@@ -64,4 +64,4 @@ namespace Dentry::Ui {
         void setupConnections() override {}
     };
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

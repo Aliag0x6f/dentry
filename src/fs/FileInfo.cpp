@@ -12,7 +12,7 @@
 #include "../formatter/SizeFormatter.h"
 #include "../log/Logger.h"
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
 	FileInfo::FileInfo(const QString &path)
 		: FileInfo(QFileInfo(path)) {}
@@ -33,4 +33,4 @@ namespace Dentry::Fs {
 		log::debug("FileInfo") << "Computed:" << m_name << "MIME:" << m_mimeType;
 	}
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

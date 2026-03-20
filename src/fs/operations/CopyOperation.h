@@ -12,7 +12,7 @@
 #include <QStringList>
 #include <QFuture>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
     /**
      * @class CopyOperation
@@ -66,4 +66,4 @@ namespace Dentry::Fs {
         QFuture<void> m_future;
     };
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

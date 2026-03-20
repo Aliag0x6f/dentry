@@ -11,7 +11,7 @@
 #include <QFuture>
 #include <QString>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
 /**
  * @class RenameOperation
@@ -78,4 +78,4 @@ private:
     QFuture<void> m_future;
 };
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

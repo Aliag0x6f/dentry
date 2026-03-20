@@ -39,7 +39,7 @@ QLoggingCategory &categoryFor(const char *categoryName) {
 
 } // namespace
 
-namespace Dentry::log {
+namespace dentry::log {
 
 // ── ANSI color codes ──────────────────────────────────────────────────────────
 
@@ -130,4 +130,4 @@ QDebug error(const char *category) {
     return QMessageLogger().critical(categoryFor(category));
 }
 
-} // namespace Dentry::log
+} // namespace dentry::log

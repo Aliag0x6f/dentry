@@ -18,11 +18,11 @@
 #include <functional>
 #include <memory>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 class AFileOperation;
 }
 
-namespace Dentry::App {
+namespace dentry::app {
 
 /**
  * @class FileOperationController
@@ -56,7 +56,7 @@ public:
      * @param dialogParent The widget used as parent for progress/input dialogs.
      * @param parent       Optional Qt parent object.
      */
-    explicit FileOperationController(Model::FileSystemModel *model,
+    explicit FileOperationController(model::FileSystemModel *model,
                                      QWidget               *dialogParent,
                                      QObject               *parent = nullptr);
 
@@ -104,12 +104,12 @@ public slots:
     void onCreateFolderRequested(const QString &directory);
 
 private:
-    void runOperation(std::unique_ptr<Fs::AFileOperation> operation,
+    void runOperation(std::unique_ptr<fs::AFileOperation> operation,
                       const std::function<void(bool)>     &onFinished);
 
-    QPointer<Model::FileSystemModel> m_model;
+    QPointer<model::FileSystemModel> m_model;
     QPointer<QWidget>                m_dialogParent;
     Clipboard                        m_clipboard;
 };
 
-} // namespace Dentry::App
+} // namespace dentry::app

@@ -12,7 +12,7 @@
 #include <QList>
 #include <QString>
 
-namespace Dentry::Model {
+namespace dentry::model {
 
 /**
  * @class AFileSystemModel
@@ -104,4 +104,4 @@ protected:
     };
 };
 
-} // namespace Dentry::Model
+} // namespace dentry::model

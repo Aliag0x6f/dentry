@@ -18,7 +18,7 @@
 #include <QSplitter>
 #include <QWidget>
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
 /**
  * @class CentralWidget
@@ -45,7 +45,7 @@ public:
      * @param model  The file system model shared with FileListView.
      * @param parent Optional Qt parent.
      */
-    explicit CentralWidget(Model::FileSystemModel *model, QWidget *parent = nullptr);
+    explicit CentralWidget(model::FileSystemModel *model, QWidget *parent = nullptr);
 
     ~CentralWidget() override = default;
 
@@ -70,7 +70,7 @@ protected:
     void setupStyle() override;
 
 private:
-    QPointer<Model::FileSystemModel> m_model;
+    QPointer<model::FileSystemModel> m_model;
     QPointer<QHBoxLayout>            m_layout;
     QPointer<QSplitter>              m_splitter;
     QPointer<Sidebar>                m_sidebar;
@@ -78,4 +78,4 @@ private:
     QPointer<PreviewPanel>           m_previewPanel;
 };
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

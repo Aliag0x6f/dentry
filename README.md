@@ -39,7 +39,7 @@ To keep lifetimes explicit and safe, Dentry follows these ownership rules:
 
 Practical examples:
 
-- File operations in controllers are created via `std::unique_ptr`, then detached for async execution and deleted on `finished`.
+- File operations in controllers are created via `std::unique_ptr`; dialogs observe them through non-owning pointers during execution.
 - UI members that reference widgets/components use `QPointer` for safe, non-owning access to parent-owned objects.
 
 References:
@@ -54,6 +54,21 @@ References:
 - Qt6 Concurrent (`qt6-base`)
 - CMake 3.16 or later
 - A C++17-compatible compiler (GCC 9+, Clang 10+)
+
+## Namespace Conventions
+
+To avoid catch-all namespaces and improve navigation, Dentry follows this namespace taxonomy:
+
+- `dentry::log`: logging API (`install`, `debug`, `info`, `warn`, `error`)
+- `dentry::formatter`: stateless formatting helpers (`formatDateTime`, `formatSize`, `formatPermissions`, ...)
+- `dentry::app`, `dentry::fs`, `dentry::model`, `dentry::ui`: core application domains
+
+Conventions:
+
+- All namespaces use lower-case domain names.
+- New helper modules must use focused, lower-case namespaces.
+- Avoid reintroducing broad catch-all namespaces like `Util`.
+
 
 ## Installation
 
@@ -188,8 +203,9 @@ dentry/
     │   ├── Style.h
     │   ├── style.qss
     │   └── resources.qrc
-    └── util/
-        ├── Logger.h/.cpp
+    ├── log/
+    │   └── Logger.h/.cpp
+    └── formatter/
         ├── SizeFormatter.h/.cpp
         ├── DateFormatter.h/.cpp
         └── PermissionFormatter.h/.cpp

@@ -10,7 +10,7 @@
 #include <QDateTime>
 #include <QString>
 
-namespace Dentry::formatter {
+namespace dentry::formatter {
 
     /**
      * @brief Formats a QDateTime as a fixed-width date and time string.
@@ -34,4 +34,4 @@ namespace Dentry::formatter {
      */
     [[nodiscard]] QString formatDateShort(const QDateTime &dateTime);
 
-} // namespace Dentry::formatter
+} // namespace dentry::formatter

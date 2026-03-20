@@ -10,7 +10,7 @@
 #include <QFileInfo>
 #include <QString>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
 /**
  * @class FileInfo
@@ -29,7 +29,7 @@ namespace Dentry::Fs {
  *
  * Example:
  * @code
- * Dentry::Fs::FileInfo info("/home/user/document.pdf");
+ * dentry::fs::FileInfo info("/home/user/document.pdf");
  * qDebug() << info.mimeType();       // "application/pdf"
  * qDebug() << info.formattedSize();  // "4.2 M"
  * qDebug() << info.formattedDate();  // "03/14/2024 09:05"
@@ -167,4 +167,4 @@ private:
     void compute();
 };
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

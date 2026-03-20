@@ -11,7 +11,7 @@
 #include <QDir>
 #include <QtConcurrent>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
     CreateFolderOperation::CreateFolderOperation(const QString &directory,
                                                  const QString &name,
@@ -52,4 +52,4 @@ namespace Dentry::Fs {
         return QString("Creating folder %1").arg(m_name);
     }
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs
