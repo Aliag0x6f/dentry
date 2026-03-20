@@ -69,7 +69,6 @@ Conventions:
 - New helper modules must use focused, lower-case namespaces.
 - Avoid reintroducing broad catch-all namespaces like `Util`.
 
-Migration notes for the namespace split are documented in `doc/namespace-migration.md`.
 
 ## Installation
 
