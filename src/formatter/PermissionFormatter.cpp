@@ -1,15 +1,15 @@
 /**
  * @file PermissionFormatter.cpp
- * @brief Implementation of PermissionFormatter.
+ * @brief Implementation of permission formatting free functions.
  *
  * @author Hugo Fabresse
  */
 
 #include "PermissionFormatter.h"
 
-namespace Dentry::Util {
+namespace Dentry::formatter {
 
-	QString PermissionFormatter::format(const QFileInfo &info) {
+	QString formatPermissions(const QFileInfo &info) {
 		QString result;
 
 		if (!info.exists()) {
@@ -23,13 +23,13 @@ namespace Dentry::Util {
 		else
 			result += '-';
 
-		result += formatRaw(info.permissions());
+		result += formatPermissionsRaw(info.permissions());
 
 		return result;
 	}
 
 
-	QString PermissionFormatter::formatRaw(QFile::Permissions permissions) {
+	QString formatPermissionsRaw(QFile::Permissions permissions) {
 		QString result;
 
 		// Owner
@@ -50,4 +50,4 @@ namespace Dentry::Util {
 		return result;
 	}
 
-} // namespace Dentry::Util
+} // namespace Dentry::formatter
