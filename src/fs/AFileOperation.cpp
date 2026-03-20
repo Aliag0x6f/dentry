@@ -7,7 +7,7 @@
 
 #include "AFileOperation.h"
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
 	AFileOperation::AFileOperation(QObject *parent)
 		: QObject(parent) {}
@@ -31,4 +31,4 @@ namespace Dentry::Fs {
 			m_cancelled = false;
 	}
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

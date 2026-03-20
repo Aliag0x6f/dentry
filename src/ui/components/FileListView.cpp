@@ -11,7 +11,7 @@
 #include <QMenu>
 #include <QMouseEvent>
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
     FileListView::FileListView(QWidget *parent)
         : QTreeView(parent) {
@@ -64,13 +64,13 @@ namespace Dentry::Ui {
             return;
         }
 
-        const auto *fsModel = qobject_cast<const Model::AFileSystemModel *>(model());
+        const auto *fsModel = qobject_cast<const model::AFileSystemModel *>(model());
         if (!fsModel) {
             QTreeView::mouseDoubleClickEvent(event);
             return;
         }
 
-        const Model::FileItem item = fsModel->entries().at(index.row());
+        const model::FileItem item = fsModel->entries().at(index.row());
 
         if (item.isDir)
             emit directoryRequested(item.absolutePath);
@@ -81,7 +81,7 @@ namespace Dentry::Ui {
     }
 
     void FileListView::contextMenuEvent(QContextMenuEvent *event) {
-        const auto *fsModel = qobject_cast<const Model::AFileSystemModel *>(model());
+        const auto *fsModel = qobject_cast<const model::AFileSystemModel *>(model());
         if (!fsModel)
             return;
 
@@ -120,11 +120,11 @@ namespace Dentry::Ui {
     // ── Selection ─────────────────────────────────────────────────────────────
 
     void FileListView::onSelectionChanged() {
-        const auto *fsModel = qobject_cast<const Model::AFileSystemModel *>(model());
+        const auto *fsModel = qobject_cast<const model::AFileSystemModel *>(model());
         if (!fsModel)
             return;
 
-        QList<Model::FileItem> selected;
+        QList<model::FileItem> selected;
         const QModelIndexList indexes = selectionModel()->selectedRows();
         selected.reserve(indexes.count());
 
@@ -134,4 +134,4 @@ namespace Dentry::Ui {
         emit selectionChanged(selected);
     }
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

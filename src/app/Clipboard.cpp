@@ -8,7 +8,7 @@
 #include "Clipboard.h"
 #include "../log/Logger.h"
 
-namespace Dentry::App {
+namespace dentry::app {
 
     void Clipboard::copy(const QStringList &paths) {
         m_paths = paths;
@@ -40,4 +40,4 @@ namespace Dentry::App {
         return m_paths.isEmpty();
     }
 
-} // namespace Dentry::App
+} // namespace dentry::app

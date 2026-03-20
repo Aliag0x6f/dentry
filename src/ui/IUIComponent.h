@@ -14,7 +14,7 @@
 
 #pragma once
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
 /**
  * @class IUIComponent
@@ -56,4 +56,4 @@ protected:
     virtual void setupConnections() {}
 };
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

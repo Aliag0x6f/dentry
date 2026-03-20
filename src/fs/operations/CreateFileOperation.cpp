@@ -13,7 +13,7 @@
 #include <QFileInfo>
 #include <QtConcurrent>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
     CreateFileOperation::CreateFileOperation(const QString &directory,
                                              const QString &name,
@@ -65,4 +65,4 @@ namespace Dentry::Fs {
         return QString("Creating file %1").arg(m_name);
     }
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

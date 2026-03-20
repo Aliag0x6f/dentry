@@ -9,7 +9,7 @@
 
 #include <QString>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
 	/**
 	 * @class IFileOperation
@@ -65,4 +65,4 @@ namespace Dentry::Fs {
 		IFileOperation() = default;
 	};
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

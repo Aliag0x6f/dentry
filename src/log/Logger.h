@@ -22,12 +22,12 @@
 #include <QLoggingCategory>
 #include <QString>
 
-namespace Dentry::log {
+namespace dentry::log {
 
 /**
  * @brief Installs the custom message handler.
  *
- * Must be called once before any Dentry::log::* function is used.
+ * Must be called once before any dentry::log::* function is used.
  * Typically called in Application::initialize().
  */
 void install();
@@ -61,4 +61,4 @@ QDebug warn(const char *category);
  */
 QDebug error(const char *category);
 
-} // namespace Dentry::log
+} // namespace dentry::log

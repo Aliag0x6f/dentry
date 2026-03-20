@@ -16,7 +16,7 @@
 #include <QStatusBar>
 #include <QString>
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
     /**
      * @class StatusBar
@@ -65,7 +65,7 @@ namespace Dentry::Ui {
          * @brief Updates the selection information.
          * @param selected List of currently selected FileItems.
          */
-        void setSelection(const QList<Model::FileItem> &selected);
+        void setSelection(const QList<model::FileItem> &selected);
 
         /**
          * @brief Clears all displayed information.
@@ -89,4 +89,4 @@ namespace Dentry::Ui {
         int m_selectionCount = 0;
     };
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

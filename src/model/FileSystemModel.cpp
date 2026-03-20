@@ -11,7 +11,7 @@
 
 #include <QDir>
 
-namespace Dentry::Model {
+namespace dentry::model {
 
     FileSystemModel::FileSystemModel(QObject *parent)
         : AFileSystemModel(parent) {}
@@ -42,7 +42,7 @@ namespace Dentry::Model {
             if (!m_filter.isEmpty() && !fi.fileName().contains(m_filter, Qt::CaseInsensitive))
                 continue;
 
-            const Fs::FileInfo info(fi);
+            const fs::FileInfo info(fi);
 
             FileItem item;
             item.name                 = info.name();
@@ -87,4 +87,4 @@ namespace Dentry::Model {
         setDirectory(m_currentPath);
     }
 
-} // namespace Dentry::Model
+} // namespace dentry::model

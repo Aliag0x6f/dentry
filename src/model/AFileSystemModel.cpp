@@ -8,7 +8,7 @@
 #include "AFileSystemModel.h"
 #include "../log/Logger.h"
 
-namespace Dentry::Model {
+namespace dentry::model {
 
     AFileSystemModel::AFileSystemModel(QObject *parent)
         : QAbstractItemModel(parent) {}
@@ -97,4 +97,4 @@ namespace Dentry::Model {
         }
     }
 
-} // namespace Dentry::Model
+} // namespace dentry::model

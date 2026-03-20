@@ -20,7 +20,7 @@
 #include <QStack>
 #include <QString>
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
 /**
  * @class MainWindow
@@ -63,12 +63,12 @@ private slots:
     void onDirectoryLoaded(const QString &);
 
 private:
-    QPointer<Model::FileSystemModel>       m_model;
+    QPointer<model::FileSystemModel>       m_model;
     QPointer<Toolbar>                      m_toolbar;
     QPointer<StatusBar>                    m_statusBar;
     QPointer<CentralWidget>                m_central;
-    QPointer<App::FileOperationController> m_fileOperationController;
-    QPointer<App::NavigationController>    m_navigationController;
+    QPointer<app::FileOperationController> m_fileOperationController;
+    QPointer<app::NavigationController>    m_navigationController;
 };
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

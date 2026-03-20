@@ -16,7 +16,7 @@
 #include <QProgressBar>
 #include <QPushButton>
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
     /**
      * @class ProgressDialog
@@ -46,7 +46,7 @@ namespace Dentry::Ui {
          * @param operation The file operation to track. Must not be null.
          * @param parent    Optional Qt parent widget.
          */
-        explicit ProgressDialog(Fs::AFileOperation *operation, QWidget *parent = nullptr);
+        explicit ProgressDialog(fs::AFileOperation *operation, QWidget *parent = nullptr);
 
         ~ProgressDialog() override = default;
 
@@ -98,7 +98,7 @@ namespace Dentry::Ui {
 
     private:
         // Non-owning observer. Ownership is provided externally (typically by Qt parent-child).
-        QPointer<Fs::AFileOperation> m_operation;
+        QPointer<fs::AFileOperation> m_operation;
         QPointer<QLabel>             m_descriptionLabel;
         QPointer<QProgressBar>       m_progressBar;
         QPointer<QPushButton>        m_finishedButton;
@@ -140,4 +140,4 @@ namespace Dentry::Ui {
         static bool isCancelledResult(bool success, const QString &error);
     };
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

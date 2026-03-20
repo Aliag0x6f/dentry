@@ -10,7 +10,7 @@
 #include <QString>
 #include <QLocale>
 
-namespace Dentry::formatter {
+namespace dentry::formatter {
 
     /**
      * @brief Formats a byte count into a human-readable string using traditional binary unit notation.
@@ -34,4 +34,4 @@ namespace Dentry::formatter {
      */
     [[nodiscard]] QString formatSizeLong(qint64 bytes);
 
-} // namespace Dentry::formatter
+} // namespace dentry::formatter

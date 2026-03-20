@@ -11,7 +11,7 @@
 #include <QFile>
 #include <QString>
 
-namespace Dentry::Model {
+namespace dentry::model {
 
 	/**
 	 * @struct FileItem
@@ -37,4 +37,4 @@ namespace Dentry::Model {
 		bool                isSymlink;
 	};
 
-} // namespace Dentry::Model
+} // namespace dentry::model

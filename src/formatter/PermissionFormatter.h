@@ -11,7 +11,7 @@
 #include <QFileInfo>
 #include <QString>
 
-namespace Dentry::formatter {
+namespace dentry::formatter {
 
 /**
  * @brief Formats file permissions as a Unix-style string.
@@ -42,4 +42,4 @@ namespace Dentry::formatter {
  */
 [[nodiscard]] QString formatPermissionsRaw(QFile::Permissions permissions);
 
-} // namespace Dentry::formatter
+} // namespace dentry::formatter

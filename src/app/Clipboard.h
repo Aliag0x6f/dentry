@@ -9,7 +9,7 @@
 
 #include <QStringList>
 
-namespace Dentry::App {
+namespace dentry::app {
 
 /**
  * @class Clipboard
@@ -24,7 +24,7 @@ namespace Dentry::App {
  *
  * Example:
  * @code
- * Dentry::App::Clipboard clipboard;
+ * dentry::app::Clipboard clipboard;
  * clipboard.copy({ "/home/user/file.txt" });
  *
  * if (!clipboard.isEmpty()) {
@@ -92,4 +92,4 @@ private:
     bool        m_isCut = false;
 };
 
-} // namespace Dentry::App
+} // namespace dentry::app

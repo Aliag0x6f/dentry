@@ -13,7 +13,7 @@
 #include <QFileInfo>
 #include <QtConcurrent>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
     DeleteOperation::DeleteOperation(const QStringList &targets,
                                      QObject           *parent)
@@ -71,4 +71,4 @@ namespace Dentry::Fs {
         return QString("Deleting %1 item(s)").arg(m_targets.count());
     }
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

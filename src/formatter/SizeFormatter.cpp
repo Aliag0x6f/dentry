@@ -7,7 +7,7 @@
 
 #include "SizeFormatter.h"
 
-namespace Dentry::formatter {
+namespace dentry::formatter {
 
 	QString formatSize(qint64 bytes) {
 		return QLocale().formattedDataSize(bytes, 2, QLocale::DataSizeTraditionalFormat);
@@ -17,4 +17,4 @@ namespace Dentry::formatter {
 		return QLocale().formattedDataSize(bytes, 2, QLocale::DataSizeIecFormat);
 	}
 
-} // namespace Dentry::formatter
+} // namespace dentry::formatter

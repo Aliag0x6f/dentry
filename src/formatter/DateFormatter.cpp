@@ -7,7 +7,7 @@
 
 #include "DateFormatter.h"
 
-namespace Dentry::formatter {
+namespace dentry::formatter {
 
     QString formatDateTime(const QDateTime &dateTime) {
         if (!dateTime.isValid())
@@ -23,4 +23,4 @@ namespace Dentry::formatter {
         return dateTime.toString("MM/dd/yyyy");
     }
 
-} // namespace Dentry::formatter
+} // namespace dentry::formatter

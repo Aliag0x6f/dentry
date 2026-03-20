@@ -12,7 +12,7 @@
 #include <QString>
 #include <atomic>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
 /**
  * @class AFileOperation
@@ -94,4 +94,4 @@ private:
     std::atomic_bool m_cancelled = false;
 };
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

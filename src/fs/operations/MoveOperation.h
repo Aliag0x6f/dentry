@@ -12,7 +12,7 @@
 #include <QString>
 #include <QStringList>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
 /**
  * @class MoveOperation
@@ -97,4 +97,4 @@ private:
     QFuture<void> m_future;
 };
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

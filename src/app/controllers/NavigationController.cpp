@@ -12,9 +12,9 @@
 #include <QStandardPaths>
 
 
-namespace Dentry::App {
+namespace dentry::app {
 
-    NavigationController::NavigationController(Model::FileSystemModel *model, QObject *parent)
+    NavigationController::NavigationController(model::FileSystemModel *model, QObject *parent)
         : QObject(parent)
         , m_model(model) {
     }
@@ -74,4 +74,4 @@ namespace Dentry::App {
         navigateTo(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     }
 
-} // namespace Dentry::App
+} // namespace dentry::app

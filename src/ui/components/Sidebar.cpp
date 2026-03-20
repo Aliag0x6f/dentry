@@ -12,7 +12,7 @@
 #include <QStandardPaths>
 #include <QVBoxLayout>
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
     Sidebar::Sidebar(QWidget *parent)
         : QFrame(parent) {
@@ -88,4 +88,4 @@ namespace Dentry::Ui {
             emit placeSelected(path);
     }
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

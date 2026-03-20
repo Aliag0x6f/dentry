@@ -13,7 +13,7 @@
 #include <QFileInfo>
 #include <QtConcurrent>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
     MoveOperation::MoveOperation(const QStringList &sources,
                                  const QString     &destination,
@@ -115,4 +115,4 @@ namespace Dentry::Fs {
             .arg(m_destination);
     }
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs
