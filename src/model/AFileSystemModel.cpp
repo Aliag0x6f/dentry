@@ -6,7 +6,7 @@
  */
 
 #include "AFileSystemModel.h"
-#include "../util/Logger.h"
+#include "../log/Logger.h"
 
 namespace Dentry::Model {
 
@@ -14,13 +14,13 @@ namespace Dentry::Model {
         : QAbstractItemModel(parent) {}
 
     void AFileSystemModel::setShowHidden(bool show) {
-        LOG_DEBUG("Model") << "ShowHidden changed to:" << show;
+        log::debug("Model") << "ShowHidden changed to:" << show;
         m_showHidden = show;
         refresh();
     }
 
     void AFileSystemModel::setFilter(const QString &filter) {
-        LOG_DEBUG("Model") << "Filter changed to:" << filter;
+        log::debug("Model") << "Filter changed to:" << filter;
         m_filter = filter;
         refresh();
     }

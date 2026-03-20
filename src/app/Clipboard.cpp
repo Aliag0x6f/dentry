@@ -6,26 +6,26 @@
  */
 
 #include "Clipboard.h"
-#include "../util/Logger.h"
+#include "../log/Logger.h"
 
 namespace Dentry::App {
 
     void Clipboard::copy(const QStringList &paths) {
         m_paths = paths;
         m_isCut = false;
-        LOG_DEBUG("Clipboard") << "Copy:" << paths.count() << "item(s)";
+        log::debug("Clipboard") << "Copy:" << paths.count() << "item(s)";
     }
 
     void Clipboard::cut(const QStringList &paths) {
         m_paths = paths;
         m_isCut = true;
-        LOG_DEBUG("Clipboard") << "Cut:" << paths.count() << "item(s)";
+        log::debug("Clipboard") << "Cut:" << paths.count() << "item(s)";
     }
 
     void Clipboard::clear() {
         m_paths.clear();
         m_isCut = false;
-        LOG_DEBUG("Clipboard") << "Cleared";
+        log::debug("Clipboard") << "Cleared";
     }
 
     const QStringList &Clipboard::paths() const {

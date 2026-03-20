@@ -6,7 +6,7 @@
  */
 
 #include "DeleteOperation.h"
-#include "../../util/Logger.h"
+#include "../../log/Logger.h"
 
 #include <QDir>
 #include <QFile>
@@ -22,7 +22,7 @@ namespace Dentry::Fs {
 
     void DeleteOperation::execute() {
         setRunning(true);
-        LOG_INFO("Op") << "Deleting " << m_targets.count() << " item(s)";
+        log::info("Op") << "Deleting " << m_targets.count() << " item(s)";
 
         m_future = QtConcurrent::run([this] {
             const int total = m_targets.count();
@@ -30,26 +30,26 @@ namespace Dentry::Fs {
 
             for (const QString &target : m_targets) {
                 if (isCancelled()) {
-                    LOG_INFO("Op") << "Delete cancelled";
+                    log::info("Op") << "Delete cancelled";
                     setRunning(false);
                     emit finished(false, "Operation cancelled");
                     return;
                 }
 
                 if (!deleteEntry(target)) {
-                    LOG_ERROR("Op") << "Failed to delete " << target;
+                    log::error("Op") << "Failed to delete " << target;
                     setRunning(false);
                     emit finished(false, QString("Failed to delete: %1").arg(target));
                     return;
                 }
 
                 ++completed;
-                LOG_DEBUG("Op") << "Deleted " << target
-                                << "(" << completed << "/" << total << ")";
+                log::debug("Op") << "Deleted " << target
+                                 << "(" << completed << "/" << total << ")";
                 emit progress(static_cast<int>(completed * 100.0 / total));
             }
 
-            LOG_INFO("Op") << "Delete completed successfully";
+            log::info("Op") << "Delete completed successfully";
             setRunning(false);
             emit finished(true, QString());
         });
@@ -59,11 +59,11 @@ namespace Dentry::Fs {
         const QFileInfo info(path);
 
         if (info.isDir()) {
-            LOG_DEBUG("Op") << "Deleting directory:" << path;
+            log::debug("Op") << "Deleting directory:" << path;
             return QDir(path).removeRecursively();
         }
 
-        LOG_DEBUG("Op") << "Deleting file:" << path;
+        log::debug("Op") << "Deleting file:" << path;
         return QFile::remove(path);
     }
 

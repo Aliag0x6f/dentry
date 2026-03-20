@@ -8,7 +8,7 @@
 #include "Application.h"
 #include "AppMetadata.h"
 #include "../ui/Style.h"
-#include "../util/Logger.h"
+#include "../log/Logger.h"
 
 namespace Dentry {
 
@@ -18,14 +18,14 @@ namespace Dentry {
     }
 
     void Application::initialize() {
-        Dentry::Util::Logger::install();
+        Dentry::log::install();
 
         setApplicationName(Metadata::AppName);
         setApplicationDisplayName(Metadata::AppDisplayName);
         setApplicationVersion(Metadata::AppVersion);
         setStyleSheet(Dentry::Ui::Style::sheet());
 
-        LOG_INFO("App") << Metadata::AppDisplayName << Metadata::AppVersion << "initialized";
+        log::info("App") << Metadata::AppDisplayName << Metadata::AppVersion << "initialized";
     }
 
 } // namespace Dentry

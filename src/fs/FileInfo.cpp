@@ -10,7 +10,7 @@
 #include "../util/DateFormatter.h"
 #include "../util/PermissionFormatter.h"
 #include "../util/SizeFormatter.h"
-#include "../util/Logger.h"
+#include "../log/Logger.h"
 
 namespace Dentry::Fs {
 
@@ -30,7 +30,7 @@ namespace Dentry::Fs {
 		m_formattedDate		   = Util::DateFormatter::format(m_lastModified);
 		m_formattedPermissions = Util::PermissionFormatter::format(m_fileInfo);
 
-		LOG_DEBUG("FileInfo") << "Computed:" << m_name << "MIME:" << m_mimeType;
+		log::debug("FileInfo") << "Computed:" << m_name << "MIME:" << m_mimeType;
 	}
 
 } // namespace Dentry::Fs

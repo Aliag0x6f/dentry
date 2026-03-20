@@ -6,7 +6,7 @@
  */
 
 #include "NavigationController.h"
-#include "../../util/Logger.h"
+#include "../../log/Logger.h"
 
 #include <QDir>
 #include <QStandardPaths>
@@ -32,7 +32,7 @@ namespace Dentry::App {
             return;
 
         if (!QDir(path).exists()) {
-            LOG_WARNING("Navigation") << "Directory does not exist:" << path;
+            log::warn("Navigation") << "Directory does not exist:" << path;
             return;
         }
 
@@ -49,7 +49,7 @@ namespace Dentry::App {
         if (canGoBack() != couldGoBack)
             emit canGoBackChanged(canGoBack());
 
-        LOG_INFO("Navigation") << "Navigated to:" << path;
+        log::info("Navigation") << "Navigated to:" << path;
     }
 
     void NavigationController::navigateBack() {
@@ -67,7 +67,7 @@ namespace Dentry::App {
         emit pathChanged(path);
         emit canGoBackChanged(canGoBack());
 
-        LOG_INFO("Navigation") << "Navigated back to:" << path;
+        log::info("Navigation") << "Navigated back to:" << path;
     }
 
     void NavigationController::navigateHome() {
