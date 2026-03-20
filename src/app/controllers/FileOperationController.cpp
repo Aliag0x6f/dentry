@@ -26,7 +26,7 @@ namespace Dentry::App {
         if (!operation)
             return;
 
-        Fs::AFileOperation *op = operation.release();
+        Fs::AFileOperation *op = operation.get();
         Ui::ProgressDialog dialog(op, m_dialogParent);
 
         // not working for the moment
