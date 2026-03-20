@@ -14,16 +14,20 @@
 namespace Dentry::formatter {
 
 /**
- * @brief Formats file permissions as a 10-character Unix-style string.
+ * @brief Formats file permissions as a Unix-style string.
  *
- * The format is: [type][owner][group][others]
+ * For existing files, the format is: [type][owner][group][others]
  * - type:   'd' for directory, '-' for regular file, 'l' for symlink
  * - owner:  rwx or --- based on QFile::ReadOwner/WriteOwner/ExeOwner
  * - group:  rwx or --- based on QFile::ReadGroup/WriteGroup/ExeGroup
  * - others: rwx or --- based on QFile::ReadOther/WriteOther/ExeOther
  *
- * @param info A valid QFileInfo object for the target file.
- * @return A 10-character permission string such as "-rwxr-xr-x".
+ * If @p info does not refer to an existing file (info.exists() is false),
+ * an empty QString is returned.
+ *
+ * @param info A QFileInfo object for the target file.
+ * @return A 10-character permission string such as "-rwxr-xr-x" for existing
+ *         files, or an empty string if the file does not exist.
  */
 [[nodiscard]] QString formatPermissions(const QFileInfo &info);
 
