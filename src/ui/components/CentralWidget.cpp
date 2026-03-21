@@ -38,6 +38,23 @@ namespace dentry::ui {
         setupStyle();
     }
 
+    void CentralWidget::setSidebarShowHidden(bool show) {
+        m_sidebar->setShowHidden(show);
+    }
+
+    void CentralWidget::clearPreview() {
+        m_previewPanel->clear();
+    }
+
+    void CentralWidget::updatePreviewFromSelection(const QList<model::FileItem> &selected) {
+        if (selected.count() == 1 && !selected.first().isDir) {
+            m_previewPanel->preview(selected.first());
+            return;
+        }
+
+        m_previewPanel->clear();
+    }
+
     void CentralWidget::setupSize() {
         m_layout->setContentsMargins(6, 6, 6, 6);
         m_layout->setSpacing(6);

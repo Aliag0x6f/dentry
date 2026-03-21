@@ -14,6 +14,7 @@
 #include "../../model/FileSystemModel.h"
 
 #include <QHBoxLayout>
+#include <QList>
 #include <QPointer>
 #include <QSplitter>
 #include <QWidget>
@@ -24,14 +25,13 @@ namespace dentry::ui {
  * @class CentralWidget
  * @brief Owns and lays out the Sidebar, FileListView and PreviewPanel inside a QSplitter.
  *
- * MainWindow sets this as its central widget and interacts
- * with its children only through the provided accessors.
- *
+ * MainWindow sets this as its central widget and interacts through
+ * behavior methods plus a minimal set of child accessors when needed.
  * Example:
  * @code
  * auto central = std::make_unique<CentralWidget>(model, this);
  * setCentralWidget(central.get());
- * connect(central->sidebar(),      &Sidebar::placeSelected,          this, &MainWindow::navigateTo);
+ * connect(central->sidebar(), &Sidebar::placeSelected, this, &MainWindow::navigateTo);
  * connect(central->fileListView(), &FileListView::directoryRequested, this, &MainWindow::navigateTo);
  * central.release(); // QMainWindow now owns the central widget.
  * @endcode
@@ -54,16 +54,23 @@ public:
     CentralWidget(CentralWidget &&)                 = delete;
     CentralWidget &operator=(CentralWidget &&)      = delete;
 
-    /** @brief Returns the sidebar. */
-    Sidebar      *sidebar()       const { return m_sidebar; }
-
-    /** @brief Returns the file list view. */
-    FileListView *fileListView()  const { return m_fileListView; }
-
-    /** @brief Returns the preview panel. */
-    PreviewPanel *previewPanel()  const { return m_previewPanel; }
-
     void build() override;
+
+    /** @brief Exposes sidebar for integration wiring from MainWindow. */
+    Sidebar *sidebar() const { return m_sidebar; }
+
+    /** @brief Exposes file list view for integration wiring from MainWindow. */
+    FileListView *fileListView() const { return m_fileListView; }
+
+    /** @brief Updates sidebar visibility policy. */
+    void setSidebarShowHidden(bool show);
+
+public slots:
+    /** @brief Clears preview content. */
+    void clearPreview();
+
+    /** @brief Updates preview based on the current selection policy. */
+    void updatePreviewFromSelection(const QList<model::FileItem> &selected);
 
 protected:
     void setupSize()  override;
