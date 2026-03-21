@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "../AUIComponent.h"
+#include "../UIComponent.h"
 #include "../../model/FileItem.h"
 
 #include <QLabel>
@@ -33,7 +33,7 @@ namespace dentry::ui {
      * preview.release(); // Qt parent now owns the panel.
      * @endcode
      */
-    class PreviewPanel : public QWidget, public AUIComponent {
+    class PreviewPanel : public UIComponent<QWidget, QVBoxLayout> {
         Q_OBJECT
 
     public:
@@ -45,8 +45,6 @@ namespace dentry::ui {
         PreviewPanel &operator=(const PreviewPanel &) = delete;
         PreviewPanel(PreviewPanel &&)                 = delete;
         PreviewPanel &operator=(PreviewPanel &&)      = delete;
-
-        void build() override;
 
     public slots:
         /**
@@ -61,7 +59,13 @@ namespace dentry::ui {
         void clear();
 
     protected:
+        /** @brief Builds the vertical preview layout and child widgets. */
+        void setupLayout(QVBoxLayout &layout) override;
+
+        /** @brief Applies size constraints for the preview panel. */
         void setupSize()  override;
+
+        /** @brief Applies object name and style-related flags. */
         void setupStyle() override;
 
     private:
@@ -79,7 +83,6 @@ namespace dentry::ui {
         QPointer<QLabel>         m_imageLabel;
         QPointer<QTextEdit>      m_textEdit;
         QPointer<QStackedWidget> m_stack;
-        QPointer<QVBoxLayout>    m_layout;
     };
 
 } // namespace dentry::ui

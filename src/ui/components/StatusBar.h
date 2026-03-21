@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "../AUIComponent.h"
+#include "../UIComponent.h"
 #include "../../model/FileItem.h"
 
 #include <QLabel>
@@ -34,7 +34,7 @@ namespace dentry::ui {
      * statusBar.release(); // QMainWindow now owns the status bar.
      * @endcode
      */
-    class StatusBar : public QStatusBar, public AUIComponent {
+    class StatusBar : public UIComponent<QStatusBar, void> {
         Q_OBJECT
 
     public:
@@ -50,8 +50,6 @@ namespace dentry::ui {
         StatusBar &operator=(const StatusBar &) = delete;
         StatusBar(StatusBar &&)                 = delete;
         StatusBar &operator=(StatusBar &&)      = delete;
-
-        void build() override;
 
     public slots:
         /**
@@ -73,9 +71,14 @@ namespace dentry::ui {
         void clear();
 
     protected:
+        /** @brief Applies status bar sizing policy. */
         void setupSize() override;
 
     private:
+        /** @brief Creates and attaches status labels to the bar. */
+        void setupWidgets();
+
+        /** @brief Refreshes labels using current counters and selection state. */
         void updateDisplay();
 
         /** @brief Label displaying folder and file counts. */

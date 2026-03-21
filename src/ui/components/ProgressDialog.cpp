@@ -20,27 +20,24 @@ namespace dentry::ui {
     }
 
     ProgressDialog::ProgressDialog(fs::AFileOperation *operation, QWidget *parent)
-        : QDialog(parent)
+        : UIComponent(parent)
         , m_operation(operation) {
         Q_ASSERT(m_operation != nullptr);
         build();
     }
 
-    void ProgressDialog::build() {
-        setupSize();
-
-        QVBoxLayout *layout = new QVBoxLayout(this);
-        layout->setSpacing(12);
-        layout->setContentsMargins(16, 16, 16, 16);
+    void ProgressDialog::setupLayout(QVBoxLayout &layout) {
+        layout.setSpacing(12);
+        layout.setContentsMargins(16, 16, 16, 16);
 
         m_descriptionLabel = new QLabel(m_operation->description(), this);
         m_descriptionLabel->setWordWrap(true);
-        layout->addWidget(m_descriptionLabel);
+        layout.addWidget(m_descriptionLabel);
 
         m_progressBar = new QProgressBar(this);
         m_progressBar->setRange(0, 100);
         m_progressBar->setValue(0);
-        layout->addWidget(m_progressBar);
+        layout.addWidget(m_progressBar);
 
         QHBoxLayout *buttonLayout = new QHBoxLayout();
         buttonLayout->addStretch();
@@ -54,9 +51,7 @@ namespace dentry::ui {
         m_finishedButton->setAutoDefault(true);
         buttonLayout->addWidget(m_finishedButton);
 
-        layout->addLayout(buttonLayout);
-
-        setupConnections();
+        layout.addLayout(buttonLayout);
     }
 
     void ProgressDialog::setupSize() {

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "../AUIComponent.h"
+#include "../UIComponent.h"
 #include "FileListView.h"
 #include "PreviewPanel.h"
 #include "Sidebar.h"
@@ -36,7 +36,7 @@ namespace dentry::ui {
  * central.release(); // QMainWindow now owns the central widget.
  * @endcode
  */
-class CentralWidget : public QWidget, public AUIComponent {
+class CentralWidget : public UIComponent<QWidget, QHBoxLayout> {
     Q_OBJECT
 
 public:
@@ -53,8 +53,6 @@ public:
     CentralWidget &operator=(const CentralWidget &) = delete;
     CentralWidget(CentralWidget &&)                 = delete;
     CentralWidget &operator=(CentralWidget &&)      = delete;
-
-    void build() override;
 
     /** @brief Exposes sidebar for integration wiring from MainWindow. */
     Sidebar *sidebar() const { return m_sidebar; }
@@ -73,12 +71,17 @@ public slots:
     void updatePreviewFromSelection(const QList<model::FileItem> &selected);
 
 protected:
+    /** @brief Creates the splitter structure and adds child panels to the layout. */
+    void setupLayout(QHBoxLayout &layout) override;
+
+    /** @brief Applies margins and spacing for the central area layout. */
     void setupSize()  override;
+
+    /** @brief Applies object names used by styling rules. */
     void setupStyle() override;
 
 private:
     QPointer<model::FileSystemModel> m_model;
-    QPointer<QHBoxLayout>            m_layout;
     QPointer<QSplitter>              m_splitter;
     QPointer<Sidebar>                m_sidebar;
     QPointer<FileListView>           m_fileListView;

@@ -16,27 +16,23 @@
 namespace dentry::ui {
 
     PreviewPanel::PreviewPanel(QWidget *parent)
-        : QWidget(parent) {
+        : UIComponent(parent) {
         build();
     }
 
-    void PreviewPanel::build() {
-        setupSize();
-        setupStyle();
-
-        m_layout = new QVBoxLayout(this);
-        m_layout->setContentsMargins(12, 12, 12, 12);
-        m_layout->setSpacing(8);
+    void PreviewPanel::setupLayout(QVBoxLayout &layout) {
+        layout.setContentsMargins(12, 12, 12, 12);
+        layout.setSpacing(8);
 
         m_nameLabel = new QLabel(this);
         m_nameLabel->setWordWrap(true);
         m_nameLabel->setAlignment(Qt::AlignCenter);
-        m_layout->addWidget(m_nameLabel);
+        layout.addWidget(m_nameLabel);
 
         m_metaLabel = new QLabel(this);
         m_metaLabel->setWordWrap(true);
         m_metaLabel->setAlignment(Qt::AlignCenter);
-        m_layout->addWidget(m_metaLabel);
+        layout.addWidget(m_metaLabel);
 
         m_stack = new QStackedWidget(this);
 
@@ -48,7 +44,7 @@ namespace dentry::ui {
         m_textEdit->setReadOnly(true);
         m_stack->addWidget(m_textEdit);
 
-        m_layout->addWidget(m_stack);
+        layout.addWidget(m_stack);
     }
 
     void PreviewPanel::setupSize() {

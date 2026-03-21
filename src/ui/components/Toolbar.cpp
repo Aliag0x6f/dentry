@@ -12,13 +12,12 @@
 namespace dentry::ui {
 
     Toolbar::Toolbar(QWidget *parent)
-        : QToolBar(parent) {
+        : UIComponent(parent) {
+        setupWidgets();
         build();
     }
 
-    void Toolbar::build() {
-        setupStyle();
-
+    void Toolbar::setupWidgets() {
         m_backAction = addAction("←");
         m_backAction->setToolTip("Back");
         m_backAction->setStatusTip("Go to previous directory");
@@ -48,9 +47,6 @@ namespace dentry::ui {
         m_searchBar->setPlaceholderText("⌕ Search");
         m_searchBar->setClearButtonEnabled(true);
         addWidget(m_searchBar);
-
-        setupSize();
-        setupConnections();
     }
 
     void Toolbar::setupStyle() {
