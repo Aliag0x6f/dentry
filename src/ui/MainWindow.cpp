@@ -49,25 +49,20 @@ namespace dentry::ui {
 
         connect(m_navigationController, &app::NavigationController::pathChanged, m_toolbar, &Toolbar::setPath);
         connect(m_navigationController, &app::NavigationController::pathChanged, this, [this](const QString &) {
-            m_central->previewPanel()->clear();
+            m_central->clearPreview();
         });
 
         connect(m_toolbar, &Toolbar::backRequested, m_navigationController, &app::NavigationController::navigateBack);
         connect(m_toolbar, &Toolbar::homeRequested, m_navigationController, &app::NavigationController::navigateHome);
         connect(m_toolbar, &Toolbar::searchChanged, m_model, &model::FileSystemModel::setFilter);
         connect(m_toolbar, &Toolbar::hiddenToggled, m_model, &model::FileSystemModel::setShowHidden);
-        connect(m_toolbar, &Toolbar::hiddenToggled, sidebar, &Sidebar::setShowHidden);
+        connect(m_toolbar, &Toolbar::hiddenToggled, m_central, &CentralWidget::setSidebarShowHidden);
 
         connect(sidebar, &Sidebar::placeSelected, m_navigationController, &app::NavigationController::navigateTo);
 
         connect(fileListView, &FileListView::directoryRequested,    m_navigationController, &app::NavigationController::navigateTo);
-        connect(fileListView, &FileListView::selectionChanged, this, [this](const QList<model::FileItem> &selected) {
-            if (selected.count() == 1 && !selected.first().isDir)
-                m_central->previewPanel()->preview(selected.first());
-            else
-                m_central->previewPanel()->clear();
-        });
-        connect(fileListView, &FileListView::selectionChanged,      m_statusBar,            &StatusBar::setSelection);
+        connect(fileListView, &FileListView::selectionChanged,      m_central, &CentralWidget::updatePreviewFromSelection);
+        connect(fileListView, &FileListView::selectionChanged,      m_statusBar, &StatusBar::setSelection);
         connect(fileListView, &FileListView::deleteRequested,       m_fileOperationController, &app::FileOperationController::onDeleteRequested);
         connect(fileListView, &FileListView::renameRequested,       m_fileOperationController, &app::FileOperationController::onRenameRequested);
         connect(fileListView, &FileListView::createFileRequested,   m_fileOperationController, &app::FileOperationController::onCreateFileRequested);

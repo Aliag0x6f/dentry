@@ -71,6 +71,21 @@ Conventions:
 
 ## Coding Standards
 
+### Encapsulation and Behavior-First APIs
+
+To preserve encapsulation and avoid Law-of-Demeter violations, Dentry favors behavior methods on owning classes over exposing internal widget state through getter chains.
+
+Guidelines:
+
+- Prefer intent-level methods/signals on owning objects (example: `CentralWidget::setSidebarShowHidden`, `CentralWidget::selectionChanged`).
+- Avoid caller-side orchestration through nested getters (example to avoid: `main->central()->previewPanel()->...`).
+- Keep simple accessors only when they are stable, necessary, and do not leak orchestration responsibilities.
+
+Issue #19 refactor scope (target classes):
+
+- `src/ui/components/CentralWidget.*`: own child wiring and expose behavior-first API.
+- `src/ui/MainWindow.cpp`: consume intent-level API instead of child getters.
+
 ### Const-Correctness and `constexpr`
 
 Dentry applies `constexpr` systematically to make immutability explicit, enable compile-time evaluation, and prevent accidental runtime mutability.
