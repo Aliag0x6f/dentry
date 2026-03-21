@@ -69,6 +69,34 @@ Conventions:
 - New helper modules must use focused, lower-case namespaces.
 - Avoid reintroducing broad catch-all namespaces like `Util`.
 
+## Coding Standards
+
+### Const-Correctness and `constexpr`
+
+Dentry applies `constexpr` systematically to make immutability explicit, enable compile-time evaluation, and prevent accidental runtime mutability.
+
+**Guidelines:**
+
+- Mark all compile-time constants with `constexpr` (not just `const`).
+- Apply `constexpr` to pure, side-effect-free functions where meaningful and correct.
+- Use `constexpr inline` for header-only constants to avoid ODR violations.
+- Avoid forcing `constexpr` on runtime-dependent logic (e.g., functions using Qt types like `QString`, `QDateTime`, `QLocale`).
+
+**Examples:**
+
+```cpp
+// ✓ Correct: compile-time constant
+constexpr inline auto AppName = DENTRY_APP_NAME;
+static constexpr const char *RED = "\033[31m";
+
+// ✗ Avoid: Qt runtime types cannot be constexpr
+[[nodiscard]] QString formatSize(qint64 bytes);  // Keep as non-constexpr
+```
+
+**References:**
+
+- https://en.cppreference.com/w/cpp/language/constexpr
+- https://en.cppreference.com/w/cpp/language/constant_initialization
 
 ## Installation
 
