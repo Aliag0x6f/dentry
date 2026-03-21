@@ -14,6 +14,7 @@
 #include "../../model/FileSystemModel.h"
 
 #include <QHBoxLayout>
+#include <QList>
 #include <QPointer>
 #include <QSplitter>
 #include <QWidget>
@@ -24,7 +25,7 @@ namespace dentry::ui {
  * @class CentralWidget
  * @brief Owns and lays out the Sidebar, FileListView and PreviewPanel inside a QSplitter.
  *
-v * MainWindow sets this as its central widget and interacts through
+ * MainWindow sets this as its central widget and interacts through
  * behavior methods plus a minimal set of child accessors when needed.
  * Example:
  * @code

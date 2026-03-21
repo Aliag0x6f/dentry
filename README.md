@@ -77,7 +77,7 @@ To preserve encapsulation and avoid Law-of-Demeter violations, Dentry favors beh
 
 Guidelines:
 
-- Prefer intent-level methods/signals on owning objects (example: `CentralWidget::setSidebarShowHidden`, `CentralWidget::selectionChanged`).
+- Prefer intent-level methods/signals on owning objects (example: `CentralWidget::setSidebarShowHidden`, `CentralWidget::updatePreviewFromSelection`).
 - Avoid caller-side orchestration through nested getters (example to avoid: `main->central()->previewPanel()->...`).
 - Keep simple accessors only when they are stable, necessary, and do not leak orchestration responsibilities.
 
