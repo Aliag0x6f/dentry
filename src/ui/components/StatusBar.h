@@ -70,10 +70,6 @@ namespace dentry::ui {
          */
         void clear();
 
-    protected:
-        /** @brief Applies status bar sizing policy. */
-        void setupSize() override;
-
     private:
         /** @brief Creates and attaches status labels to the bar. */
         void setupWidgets();

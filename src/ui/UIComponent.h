@@ -12,6 +12,8 @@
 #pragma once
 
 #include <QWidget>
+#include <QLayout>
+#include <QtGlobal>
 #include <type_traits>
 
 namespace dentry::ui {
@@ -28,14 +30,30 @@ namespace dentry::ui {
         explicit UIComponent(QWidget *parent = nullptr)
             : TWidget(parent) {
             static_assert(std::is_base_of_v<QWidget, TWidget>, "TWidget must derive from QWidget");
+            static_assert(std::is_base_of_v<QLayout, TLayout>, "TLayout must derive from QLayout");
+            static_assert(std::is_constructible_v<TLayout, QWidget *>, "TLayout must be constructible with QWidget*");
         }
 
         virtual ~UIComponent() = default;
 
         /**
          * @brief Executes the ordered setup pipeline for layout-based components.
+         *
+         * This method is intended to be called exactly once from the concrete
+         * component constructor.
          */
         void build() {
+            if (m_built) {
+                Q_ASSERT_X(false, "UIComponent::build", "build() must only be called once");
+                return;
+            }
+
+            if (this->layout() != nullptr || m_layout != nullptr) {
+                Q_ASSERT_X(false, "UIComponent::build", "layout already exists before build()");
+                return;
+            }
+
+            m_built = true;
             m_layout = new TLayout(static_cast<QWidget *>(this));
             setupLayout(*m_layout);
             setupSize();
@@ -55,6 +73,9 @@ namespace dentry::ui {
 
         /** @brief Owned layout instance created during build(). */
         TLayout *m_layout = nullptr;
+
+        /** @brief Tracks that build() has already been executed once. */
+        bool m_built = false;
     };
 
     /**
@@ -72,8 +93,17 @@ namespace dentry::ui {
 
         /**
          * @brief Executes the ordered setup pipeline for components without owned layout.
+         *
+         * This method is intended to be called exactly once from the concrete
+         * component constructor.
          */
         void build() {
+            if (m_built) {
+                Q_ASSERT_X(false, "UIComponent::build", "build() must only be called once");
+                return;
+            }
+
+            m_built = true;
             setupSize();
             setupStyle();
             setupConnections();
@@ -86,6 +116,9 @@ namespace dentry::ui {
         virtual void setupStyle() {}
         /** @brief Connects internal signals and slots. */
         virtual void setupConnections() {}
+
+        /** @brief Tracks that build() has already been executed once. */
+        bool m_built = false;
     };
 
 } // namespace dentry::ui

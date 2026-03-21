@@ -23,10 +23,6 @@ namespace dentry::ui {
         addPermanentWidget(m_selectionLabel);
     }
 
-    void StatusBar::setupSize() {
-        return;
-    }
-
     void StatusBar::setDirectoryStats(int folderCount, int fileCount) {
         m_folderCount = folderCount;
         m_fileCount   = fileCount;
