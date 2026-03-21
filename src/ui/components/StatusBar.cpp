@@ -10,22 +10,17 @@
 namespace dentry::ui {
 
     StatusBar::StatusBar(QWidget *parent)
-        : QStatusBar(parent) {
+        : UIComponent(parent) {
+        setupWidgets();
         build();
     }
 
-    void StatusBar::build() {
-        setupSize();
-
+    void StatusBar::setupWidgets() {
         m_statsLabel     = new QLabel(this);
         m_selectionLabel = new QLabel(this);
 
         addWidget(m_statsLabel);
         addPermanentWidget(m_selectionLabel);
-    }
-
-    void StatusBar::setupSize() {
-        return;
     }
 
     void StatusBar::setDirectoryStats(int folderCount, int fileCount) {

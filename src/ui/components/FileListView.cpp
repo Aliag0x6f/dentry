@@ -14,14 +14,10 @@
 namespace dentry::ui {
 
     FileListView::FileListView(QWidget *parent)
-        : QTreeView(parent) {
+        : UIComponent(parent) {
         build();
     }
 
-    void FileListView::build() {
-        setupSize();
-        setupStyle();
-    }
 
     void FileListView::setupSize() {
         setSortingEnabled(true);

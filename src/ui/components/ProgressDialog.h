@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "../AUIComponent.h"
+#include "../UIComponent.h"
 #include "../../fs/AFileOperation.h"
 
 #include <QDialog>
@@ -15,6 +15,7 @@
 #include <QPointer>
 #include <QProgressBar>
 #include <QPushButton>
+#include <QVBoxLayout>
 
 namespace dentry::ui {
 
@@ -37,7 +38,7 @@ namespace dentry::ui {
      * dialog.exec();
      * @endcode
      */
-    class ProgressDialog : public QDialog, public AUIComponent {
+    class ProgressDialog : public UIComponent<QDialog, QVBoxLayout> {
         Q_OBJECT
 
     public:
@@ -55,9 +56,10 @@ namespace dentry::ui {
         ProgressDialog(ProgressDialog &&)                 = delete;
         ProgressDialog &operator=(ProgressDialog &&)      = delete;
 
-        void build() override;
-
     protected:
+        /** @brief Builds dialog content (description, progress bar and action buttons). */
+        void setupLayout(QVBoxLayout &layout) override;
+
         /**
          * @brief Intercepts close/escape requests.
          *
@@ -65,7 +67,11 @@ namespace dentry::ui {
          * The dialog only closes through explicit Finished/Canceled buttons.
          */
         void reject() override;
+
+        /** @brief Applies dialog title, size constraints and modality. */
         void setupSize()        override;
+
+        /** @brief Connects operation and button signals to dialog handlers. */
         void setupConnections() override;
 
     private slots:
@@ -97,7 +103,6 @@ namespace dentry::ui {
         void onFinishedClicked();
 
     private:
-        // Non-owning observer. Ownership is provided externally (typically by Qt parent-child).
         QPointer<fs::AFileOperation> m_operation;
         QPointer<QLabel>             m_descriptionLabel;
         QPointer<QProgressBar>       m_progressBar;

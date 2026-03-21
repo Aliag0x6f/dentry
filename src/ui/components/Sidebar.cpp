@@ -15,31 +15,27 @@
 namespace dentry::ui {
 
     Sidebar::Sidebar(QWidget *parent)
-        : QFrame(parent) {
+        : UIComponent(parent) {
         build();
     }
 
-    void Sidebar::build() {
-        QVBoxLayout *layout = new QVBoxLayout(this);
-        layout->setContentsMargins(0, 0, 0, 0);
-        layout->setSpacing(0);
+    void Sidebar::setupLayout(QVBoxLayout &layout) {
+        layout.setContentsMargins(0, 0, 0, 0);
+        layout.setSpacing(0);
 
         QLabel *title = new QLabel("PLACES", this);
         title->setObjectName("sidebarTitle");
-        layout->addWidget(title);
+        layout.addWidget(title);
 
         QFrame *separator = new QFrame(this);
         separator->setFrameShape(QFrame::HLine);
         separator->setObjectName("sidebarSeparator");
-        layout->addWidget(separator);
+        layout.addWidget(separator);
 
         m_list = new QListWidget(this);
-        layout->addWidget(m_list);
+        layout.addWidget(m_list);
 
-        setupSize();
-        setupStyle();
         buildPlaces();
-        setupConnections();
     }
 
     void Sidebar::setupSize() {

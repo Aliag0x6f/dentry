@@ -7,13 +7,14 @@
 
 #pragma once
 
-#include "../AUIComponent.h"
+#include "../UIComponent.h"
 
 #include <QFrame>
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QPointer>
 #include <QString>
+#include <QVBoxLayout>
 #include <QWidget>
 
 namespace dentry::ui {
@@ -35,7 +36,7 @@ namespace dentry::ui {
      * sidebar.release(); // Qt parent now owns the sidebar.
      * @endcode
      */
-    class Sidebar : public QFrame, public AUIComponent {
+    class Sidebar : public UIComponent<QFrame, QVBoxLayout> {
         Q_OBJECT
 
     public:
@@ -58,8 +59,6 @@ namespace dentry::ui {
          */
         void setShowHidden(bool show);
 
-        void build() override;
-
         signals:
             /**
              * @brief Emitted when the user clicks a place.
@@ -68,8 +67,16 @@ namespace dentry::ui {
             void placeSelected(const QString &path);
 
     protected:
+        /** @brief Creates sidebar title, separator and list within the vertical layout. */
+        void setupLayout(QVBoxLayout &layout) override;
+
+        /** @brief Applies width constraints for the places list. */
         void setupSize()        override;
+
+        /** @brief Applies object name used by styling rules. */
         void setupStyle()       override;
+
+        /** @brief Connects list click handling to place selection behavior. */
         void setupConnections() override;
 
     private slots:

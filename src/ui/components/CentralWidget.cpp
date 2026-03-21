@@ -10,13 +10,12 @@
 namespace dentry::ui {
 
     CentralWidget::CentralWidget(model::FileSystemModel *model, QWidget *parent)
-        : QWidget(parent)
+        : UIComponent(parent)
         , m_model(model) {
         build();
     }
 
-    void CentralWidget::build() {
-        m_layout   = new QHBoxLayout(this);
+    void CentralWidget::setupLayout(QHBoxLayout &layout) {
         m_splitter = new QSplitter(Qt::Horizontal, this);
 
         m_sidebar      = new Sidebar(m_splitter);
@@ -32,10 +31,7 @@ namespace dentry::ui {
         m_splitter->setStretchFactor(1, 1);
         m_splitter->setStretchFactor(2, 0);
 
-        m_layout->addWidget(m_splitter);
-
-        setupSize();
-        setupStyle();
+        layout.addWidget(m_splitter);
     }
 
     void CentralWidget::setSidebarShowHidden(bool show) {

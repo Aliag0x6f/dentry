@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "AUIComponent.h"
+#include "UIComponent.h"
 #include "components/CentralWidget.h"
 #include "components/StatusBar.h"
 #include "components/Toolbar.h"
@@ -36,10 +36,18 @@ namespace dentry::ui {
  * window.show();
  * @endcode
  */
-class MainWindow : public QMainWindow, public AUIComponent {
+class MainWindow : public UIComponent<QMainWindow, void> {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Constructs the main application window.
+     *
+     * Creates and wires all top-level UI components through the UIComponent
+     * setup pipeline.
+     *
+     * @param parent Optional Qt parent widget.
+     */
     explicit MainWindow(QWidget *parent = nullptr);
 
     ~MainWindow() override = default;
@@ -49,10 +57,14 @@ public:
     MainWindow(MainWindow &&)                 = delete;
     MainWindow &operator=(MainWindow &&)      = delete;
 
-    void build() override;
-
 protected:
+    /** @brief Applies window geometry constraints (minimum size and initial size). */
     void setupSize()        override;
+
+    /** @brief Applies top-level window style metadata (title, object names if needed). */
+    void setupStyle()       override;
+
+    /** @brief Connects cross-component signals/slots for navigation and file operations. */
     void setupConnections() override;
 
 private slots:
@@ -63,6 +75,9 @@ private slots:
     void onDirectoryLoaded(const QString &);
 
 private:
+    /** @brief Instantiates and registers the main child widgets/controllers. */
+    void setupWidgets();
+
     QPointer<model::FileSystemModel>       m_model;
     QPointer<Toolbar>                      m_toolbar;
     QPointer<StatusBar>                    m_statusBar;

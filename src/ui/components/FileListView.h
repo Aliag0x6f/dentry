@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "../AUIComponent.h"
+#include "../UIComponent.h"
 #include "../../model/AFileSystemModel.h"
 #include "../../model/FileItem.h"
 
@@ -33,7 +33,7 @@ namespace dentry::ui {
  * view.release(); // Qt parent now owns the view.
  * @endcode
  */
-class FileListView : public QTreeView, public AUIComponent {
+class FileListView : public UIComponent<QTreeView, void> {
     Q_OBJECT
 
 public:
@@ -52,7 +52,6 @@ public:
      */
     void setModel(QAbstractItemModel *model) override;
 
-    void build() override;
 
 signals:
     /**
@@ -130,7 +129,10 @@ protected:
      */
     void contextMenuEvent(QContextMenuEvent *event) override;
 
+    /** @brief Applies sorting and view sizing behavior. */
     void setupSize()  override;
+
+    /** @brief Applies list view style and interaction mode. */
     void setupStyle() override;
 
 private slots:

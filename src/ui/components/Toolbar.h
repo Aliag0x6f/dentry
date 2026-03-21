@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "../AUIComponent.h"
+#include "../UIComponent.h"
 
 #include <QAction>
 #include <QLabel>
@@ -36,7 +36,7 @@ namespace dentry::ui {
      * toolbar.release(); // QMainWindow now owns the toolbar.
      * @endcode
      */
-    class Toolbar : public QToolBar, public AUIComponent {
+    class Toolbar : public UIComponent<QToolBar, void> {
         Q_OBJECT
 
     public:
@@ -58,8 +58,6 @@ namespace dentry::ui {
          * @param path Absolute path to display.
          */
         void setPath(const QString &path);
-
-        void build() override;
 
         signals:
             /**
@@ -85,11 +83,19 @@ namespace dentry::ui {
             void hiddenToggled(bool show);
 
     protected:
+        /** @brief Applies toolbar styling and behavior flags. */
         void setupStyle()       override;
+
+        /** @brief Applies fixed sizing constraints for toolbar widgets. */
         void setupSize()        override;
+
+        /** @brief Connects internal actions/widgets to public toolbar signals. */
         void setupConnections() override;
 
     private:
+        /** @brief Creates actions and widgets shown in the toolbar. */
+        void setupWidgets();
+
         QPointer<QAction>   m_backAction;
         QPointer<QAction>   m_homeAction;
         QPointer<QAction>   m_hiddenAction;
