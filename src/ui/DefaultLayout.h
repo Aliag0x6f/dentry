@@ -28,7 +28,7 @@ namespace dentry::ui {
 
     protected:
         /** @brief Applies default layout policy shared by UI components. */
-        virtual void configure() {
+        void configure() {
             TLayout::setContentsMargins(6, 6, 6, 6);
             TLayout::setSpacing(6);
         }
