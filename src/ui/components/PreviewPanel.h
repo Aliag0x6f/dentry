@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "../DefaultLayout.h"
 #include "../UIComponent.h"
 #include "../../model/FileItem.h"
 
@@ -15,7 +16,6 @@
 #include <QStackedWidget>
 #include <QTextEdit>
 #include <QWidget>
-#include <QVBoxLayout>
 
 namespace dentry::ui {
 
@@ -33,7 +33,7 @@ namespace dentry::ui {
      * preview.release(); // Qt parent now owns the panel.
      * @endcode
      */
-    class PreviewPanel : public UIComponent<QWidget, QVBoxLayout> {
+    class PreviewPanel : public UIComponent<QWidget, VLayout> {
         Q_OBJECT
 
     public:
@@ -60,7 +60,7 @@ namespace dentry::ui {
 
     protected:
         /** @brief Builds the vertical preview layout and child widgets. */
-        void setupLayout(QVBoxLayout &layout) override;
+        void setupLayout(VLayout &layout) override;
 
         /** @brief Applies size constraints for the preview panel. */
         void setupSize()  override;

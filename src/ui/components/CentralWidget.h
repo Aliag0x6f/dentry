@@ -7,13 +7,13 @@
 
 #pragma once
 
+#include "../DefaultLayout.h"
 #include "../UIComponent.h"
 #include "FileListView.h"
 #include "PreviewPanel.h"
 #include "Sidebar.h"
 #include "../../model/FileSystemModel.h"
 
-#include <QHBoxLayout>
 #include <QList>
 #include <QPointer>
 #include <QSplitter>
@@ -36,7 +36,7 @@ namespace dentry::ui {
  * central.release(); // QMainWindow now owns the central widget.
  * @endcode
  */
-class CentralWidget : public UIComponent<QWidget, QHBoxLayout> {
+class CentralWidget : public UIComponent<QWidget, HLayout> {
     Q_OBJECT
 
 public:
@@ -72,7 +72,7 @@ public slots:
 
 protected:
     /** @brief Creates the splitter structure and adds child panels to the layout. */
-    void setupLayout(QHBoxLayout &layout) override;
+    void setupLayout(HLayout &layout) override;
 
     /** @brief Applies margins and spacing for the central area layout. */
     void setupSize()  override;

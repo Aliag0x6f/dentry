@@ -15,7 +15,7 @@ namespace dentry::ui {
         build();
     }
 
-    void CentralWidget::setupLayout(QHBoxLayout &layout) {
+    void CentralWidget::setupLayout(HLayout &layout) {
         m_splitter = new QSplitter(Qt::Horizontal, this);
 
         m_sidebar      = new Sidebar(m_splitter);
