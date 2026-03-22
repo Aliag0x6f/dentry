@@ -10,7 +10,6 @@
 #include <QDir>
 #include <QLabel>
 #include <QStandardPaths>
-#include <QVBoxLayout>
 
 namespace dentry::ui {
 
@@ -19,7 +18,7 @@ namespace dentry::ui {
         build();
     }
 
-    void Sidebar::setupLayout(QVBoxLayout &layout) {
+    void Sidebar::setupLayout(VLayout &layout) {
         layout.setContentsMargins(0, 0, 0, 0);
         layout.setSpacing(0);
 

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "../DefaultLayout.h"
 #include "../UIComponent.h"
 #include "../../fs/AFileOperation.h"
 
@@ -15,7 +16,6 @@
 #include <QPointer>
 #include <QProgressBar>
 #include <QPushButton>
-#include <QVBoxLayout>
 
 namespace dentry::ui {
 
@@ -38,7 +38,7 @@ namespace dentry::ui {
      * dialog.exec();
      * @endcode
      */
-    class ProgressDialog : public UIComponent<QDialog, QVBoxLayout> {
+    class ProgressDialog : public UIComponent<QDialog, VLayout> {
         Q_OBJECT
 
     public:
@@ -58,7 +58,7 @@ namespace dentry::ui {
 
     protected:
         /** @brief Builds dialog content (description, progress bar and action buttons). */
-        void setupLayout(QVBoxLayout &layout) override;
+        void setupLayout(VLayout &layout) override;
 
         /**
          * @brief Intercepts close/escape requests.

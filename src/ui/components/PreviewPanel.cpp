@@ -11,7 +11,6 @@
 #include <QFileInfo>
 #include <QPixmap>
 #include <QTextStream>
-#include <QVBoxLayout>
 
 namespace dentry::ui {
 
@@ -20,7 +19,7 @@ namespace dentry::ui {
         build();
     }
 
-    void PreviewPanel::setupLayout(QVBoxLayout &layout) {
+    void PreviewPanel::setupLayout(VLayout &layout) {
         layout.setContentsMargins(12, 12, 12, 12);
         layout.setSpacing(8);
 

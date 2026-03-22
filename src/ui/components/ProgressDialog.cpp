@@ -7,9 +7,7 @@
 
 #include "ProgressDialog.h"
 
-#include <QHBoxLayout>
 #include <QtGlobal>
-#include <QVBoxLayout>
 
 namespace dentry::ui {
 
@@ -26,7 +24,7 @@ namespace dentry::ui {
         build();
     }
 
-    void ProgressDialog::setupLayout(QVBoxLayout &layout) {
+    void ProgressDialog::setupLayout(VLayout &layout) {
         layout.setSpacing(12);
         layout.setContentsMargins(16, 16, 16, 16);
 
@@ -39,7 +37,7 @@ namespace dentry::ui {
         m_progressBar->setValue(0);
         layout.addWidget(m_progressBar);
 
-        QHBoxLayout *buttonLayout = new QHBoxLayout();
+        HLayout *buttonLayout = new HLayout();
         buttonLayout->addStretch();
 
         m_cancelButton = new QPushButton(tr("Cancel"), this);

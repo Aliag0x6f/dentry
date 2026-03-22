@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "../DefaultLayout.h"
 #include "../UIComponent.h"
 
 #include <QFrame>
@@ -14,7 +15,6 @@
 #include <QListWidgetItem>
 #include <QPointer>
 #include <QString>
-#include <QVBoxLayout>
 #include <QWidget>
 
 namespace dentry::ui {
@@ -36,7 +36,7 @@ namespace dentry::ui {
      * sidebar.release(); // Qt parent now owns the sidebar.
      * @endcode
      */
-    class Sidebar : public UIComponent<QFrame, QVBoxLayout> {
+    class Sidebar : public UIComponent<QFrame, VLayout> {
         Q_OBJECT
 
     public:
@@ -68,7 +68,7 @@ namespace dentry::ui {
 
     protected:
         /** @brief Creates sidebar title, separator and list within the vertical layout. */
-        void setupLayout(QVBoxLayout &layout) override;
+        void setupLayout(VLayout &layout) override;
 
         /** @brief Applies width constraints for the places list. */
         void setupSize()        override;
