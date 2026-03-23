@@ -8,11 +8,14 @@
 #pragma once
 
 #include "../UIComponent.h"
+#include "../../app/controllers/KeyboardController.h"
 #include "../../model/AFileSystemModel.h"
 #include "../../model/FileItem.h"
 
 #include <QList>
 #include <QTreeView>
+
+class QKeyEvent;
 
 namespace dentry::ui {
 
@@ -52,6 +55,14 @@ public:
      */
     void setModel(QAbstractItemModel *model) override;
 
+    /**
+     * @brief Sets the leader key used by custom keyboard sequences.
+     *
+     * Default bindings do not require a leader, but this enables future
+     * user-configurable Vim-like combos.
+     */
+    void setKeyboardLeaderKey(Qt::Key key);
+
 
 signals:
     /**
@@ -71,6 +82,11 @@ signals:
      * @param item The FileItem that was activated.
      */
     void fileActivated(const model::FileItem &item);
+
+    /**
+     * @brief Emitted when the user requests back navigation from the keyboard.
+     */
+    void backRequested();
 
     // ── Operations ────────────────────────────────────────────────────────
 
@@ -129,6 +145,11 @@ protected:
      */
     void contextMenuEvent(QContextMenuEvent *event) override;
 
+    /**
+     * @brief Handles keyboard-driven navigation/actions in the list view.
+     */
+    void keyPressEvent(QKeyEvent *event) override;
+
     /** @brief Applies sorting and view sizing behavior. */
     void setupSize()  override;
 
@@ -140,6 +161,25 @@ private slots:
      * @brief Handles selection changes in the view.
      */
     void onSelectionChanged();
+
+private:
+    /** @brief Selects a specific row if it is valid. */
+    void selectRow(int row);
+
+    /** @brief Moves selection by a row delta (positive: down, negative: up). */
+    void selectRelativeRow(int delta);
+
+    /** @brief Selects the first row in the current model. */
+    void selectFirstRow();
+
+    /** @brief Selects the last row in the current model. */
+    void selectLastRow();
+
+    /** @brief Activates the current selection (navigate into folder / activate file). */
+    void activateCurrentItem();
+
+    /** @brief Dedicated keyboard command parser/binding manager. */
+    app::KeyboardController m_keyboardController;
 };
 
 } // namespace dentry::ui

@@ -183,6 +183,19 @@ DENTRY_DEBUG=1 QT_LOGGING_RULES="*.debug=true;Mime.debug=false;FileInfo.debug=fa
 | Jump to a place | Click an entry in the sidebar |
 | Sort by column | Click a column header |
 
+### Vim-Style Keyboard Controls (file list)
+
+| Action | Keys |
+|---|---|
+| Move selection down | `j` |
+| Move selection up | `k` |
+| Go to first entry | `gg` |
+| Go to last entry | `G` |
+| Open selected item | `l` or `Enter` |
+| Navigate back | `h` or `Backspace` |
+
+Keyboard mappings are resolved by a dedicated controller (`src/app/controllers/KeyboardController.*`) so bindings can evolve toward user customization (including leader-based combos) without coupling parsing logic to the view widget.
+
 ### File Operations
 
 | Action | Method |

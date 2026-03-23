@@ -17,6 +17,7 @@ namespace dentry::ui {
         setupWidgets();
         build();
         m_navigationController->navigateHome();
+        m_central->fileListView()->setFocus();
         log::info("Ui") << "MainWindow built";
     }
 
@@ -60,6 +61,7 @@ namespace dentry::ui {
         connect(sidebar, &Sidebar::placeSelected, m_navigationController, &app::NavigationController::navigateTo);
 
         connect(fileListView, &FileListView::directoryRequested,    m_navigationController, &app::NavigationController::navigateTo);
+        connect(fileListView, &FileListView::backRequested,         m_navigationController, &app::NavigationController::navigateBack);
         connect(fileListView, &FileListView::selectionChanged,      m_central, &CentralWidget::updatePreviewFromSelection);
         connect(fileListView, &FileListView::selectionChanged,      m_statusBar, &StatusBar::setSelection);
         connect(fileListView, &FileListView::deleteRequested,       m_fileOperationController, &app::FileOperationController::onDeleteRequested);
