@@ -9,7 +9,7 @@
 
 #include <QApplication>
 
-namespace Dentry {
+namespace dentry {
 
     /**
      * @class Application
@@ -43,4 +43,4 @@ namespace Dentry {
         void initialize();
     };
 
-} // namespace Dentry
+} // namespace dentry

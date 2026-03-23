@@ -7,14 +7,39 @@
 
 #include "Logger.h"
 
+#include <QByteArray>
 #include <QDateTime>
+#include <QHash>
 #include <QMessageLogContext>
+#include <QMutex>
+#include <QMutexLocker>
+#include <QSharedPointer>
 #include <QString>
-
 #include <cstdio>
 #include <cstdlib>
 
-namespace Dentry::Util {
+namespace {
+
+QLoggingCategory &categoryFor(const char *categoryName) {
+    static QMutex                                              mutex;
+    static QHash<QString, QByteArray>                          categoryNames;
+    static QHash<QString, QSharedPointer<QLoggingCategory>>   categories;
+
+    const QString key = QString::fromUtf8(categoryName);
+    QMutexLocker   lock(&mutex);
+
+    auto it = categories.find(key);
+    if (it == categories.end()) {
+        auto nameIt = categoryNames.insert(key, key.toUtf8());
+        it = categories.insert(key, QSharedPointer<QLoggingCategory>::create(nameIt.value().constData()));
+    }
+
+    return *it.value();
+}
+
+} // namespace
+
+namespace dentry::log {
 
 // ── ANSI color codes ──────────────────────────────────────────────────────────
 
@@ -77,17 +102,32 @@ static void messageHandler(QtMsgType type,
         abort();
 }
 
-// ── Logger ────────────────────────────────────────────────────────────────────
-
-void Logger::install() {
+void install() {
     if (qgetenv("DENTRY_DEBUG").isEmpty())
         QLoggingCategory::setFilterRules("*.debug=false");
 
     qInstallMessageHandler(messageHandler);
 }
 
-void Logger::uninstall() {
+void uninstall() {
     qInstallMessageHandler(nullptr);
 }
 
-} // namespace Dentry::Util
+
+QDebug debug(const char *category) {
+    return QMessageLogger().debug(categoryFor(category));
+}
+
+QDebug info(const char *category) {
+    return QMessageLogger().info(categoryFor(category));
+}
+
+QDebug warn(const char *category) {
+    return QMessageLogger().warning(categoryFor(category));
+}
+
+QDebug error(const char *category) {
+    return QMessageLogger().critical(categoryFor(category));
+}
+
+} // namespace dentry::log

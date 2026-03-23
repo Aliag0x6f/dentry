@@ -1,47 +1,98 @@
 cmake_minimum_required(VERSION 3.16)
-project(dentry)
+
+project(dentry VERSION 1.2.0 LANGUAGES CXX)
+
+include(GNUInstallDirs)
+include(ProcessorCount)
+
+option(DENTRY_ENABLE_WARNINGS "Enable extra compiler warnings" ON)
+option(DENTRY_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
+option(DENTRY_ENABLE_UNITY "Enable unity build for faster clean builds" OFF)
+option(DENTRY_ENABLE_PCH "Enable precompiled headers" OFF)
+ProcessorCount(DENTRY_DEFAULT_BUILD_JOBS)
+if(NOT DENTRY_DEFAULT_BUILD_JOBS OR DENTRY_DEFAULT_BUILD_JOBS EQUAL 0)
+    set(DENTRY_DEFAULT_BUILD_JOBS 4)
+endif()
+set(DENTRY_BUILD_JOBS "${DENTRY_DEFAULT_BUILD_JOBS}" CACHE STRING "Maximum parallel compile jobs for this target (Ninja only)")
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets Concurrent)
 
-add_executable(dentry
-        src/main.cpp
-        src/util/Logger.cpp
-        src/util/DateFormatter.cpp
-        src/util/PermissionFormatter.cpp
-        src/util/SizeFormatter.cpp
-        src/fs/MimeResolver.cpp
-        src/fs/FileInfo.cpp
-        src/fs/AFileOperation.cpp
-        src/fs/operations/CopyOperation.cpp
-        src/fs/operations/MoveOperation.cpp
-        src/fs/operations/DeleteOperation.cpp
-        src/fs/operations/RenameOperation.cpp
-        src/fs/operations/CreateFileOperation.cpp
-        src/fs/operations/CreateFolderOperation.cpp
-        src/model/AFileSystemModel.cpp
-        src/model/FileSystemModel.cpp
-        src/ui/StatusBar.cpp
-        src/ui/Sidebar.cpp
-        src/ui/Toolbar.cpp
-        src/ui/ProgressDialog.cpp
-        src/ui/FileListView.cpp
-        src/ui/PreviewPanel.cpp
-        src/ui/MainWindow.cpp
-        src/ui/resources.qrc
-        src/app/Clipboard.cpp
-        src/app/Application.cpp
+
+file(GLOB_RECURSE DENTRY_SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.qrc"
 )
 
-target_link_libraries(dentry Qt6::Widgets Qt6::Concurrent)
+qt_add_executable(dentry
+    ${DENTRY_SOURCES}
+)
+
+if(CMAKE_GENERATOR MATCHES "Ninja")
+    # Limit compile/link parallelism without passing -j on each build command.
+    set_property(GLOBAL PROPERTY JOB_POOLS compile_pool=${DENTRY_BUILD_JOBS};link_pool=1)
+    set_property(TARGET dentry PROPERTY JOB_POOL_COMPILE compile_pool)
+    set_property(TARGET dentry PROPERTY JOB_POOL_LINK link_pool)
+endif()
+
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${DENTRY_SOURCES})
+
+target_include_directories(dentry
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+target_link_libraries(dentry
+    PRIVATE
+        Qt6::Widgets
+        Qt6::Concurrent
+)
+
+target_compile_definitions(dentry
+    PRIVATE
+        "DENTRY_APP_NAME=\"Dentry\""
+        "DENTRY_APP_VERSION=\"${PROJECT_VERSION}\""
+)
+
+if(DENTRY_ENABLE_WARNINGS)
+    if(MSVC)
+        target_compile_options(dentry PRIVATE /W4)
+        if(DENTRY_WARNINGS_AS_ERRORS)
+            target_compile_options(dentry PRIVATE /WX)
+        endif()
+    else()
+        target_compile_options(dentry PRIVATE -Wall -Wextra -Wpedantic)
+        if(DENTRY_WARNINGS_AS_ERRORS)
+            target_compile_options(dentry PRIVATE -Werror)
+        endif()
+    endif()
+endif()
+
+set_target_properties(dentry PROPERTIES
+    UNITY_BUILD ${DENTRY_ENABLE_UNITY}
+)
+
+if(DENTRY_ENABLE_PCH)
+    target_precompile_headers(dentry PRIVATE
+        <QApplication>
+        <QDebug>
+        <QDir>
+        <QFileInfo>
+        <QString>
+        <QWidget>
+    )
+endif()
 
 install(TARGETS dentry
-    RUNTIME DESTINATION bin
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 install(FILES dentry.desktop
-    DESTINATION share/applications
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
 )

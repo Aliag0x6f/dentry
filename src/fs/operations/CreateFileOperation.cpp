@@ -6,12 +6,14 @@
  */
 
 #include "CreateFileOperation.h"
-#include "../../util/Logger.h"
+#include "../../log/Logger.h"
 
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QtConcurrent>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
     CreateFileOperation::CreateFileOperation(const QString &directory,
                                              const QString &name,
@@ -22,32 +24,40 @@ namespace Dentry::Fs {
 
     void CreateFileOperation::execute() {
         setRunning(true);
-        LOG_INFO("Op") << "Creating file:" << m_name << "in" << m_directory;
+        log::info("Op") << "Creating file:" << m_name << "in" << m_directory;
 
         m_future = QtConcurrent::run([this] {
             if (isCancelled()) {
-                LOG_INFO("Op") << "Create file cancelled";
-                emit finished(false, "Operation cancelled");
+                log::info("Op") << "Create file cancelled";
                 setRunning(false);
+                emit finished(false, "Operation cancelled");
                 return;
             }
 
-            const QString path = m_directory + "/" + m_name;
+            const QString safeName = QFileInfo(m_name).fileName();
+            if (safeName.isEmpty()) {
+                log::error("Op") << "Invalid file name:" << m_name;
+                setRunning(false);
+                emit finished(false, "Invalid file name");
+                return;
+            }
+
+            const QString path = QDir(m_directory).filePath(m_name);
 
             QFile file(path);
 
             if (!file.open(QIODevice::WriteOnly)) {
-                LOG_ERROR("Op") << "Failed to create file:" << m_name;
-                emit finished(false, QString("Failed to create: %1").arg(m_name));
+                log::error("Op") << "Failed to create file:" << m_name;
                 setRunning(false);
+                emit finished(false, QString("Failed to create: %1").arg(m_name));
                 return;
             }
 
             file.close();
-            LOG_INFO("Op") << "File created successfully:" << path;
+            log::info("Op") << "File created successfully:" << path;
             emit progress(100);
-            emit finished(true, QString());
             setRunning(false);
+            emit finished(true, QString());
         });
     }
 
@@ -55,4 +65,4 @@ namespace Dentry::Fs {
         return QString("Creating file %1").arg(m_name);
     }
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

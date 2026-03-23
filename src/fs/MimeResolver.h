@@ -11,7 +11,7 @@
 #include <QMimeDatabase>
 #include <QString>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
 /**
  * @class MimeResolver
@@ -27,10 +27,10 @@ namespace Dentry::Fs {
  *
  * Example:
  * @code
- * QString mime = Dentry::Fs::MimeResolver::resolve("/home/user/photo.jpg");
+ * QString mime = dentry::fs::MimeResolver::resolve("/home/user/photo.jpg");
  * // mime == "image/jpeg"
  *
- * QString mime = Dentry::Fs::MimeResolver::resolve("/home/user/");
+ * QString mime = dentry::fs::MimeResolver::resolve("/home/user/");
  * // mime == "inode/directory"
  * @endcode
  */
@@ -89,4 +89,4 @@ private:
     [[nodiscard]] static const QMimeDatabase &database();
 };
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

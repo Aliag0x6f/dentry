@@ -28,12 +28,90 @@ Dentry — named after the Linux kernel's directory entry cache structure — is
 | License | GPLv3 |
 | Tested on | Arch Linux |
 
+## Ownership and RAII Policy
+
+To keep lifetimes explicit and safe, Dentry follows these ownership rules:
+
+- `QObject` lifetimes are managed by Qt parent-child ownership.
+- Non-Qt ownership uses `std::unique_ptr`.
+- Raw pointers are non-owning observers only.
+- Business code must not rely on unmanaged `new`/`delete` ownership pairs.
+
+Practical examples:
+
+- File operations in controllers are created via `std::unique_ptr`; dialogs observe them through non-owning pointers during execution.
+- UI members that reference widgets/components use `QPointer` for safe, non-owning access to parent-owned objects.
+
+References:
+
+- RAII: https://en.cppreference.com/w/cpp/language/raii
+- `std::unique_ptr`: https://en.cppreference.com/w/cpp/memory/unique_ptr
+- Qt object trees: https://doc.qt.io/qt-6/objecttrees.html
+
 ## Requirements
 
 - Qt6 Base (`qt6-base`)
 - Qt6 Concurrent (`qt6-base`)
 - CMake 3.16 or later
 - A C++17-compatible compiler (GCC 9+, Clang 10+)
+
+## Namespace Conventions
+
+To avoid catch-all namespaces and improve navigation, Dentry follows this namespace taxonomy:
+
+- `dentry::log`: logging API (`install`, `debug`, `info`, `warn`, `error`)
+- `dentry::formatter`: stateless formatting helpers (`formatDateTime`, `formatSize`, `formatPermissions`, ...)
+- `dentry::app`, `dentry::fs`, `dentry::model`, `dentry::ui`: core application domains
+
+Conventions:
+
+- All namespaces use lower-case domain names.
+- New helper modules must use focused, lower-case namespaces.
+- Avoid reintroducing broad catch-all namespaces like `Util`.
+
+## Coding Standards
+
+### Encapsulation and Behavior-First APIs
+
+To preserve encapsulation and avoid Law-of-Demeter violations, Dentry favors behavior methods on owning classes over exposing internal widget state through getter chains.
+
+Guidelines:
+
+- Prefer intent-level methods/signals on owning objects (example: `CentralWidget::setSidebarShowHidden`, `CentralWidget::updatePreviewFromSelection`).
+- Avoid caller-side orchestration through nested getters (example to avoid: `main->central()->previewPanel()->...`).
+- Keep simple accessors only when they are stable, necessary, and do not leak orchestration responsibilities.
+
+Issue #19 refactor scope (target classes):
+
+- `src/ui/components/CentralWidget.*`: own child wiring and expose behavior-first API.
+- `src/ui/MainWindow.cpp`: consume intent-level API instead of child getters.
+
+### Const-Correctness and `constexpr`
+
+Dentry applies `constexpr` systematically to make immutability explicit, enable compile-time evaluation, and prevent accidental runtime mutability.
+
+**Guidelines:**
+
+- Mark all compile-time constants with `constexpr` (not just `const`).
+- Apply `constexpr` to pure, side-effect-free functions where meaningful and correct.
+- Use `constexpr inline` for header-only constants to avoid ODR violations.
+- Avoid forcing `constexpr` on runtime-dependent logic (e.g., functions using Qt types like `QString`, `QDateTime`, `QLocale`).
+
+**Examples:**
+
+```cpp
+// ✓ Correct: compile-time constant
+constexpr inline auto AppName = DENTRY_APP_NAME;
+static constexpr const char *RED = "\033[31m";
+
+// ✗ Avoid: Qt runtime types cannot be constexpr
+[[nodiscard]] QString formatSize(qint64 bytes);  // Keep as non-constexpr
+```
+
+**References:**
+
+- https://en.cppreference.com/w/cpp/language/constexpr
+- https://en.cppreference.com/w/cpp/language/constant_initialization
 
 ## Installation
 
@@ -164,12 +242,12 @@ dentry/
     │   ├── PreviewPanel.h/.cpp
     │   ├── Toolbar.h/.cpp
     │   ├── StatusBar.h/.cpp
-    │   ├── ProgressDialog.h/.cpp
     │   ├── Style.h
     │   ├── style.qss
     │   └── resources.qrc
-    └── util/
-        ├── Logger.h/.cpp
+    ├── log/
+    │   └── Logger.h/.cpp
+    └── formatter/
         ├── SizeFormatter.h/.cpp
         ├── DateFormatter.h/.cpp
         └── PermissionFormatter.h/.cpp

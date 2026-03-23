@@ -6,14 +6,14 @@
  */
 
 #include "RenameOperation.h"
-#include "../../util/Logger.h"
+#include "../../log/Logger.h"
 
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QtConcurrent>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
     RenameOperation::RenameOperation(const QString &source,
                                      const QString &newName,
@@ -24,35 +24,42 @@ namespace Dentry::Fs {
 
     void RenameOperation::execute() {
         setRunning(true);
-        LOG_INFO("Op") << "Renaming:" << QFileInfo(m_source).fileName() << "->" << m_newName;
+        log::info("Op") << "Renaming:" << QFileInfo(m_source).fileName() << "->" << m_newName;
 
         m_future = QtConcurrent::run([this] {
             if (isCancelled()) {
-                LOG_INFO("Op") << "Rename cancelled";
-                emit finished(false, "Operation cancelled");
+                log::info("Op") << "Rename cancelled";
                 setRunning(false);
+                emit finished(false, "Operation cancelled");
                 return;
             }
 
             if (!renameEntry(m_source)) {
-                LOG_ERROR("Op") << "Failed to rename:" << QFileInfo(m_source).fileName();
-                emit finished(false, QString("Failed to rename: %1").arg(m_source));
+                log::error("Op") << "Failed to rename:" << QFileInfo(m_source).fileName();
                 setRunning(false);
+                emit finished(false, QString("Failed to rename: %1").arg(m_source));
                 return;
             }
 
-            LOG_INFO("Op") << "Rename completed successfully";
+            log::info("Op") << "Rename completed successfully";
             emit progress(100);
-            emit finished(true, QString());
             setRunning(false);
+            emit finished(true, QString());
         });
     }
 
     bool RenameOperation::renameEntry(const QString &path) {
         const QFileInfo info(path);
-        const QString destination = info.dir().absolutePath() + "/" + m_newName;
+        const QFileInfo newNameInfo(m_newName);
 
-        LOG_DEBUG("Op") << "Renaming:" << path << "->" << destination;
+        const QString sanitizedNewName = newNameInfo.fileName();
+        if (sanitizedNewName.isEmpty()) {
+            log::error("Op") << "Invalid new name for rename operation:" << m_newName;
+            return false;
+        }
+        const QString destination = QDir(info.dir().absolutePath()).filePath(sanitizedNewName);
+
+        log::debug("Op") << "Renaming:" << path << "->" << destination;
         return QFile::rename(path, destination);
     }
 
@@ -62,4 +69,4 @@ namespace Dentry::Fs {
             .arg(m_newName);
     }
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

@@ -9,7 +9,7 @@
 
 #include <QString>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
 	/**
 	 * @class IFileOperation
@@ -54,7 +54,7 @@ namespace Dentry::Fs {
 		/**
 		 * @brief Returns a human-readable description of the operation.
 		 *
-		 * Used to display in the progress dialog.
+		 * Used in logs and operation status reporting.
 		 * Example: "Copying document.pdf to /home/user/Downloads"
 		 *
 		 * @return A descriptive string.
@@ -65,4 +65,4 @@ namespace Dentry::Fs {
 		IFileOperation() = default;
 	};
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

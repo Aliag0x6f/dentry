@@ -7,13 +7,17 @@
 
 #pragma once
 
+#include "../DefaultLayout.h"
+#include "../UIComponent.h"
+
+#include <QFrame>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QPointer>
 #include <QString>
 #include <QWidget>
-#include <QFrame>
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
     /**
      * @class Sidebar
@@ -27,11 +31,12 @@ namespace Dentry::Ui {
      *
      * Example:
      * @code
-     * auto *sidebar = new Sidebar(this);
-     * connect(sidebar, &Sidebar::placeSelected, model, &FileSystemModel::setDirectory);
+     * auto sidebar = std::make_unique<Sidebar>(this);
+     * connect(sidebar.get(), &Sidebar::placeSelected, this, &MainWindow::navigateTo);
+     * sidebar.release(); // Qt parent now owns the sidebar.
      * @endcode
      */
-    class Sidebar : public QFrame {
+    class Sidebar : public UIComponent<QFrame, VLayout> {
         Q_OBJECT
 
     public:
@@ -61,6 +66,19 @@ namespace Dentry::Ui {
              */
             void placeSelected(const QString &path);
 
+    protected:
+        /** @brief Creates sidebar title, separator and list within the vertical layout. */
+        void setupLayout(VLayout &layout) override;
+
+        /** @brief Applies width constraints for the places list. */
+        void setupSize()        override;
+
+        /** @brief Applies object name used by styling rules. */
+        void setupStyle()       override;
+
+        /** @brief Connects list click handling to place selection behavior. */
+        void setupConnections() override;
+
     private slots:
         /**
          * @brief Handles a click on a sidebar item.
@@ -73,11 +91,11 @@ namespace Dentry::Ui {
         void buildPlaces();
 
         /** @brief The list widget displaying the places. */
-        QListWidget *m_list;
+        QPointer<QListWidget> m_list;
 
         /** @brief Whether hidden dot-files are shown. */
         bool m_showHidden = false;
 
     };
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

@@ -12,7 +12,7 @@
 #include <QStringList>
 #include <QFuture>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
     /**
      * @class CopyOperation
@@ -23,10 +23,10 @@ namespace Dentry::Fs {
      *
      * Example:
      * @code
-     * auto *op = new CopyOperation(sources, destination, parent);
-     * connect(op, &CopyOperation::progress, progressDialog, &ProgressDialog::onProgress);
-     * connect(op, &CopyOperation::finished, this, &MainWindow::onOperationFinished);
+     * auto op = std::make_unique<CopyOperation>(sources, destination, this);
+     * connect(op.get(), &CopyOperation::finished, this, &MainWindow::onOperationFinished);
      * op->execute();
+     * op.release(); // Qt parent now owns the operation.
      * @endcode
      */
     class CopyOperation final : public AFileOperation {
@@ -65,4 +65,4 @@ namespace Dentry::Fs {
         QFuture<void> m_future;
     };
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

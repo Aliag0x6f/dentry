@@ -6,12 +6,12 @@
  */
 
 #include "CreateFolderOperation.h"
-#include "../../util/Logger.h"
+#include "../../log/Logger.h"
 
 #include <QDir>
 #include <QtConcurrent>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
     CreateFolderOperation::CreateFolderOperation(const QString &directory,
                                                  const QString &name,
@@ -22,29 +22,29 @@ namespace Dentry::Fs {
 
     void CreateFolderOperation::execute() {
         setRunning(true);
-        LOG_INFO("Op") << "Creating folder: " << m_name << "in" << m_directory;
+        log::info("Op") << "Creating folder: " << m_name << "in" << m_directory;
 
         m_future = QtConcurrent::run([this] {
             if (isCancelled()) {
-                LOG_INFO("Op") << "Create folder cancelled";
-                emit finished(false, "Operation cancelled");
+                log::info("Op") << "Create folder cancelled";
                 setRunning(false);
+                emit finished(false, "Operation cancelled");
                 return;
             }
 
             QDir dir(m_directory);
 
             if (!dir.mkdir(m_name)) {
-                LOG_ERROR("Op") << "Failed to create directory: " << m_name;
-                emit finished(false, QString("Failed to create folder: %1").arg(m_name));
+                log::error("Op") << "Failed to create directory: " << m_name;
                 setRunning(false);
+                emit finished(false, QString("Failed to create folder: %1").arg(m_name));
                 return;
             }
 
-            LOG_INFO("Op") << "Folder created successfully:" << m_directory + "/" + m_name;
+            log::info("Op") << "Folder created successfully:" << QDir(m_directory).filePath(m_name);
             emit progress(100);
-            emit finished(true, QString());
             setRunning(false);
+            emit finished(true, QString());
         });
     }
 
@@ -52,4 +52,4 @@ namespace Dentry::Fs {
         return QString("Creating folder %1").arg(m_name);
     }
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

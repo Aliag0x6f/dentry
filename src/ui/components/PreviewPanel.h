@@ -7,13 +7,17 @@
 
 #pragma once
 
-#include "../model/FileItem.h"
+#include "../DefaultLayout.h"
+#include "../UIComponent.h"
+#include "../../model/FileItem.h"
+
 #include <QLabel>
+#include <QPointer>
 #include <QStackedWidget>
 #include <QTextEdit>
 #include <QWidget>
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
     /**
      * @class PreviewPanel
@@ -24,11 +28,12 @@ namespace Dentry::Ui {
      *
      * Example:
      * @code
-     * auto *preview = new PreviewPanel(this);
-     * connect(view, &FileListView::fileActivated, preview, &PreviewPanel::preview);
+     * auto preview = std::make_unique<PreviewPanel>(this);
+     * connect(view, &FileListView::fileActivated, preview.get(), &PreviewPanel::preview);
+     * preview.release(); // Qt parent now owns the panel.
      * @endcode
      */
-    class PreviewPanel : public QWidget {
+    class PreviewPanel : public UIComponent<QWidget, VLayout> {
         Q_OBJECT
 
     public:
@@ -46,17 +51,24 @@ namespace Dentry::Ui {
          * @brief Previews the given file.
          * @param item The FileItem to preview.
          */
-        void preview(const Model::FileItem &item);
+        void preview(const model::FileItem &item);
 
         /**
          * @brief Clears the preview panel.
          */
         void clear();
 
-    private:
-        /** @brief Builds the panel layout. */
-        void build();
+    protected:
+        /** @brief Builds the vertical preview layout and child widgets. */
+        void setupLayout(VLayout &layout) override;
 
+        /** @brief Applies size constraints for the preview panel. */
+        void setupSize()  override;
+
+        /** @brief Applies object name and style-related flags. */
+        void setupStyle() override;
+
+    private:
         /** @brief Shows a text preview of the given file. */
         void showText(const QString &path);
 
@@ -64,13 +76,13 @@ namespace Dentry::Ui {
         void showImage(const QString &path);
 
         /** @brief Shows file metadata. */
-        void showMetadata(const Model::FileItem &item);
+        void showMetadata(const model::FileItem &item);
 
-        QLabel         *m_nameLabel;
-        QLabel         *m_metaLabel;
-        QLabel         *m_imageLabel;
-        QTextEdit      *m_textEdit;
-        QStackedWidget *m_stack;
+        QPointer<QLabel>         m_nameLabel;
+        QPointer<QLabel>         m_metaLabel;
+        QPointer<QLabel>         m_imageLabel;
+        QPointer<QTextEdit>      m_textEdit;
+        QPointer<QStackedWidget> m_stack;
     };
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

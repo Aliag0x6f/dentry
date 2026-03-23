@@ -11,7 +11,7 @@
 #include <QFuture>
 #include <QString>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
 /**
  * @class CreateFileOperation
@@ -22,9 +22,10 @@ namespace Dentry::Fs {
  *
  * Example:
  * @code
- * auto *op = new CreateFileOperation(directory, name, parent);
- * connect(op, &CreateFileOperation::finished, this, &MainWindow::onOperationFinished);
+ * auto op = std::make_unique<CreateFileOperation>(directory, name, this);
+ * connect(op.get(), &CreateFileOperation::finished, this, &MainWindow::onOperationFinished);
  * op->execute();
+ * op.release(); // Qt parent now owns the operation.
  * @endcode
  */
 class CreateFileOperation final : public AFileOperation {
@@ -68,4 +69,4 @@ private:
     QFuture<void> m_future;
 };
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

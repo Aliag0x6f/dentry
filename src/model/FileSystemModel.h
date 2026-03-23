@@ -10,21 +10,22 @@
 #include "AFileSystemModel.h"
 #include <QString>
 
-namespace Dentry::Model {
+namespace dentry::model {
 
     /**
      * @class FileSystemModel
      * @brief Concrete model that reads the local filesystem.
      *
-     * Uses QDir and Dentry::Fs::FileInfo to populate entries.
+     * Uses QDir and dentry::fs::FileInfo to populate entries.
      * Supports hidden file filtering, search filtering, and sorting
      * with directories always listed before files.
      *
      * Example:
      * @code
-     * auto *model = new FileSystemModel(parent);
-     * treeView->setModel(model);
+     * auto model = std::make_unique<FileSystemModel>(parent);
+     * treeView->setModel(model.get());
      * model->setDirectory(QDir::homePath());
+     * model.release(); // Qt parent now owns the model.
      * @endcode
      */
     class FileSystemModel final : public AFileSystemModel {
@@ -60,4 +61,4 @@ namespace Dentry::Model {
         void refresh() override;
     };
 
-} // namespace Dentry::Model
+} // namespace dentry::model

@@ -9,9 +9,9 @@
 #include "ui/MainWindow.h"
 
 int main(int argc, char *argv[]) {
-    Dentry::Application app(argc, argv);
+    dentry::Application app(argc, argv);
 
-    Dentry::Ui::MainWindow window;
+    dentry::ui::MainWindow window;
     window.show();
 
     return app.exec();

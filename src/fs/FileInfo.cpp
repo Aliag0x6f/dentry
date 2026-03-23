@@ -7,12 +7,12 @@
 
 #include "FileInfo.h"
 #include "MimeResolver.h"
-#include "../util/DateFormatter.h"
-#include "../util/PermissionFormatter.h"
-#include "../util/SizeFormatter.h"
-#include "../util/Logger.h"
+#include "../formatter/DateFormatter.h"
+#include "../formatter/PermissionFormatter.h"
+#include "../formatter/SizeFormatter.h"
+#include "../log/Logger.h"
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
 	FileInfo::FileInfo(const QString &path)
 		: FileInfo(QFileInfo(path)) {}
@@ -26,11 +26,11 @@ namespace Dentry::Fs {
 		m_size				   = m_fileInfo.isDir() ? 0 : m_fileInfo.size();
 		m_lastModified		   = m_fileInfo.lastModified();
 		m_mimeType			   = MimeResolver::resolve(m_fileInfo);
-		m_formattedSize		   = m_fileInfo.isDir() ? QString() : Util::SizeFormatter::format(m_size);
-		m_formattedDate		   = Util::DateFormatter::format(m_lastModified);
-		m_formattedPermissions = Util::PermissionFormatter::format(m_fileInfo);
+		m_formattedSize		   = m_fileInfo.isDir() ? QString() : formatter::formatSize(m_size);
+		m_formattedDate		   = formatter::formatDateTime(m_lastModified);
+		m_formattedPermissions = formatter::formatPermissions(m_fileInfo);
 
-		LOG_DEBUG("FileInfo") << "Computed:" << m_name << "MIME:" << m_mimeType;
+		log::debug("FileInfo") << "Computed:" << m_name << "MIME:" << m_mimeType;
 	}
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

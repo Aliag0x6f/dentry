@@ -24,7 +24,7 @@
 #include <QFile>
 #include <QString>
 
-namespace Dentry::Ui {
+namespace dentry::ui {
 
     /**
      * @class Style
@@ -60,4 +60,4 @@ namespace Dentry::Ui {
         }
     };
 
-} // namespace Dentry::Ui
+} // namespace dentry::ui

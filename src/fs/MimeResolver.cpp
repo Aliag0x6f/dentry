@@ -6,11 +6,11 @@
  */
 
 #include "MimeResolver.h"
-#include "../util/Logger.h"
+#include "../log/Logger.h"
 
 #include <QMimeType>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
 	const QMimeDatabase &MimeResolver::database() {
 		static QMimeDatabase db;
@@ -28,11 +28,11 @@ namespace Dentry::Fs {
 		const QMimeType mime = database().mimeTypeForFile(info, QMimeDatabase::MatchDefault);
 
 		if (!mime.isValid()) {
-			LOG_WARNING("Mime") << "Invalid MIME for:" << info.fileName() << "fallback to octet-stream";
+			log::warn("Mime") << "Invalid MIME for:" << info.fileName() << "fallback to octet-stream";
 			return QStringLiteral("application/octet-stream");
 		}
 
-		LOG_DEBUG("Mime") << "Resolved:" << info.fileName() << "->" << mime.name();
+		log::debug("Mime") << "Resolved:" << info.fileName() << "->" << mime.name();
 		return mime.name();
 	}
 
@@ -40,11 +40,11 @@ namespace Dentry::Fs {
 		const QMimeType mime = database().mimeTypeForName(mimeType);
 
 		if (!mime.isValid()) {
-			LOG_WARNING("Mime") << "Invalid MIME type for icon lookup:" << mimeType;
+			log::warn("Mime") << "Invalid MIME type for icon lookup:" << mimeType;
 			return QStringLiteral("text-x-generic");
 		}
 
 		return mime.genericIconName();
 	}
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs

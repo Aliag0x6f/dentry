@@ -6,10 +6,11 @@
  */
 
 #include "Application.h"
+#include "AppMetadata.h"
 #include "../ui/Style.h"
-#include "../util/Logger.h"
+#include "../log/Logger.h"
 
-namespace Dentry {
+namespace dentry {
 
     Application::Application(int &argc, char **argv)
         : QApplication(argc, argv) {
@@ -17,16 +18,14 @@ namespace Dentry {
     }
 
     void Application::initialize() {
-        Dentry::Util::Logger::install();
-        LOG_INFO("App") << "Logger installed";
+        dentry::log::install();
 
-        setApplicationName("Dentry");
-        setApplicationVersion("1.0.0");
+        setApplicationName(metadata::AppName);
+        setApplicationDisplayName(metadata::AppDisplayName);
+        setApplicationVersion(metadata::AppVersion);
+        setStyleSheet(dentry::ui::Style::sheet());
 
-        LOG_INFO("App") << "Dentry" << applicationVersion() << "starting";
-
-        setStyleSheet(Dentry::Ui::Style::sheet());
-        LOG_INFO("App") << "Stylesheet loaded";
+        log::info("App") << metadata::AppDisplayName << metadata::AppVersion << "initialized";
     }
 
-} // namespace Dentry
+} // namespace dentry

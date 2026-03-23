@@ -6,14 +6,14 @@
  */
 
 #include "MoveOperation.h"
-#include "../../util/Logger.h"
+#include "../../log/Logger.h"
 
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QtConcurrent>
 
-namespace Dentry::Fs {
+namespace dentry::fs {
 
     MoveOperation::MoveOperation(const QStringList &sources,
                                  const QString     &destination,
@@ -24,7 +24,7 @@ namespace Dentry::Fs {
 
     void MoveOperation::execute() {
         setRunning(true);
-        LOG_INFO("Op") << "Moving" << m_sources.count() << "item(s) to" << m_destination;
+        log::info("Op") << "Moving" << m_sources.count() << "item(s) to" << m_destination;
 
         m_future = QtConcurrent::run([this] {
             const int total = m_sources.count();
@@ -32,41 +32,41 @@ namespace Dentry::Fs {
 
             for (const QString &source : m_sources) {
                 if (isCancelled()) {
-                    LOG_INFO("Op") << "Move cancelled";
-                    emit finished(false, "Operation cancelled");
+                    log::info("Op") << "Move cancelled";
                     setRunning(false);
+                    emit finished(false, "Operation cancelled");
                     return;
                 }
 
                 const QFileInfo info(source);
-                const QString dest = m_destination + "/" + info.fileName();
+                const QString dest = QDir(m_destination).filePath(info.fileName());
 
                 if (!moveEntry(source, dest)) {
-                    LOG_ERROR("Op") << "Failed to move:" << info.fileName();
-                    emit finished(false, QString("Failed to move: %1").arg(info.fileName()));
+                    log::error("Op") << "Failed to move:" << info.fileName();
                     setRunning(false);
+                    emit finished(false, QString("Failed to move: %1").arg(info.fileName()));
                     return;
                 }
 
                 ++completed;
-                LOG_DEBUG("Op") << "Moved:" << info.fileName()
-                                << "(" << completed << "/" << total << ")";
+                log::debug("Op") << "Moved:" << info.fileName()
+                                 << "(" << completed << "/" << total << ")";
                 emit progress(static_cast<int>(completed * 100.0 / total));
             }
 
-            LOG_INFO("Op") << "Move completed successfully";
-            emit finished(true, QString());
+            log::info("Op") << "Move completed successfully";
             setRunning(false);
+            emit finished(true, QString());
         });
     }
 
     bool MoveOperation::moveEntry(const QString &source, const QString &destination) {
         if (QFile::rename(source, destination)) {
-            LOG_DEBUG("Op") << "Renamed directly:" << source;
+            log::debug("Op") << "Renamed directly:" << source;
             return true;
         }
 
-        LOG_DEBUG("Op") << "Rename failed, falling back to copy+delete:" << source;
+        log::debug("Op") << "Rename failed, falling back to copy+delete:" << source;
         return copyThenDelete(source, destination);
     }
 
@@ -74,10 +74,10 @@ namespace Dentry::Fs {
         const QFileInfo info(source);
 
         if (info.isDir()) {
-            LOG_DEBUG("Op") << "Moving directory:" << source << "->" << destination;
+            log::debug("Op") << "Moving directory:" << source << "->" << destination;
             QDir srcDir(source);
             if (!QDir().mkpath(destination)) {
-                LOG_ERROR("Op") << "Failed to create directory:" << destination;
+                log::error("Op") << "Failed to create directory:" << destination;
                 return false;
             }
 
@@ -89,7 +89,7 @@ namespace Dentry::Fs {
                 if (isCancelled())
                     return false;
 
-                const QString destPath = destination + "/" + entry.fileName();
+                const QString destPath = QDir(destination).filePath(entry.fileName());
 
                 if (!copyThenDelete(entry.absoluteFilePath(), destPath))
                     return false;
@@ -102,7 +102,7 @@ namespace Dentry::Fs {
             QFile::remove(destination);
 
         if (!QFile::copy(source, destination)) {
-            LOG_ERROR("Op") << "Failed to copy file:" << source;
+            log::error("Op") << "Failed to copy file:" << source;
             return false;
         }
 
@@ -115,4 +115,4 @@ namespace Dentry::Fs {
             .arg(m_destination);
     }
 
-} // namespace Dentry::Fs
+} // namespace dentry::fs
