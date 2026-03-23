@@ -242,7 +242,6 @@ dentry/
     │   ├── PreviewPanel.h/.cpp
     │   ├── Toolbar.h/.cpp
     │   ├── StatusBar.h/.cpp
-    │   ├── ProgressDialog.h/.cpp
     │   ├── Style.h
     │   ├── style.qss
     │   └── resources.qrc

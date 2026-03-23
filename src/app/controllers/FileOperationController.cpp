@@ -6,7 +6,6 @@
  */
 
 #include "FileOperationController.h"
-#include "../../ui/components/ProgressDialog.h"
 
 #include <QFileInfo>
 #include <QInputDialog>
@@ -26,20 +25,20 @@ namespace dentry::app {
         if (!operation)
             return;
 
-        fs::AFileOperation *op = operation.get();
-        ui::ProgressDialog dialog(op, m_dialogParent);
+        fs::AFileOperation *op = operation.release();
+        op->setParent(this);
 
-        // not working for the moment
-        /*connect(op, &fs::AFileOperation::finished, op, [op](bool, const QString &) {
-            op->deleteLater();
-        });*/
-
-        connect(op, &fs::AFileOperation::finished, this, [onFinished](bool success, const QString &) {
+        connect(op, &fs::AFileOperation::finished, this, [onFinished, op](bool success, const QString &) {
             onFinished(success);
+            op->deleteLater();
+        });
+
+        connect(op, &fs::AFileOperation::finished, this, [](bool success, const QString &error) {
+            if (!success)
+                log::error("FileOps") << "Operation failed:" << error;
         });
 
         op->execute();
-        dialog.exec();
     }
 
     FileOperationController::FileOperationController(model::FileSystemModel *model,

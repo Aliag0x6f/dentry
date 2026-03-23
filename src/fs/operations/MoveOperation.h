@@ -28,7 +28,6 @@ namespace dentry::fs {
  * Example:
  * @code
  * auto op = std::make_unique<MoveOperation>(sources, destination, this);
- * connect(op.get(), &MoveOperation::progress, progressDialog, &ProgressDialog::onProgress);
  * connect(op.get(), &MoveOperation::finished, this, &MainWindow::onOperationFinished);
  * op->execute();
  * op.release(); // Qt parent now owns the operation.

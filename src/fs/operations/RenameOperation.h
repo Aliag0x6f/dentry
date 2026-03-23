@@ -23,7 +23,6 @@ namespace dentry::fs {
  * Example:
  * @code
  * auto op = std::make_unique<RenameOperation>(source, newName, this);
- * connect(op.get(), &RenameOperation::progress, progressDialog, &ProgressDialog::onProgress);
  * connect(op.get(), &RenameOperation::finished, this, &MainWindow::onOperationFinished);
  * op->execute();
  * op.release(); // Qt parent now owns the operation.

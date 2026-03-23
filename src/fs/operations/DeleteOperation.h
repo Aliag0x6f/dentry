@@ -24,7 +24,6 @@ namespace dentry::fs {
  * Example:
  * @code
  * auto op = std::make_unique<DeleteOperation>(targets, this);
- * connect(op.get(), &DeleteOperation::progress, progressDialog, &ProgressDialog::onProgress);
  * connect(op.get(), &DeleteOperation::finished, this, &MainWindow::onOperationFinished);
  * op->execute();
  * op.release(); // Qt parent now owns the operation.

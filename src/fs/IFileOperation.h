@@ -54,7 +54,7 @@ namespace dentry::fs {
 		/**
 		 * @brief Returns a human-readable description of the operation.
 		 *
-		 * Used to display in the progress dialog.
+		 * Used in logs and operation status reporting.
 		 * Example: "Copying document.pdf to /home/user/Downloads"
 		 *
 		 * @return A descriptive string.
