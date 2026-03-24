@@ -8,14 +8,12 @@
 #pragma once
 
 #include "../UIComponent.h"
-#include "../../app/controllers/KeyboardController.h"
+#include "../../app/events/FileListEvents.h"
 #include "../../model/AFileSystemModel.h"
 #include "../../model/FileItem.h"
 
 #include <QList>
 #include <QTreeView>
-
-class QKeyEvent;
 
 namespace dentry::ui {
 
@@ -55,15 +53,6 @@ public:
      */
     void setModel(QAbstractItemModel *model) override;
 
-    /**
-     * @brief Sets the leader key used by custom keyboard sequences.
-     *
-     * Default bindings do not require a leader, but this enables future
-     * user-configurable Vim-like combos.
-     */
-    void setKeyboardLeaderKey(Qt::Key key);
-
-
 signals:
     /**
      * @brief Emitted when the user double-clicks a directory.
@@ -87,6 +76,11 @@ signals:
      * @brief Emitted when the user requests back navigation from the keyboard.
      */
     void backRequested();
+
+    /**
+     * @brief Emitted when the user requests to focus the sidebar (Places).
+     */
+    void focusSidebarRequested();
 
     // ── Operations ────────────────────────────────────────────────────────
 
@@ -133,22 +127,6 @@ signals:
     void createFolderRequested(const QString &directory);
 
 protected:
-    /**
-     * @brief Handles double-click to navigate into directories or open files.
-     * @param index The index that was double-clicked.
-     */
-    void mouseDoubleClickEvent(QMouseEvent *event) override;
-
-    /**
-     * @brief Handles context menu requests.
-     * @param event The context menu event.
-     */
-    void contextMenuEvent(QContextMenuEvent *event) override;
-
-    /**
-     * @brief Handles keyboard-driven navigation/actions in the list view.
-     */
-    void keyPressEvent(QKeyEvent *event) override;
 
     /** @brief Applies sorting and view sizing behavior. */
     void setupSize()  override;
@@ -163,6 +141,9 @@ private slots:
     void onSelectionChanged();
 
 private:
+    /** @brief Executes semantic keyboard command dispatching for the view. */
+    void executeKeyboardCommand(app::FileListCommand command);
+
     /** @brief Selects a specific row if it is valid. */
     void selectRow(int row);
 
@@ -178,8 +159,8 @@ private:
     /** @brief Activates the current selection (navigate into folder / activate file). */
     void activateCurrentItem();
 
-    /** @brief Dedicated keyboard command parser/binding manager. */
-    app::KeyboardController m_keyboardController;
+    /** @brief Dedicated event orchestrator for keyboard/mouse selection interactions. */
+    app::events::FileListEvents m_events;
 };
 
 } // namespace dentry::ui

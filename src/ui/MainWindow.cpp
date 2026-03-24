@@ -62,6 +62,7 @@ namespace dentry::ui {
 
         connect(fileListView, &FileListView::directoryRequested,    m_navigationController, &app::NavigationController::navigateTo);
         connect(fileListView, &FileListView::backRequested,         m_navigationController, &app::NavigationController::navigateBack);
+        connect(fileListView, &FileListView::focusSidebarRequested, sidebar, QOverload<>::of(&QWidget::setFocus));
         connect(fileListView, &FileListView::selectionChanged,      m_central, &CentralWidget::updatePreviewFromSelection);
         connect(fileListView, &FileListView::selectionChanged,      m_statusBar, &StatusBar::setSelection);
         connect(fileListView, &FileListView::deleteRequested,       m_fileOperationController, &app::FileOperationController::onDeleteRequested);
@@ -90,6 +91,5 @@ namespace dentry::ui {
 
         m_statusBar->setDirectoryStats(folders, files);
     }
-
 
 } // namespace dentry::ui

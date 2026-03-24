@@ -7,16 +7,48 @@
 
 #include "FileListView.h"
 
-#include <QContextMenuEvent>
-#include <QKeyEvent>
-#include <QMenu>
-#include <QMouseEvent>
+#include <utility>
 
 namespace dentry::ui {
 
     FileListView::FileListView(QWidget *parent)
         : UIComponent(parent) {
         build();
+
+        app::events::FileListEventCallbacks callbacks;
+        callbacks.onCommand = [this](const app::FileListCommand command) {
+            executeKeyboardCommand(command);
+        };
+        callbacks.onDirectoryRequested = [this](const QString &path) {
+            emit directoryRequested(path);
+        };
+        callbacks.onFileActivated = [this](const model::FileItem &item) {
+            emit fileActivated(item);
+        };
+        callbacks.onCopyRequested = [this](const QStringList &paths) {
+            emit copyRequested(paths);
+        };
+        callbacks.onCutRequested = [this](const QStringList &paths) {
+            emit cutRequested(paths);
+        };
+        callbacks.onPasteRequested = [this](const QString &destination) {
+            emit pasteRequested(destination);
+        };
+        callbacks.onDeleteRequested = [this](const QStringList &paths) {
+            emit deleteRequested(paths);
+        };
+        callbacks.onRenameRequested = [this](const QString &path) {
+            emit renameRequested(path);
+        };
+        callbacks.onCreateFileRequested = [this](const QString &directory) {
+            emit createFileRequested(directory);
+        };
+        callbacks.onCreateFolderRequested = [this](const QString &directory) {
+            emit createFolderRequested(directory);
+        };
+
+        m_events.setCallbacks(std::move(callbacks));
+        m_events.installOn(this);
     }
 
 
@@ -52,80 +84,27 @@ namespace dentry::ui {
         }
     }
 
-    void FileListView::setKeyboardLeaderKey(Qt::Key key) {
-        m_keyboardController.setLeaderKey(key);
-    }
 
-    // ── Events ────────────────────────────────────────────────────────────────
+    // ── Selection ─────────────────────────────────────────────────────────────
 
-    void FileListView::mouseDoubleClickEvent(QMouseEvent *event) {
-        const QModelIndex index = indexAt(event->pos());
-
-        if (!index.isValid()) {
-            QTreeView::mouseDoubleClickEvent(event);
-            return;
-        }
-
-        const auto *fsModel = qobject_cast<const model::AFileSystemModel *>(model());
-        if (!fsModel) {
-            QTreeView::mouseDoubleClickEvent(event);
-            return;
-        }
-
-        const model::FileItem item = fsModel->entries().at(index.row());
-
-        if (item.isDir)
-            emit directoryRequested(item.absolutePath);
-        else
-            emit fileActivated(item);
-
-        QTreeView::mouseDoubleClickEvent(event);
-    }
-
-    void FileListView::contextMenuEvent(QContextMenuEvent *event) {
+    void FileListView::onSelectionChanged() {
         const auto *fsModel = qobject_cast<const model::AFileSystemModel *>(model());
         if (!fsModel)
             return;
 
-        QStringList selectedPaths;
+        QList<model::FileItem> selected;
         const QModelIndexList indexes = selectionModel()->selectedRows();
-        for (const QModelIndex &i : indexes)
-            selectedPaths << fsModel->entries().at(i.row()).absolutePath;
+        selected.reserve(indexes.count());
 
-        const QString currentDir = fsModel->currentPath();
+        for (const QModelIndex &index : indexes)
+            selected.append(fsModel->entries().at(index.row()));
 
-        QMenu menu(this);
+        m_events.onSelectionChanged(selected);
 
-        if (!selectedPaths.isEmpty()) {
-            menu.addAction("Copy",   this, [this, selectedPaths] { emit copyRequested(selectedPaths); });
-            menu.addAction("Cut",    this, [this, selectedPaths] { emit cutRequested(selectedPaths); });
-            menu.addSeparator();
-
-            if (selectedPaths.count() == 1) {
-                menu.addAction("Rename", this, [this, selectedPaths] {
-                    emit renameRequested(selectedPaths.first());
-                });
-            }
-
-            menu.addAction("Delete", this, [this, selectedPaths] { emit deleteRequested(selectedPaths); });
-            menu.addSeparator();
-        }
-
-        menu.addAction("Paste",      this, [this, currentDir] { emit pasteRequested(currentDir); });
-        menu.addSeparator();
-        menu.addAction("New File",   this, [this, currentDir] { emit createFileRequested(currentDir); });
-        menu.addAction("New Folder", this, [this, currentDir] { emit createFolderRequested(currentDir); });
-
-        menu.exec(event->globalPos());
+        emit selectionChanged(selected);
     }
 
-    void FileListView::keyPressEvent(QKeyEvent *event) {
-        app::FileListCommand command;
-        if (!m_keyboardController.handleKeyPress(*event, command)) {
-            QTreeView::keyPressEvent(event);
-            return;
-        }
-
+    void FileListView::executeKeyboardCommand(const app::FileListCommand command) {
         switch (command) {
             case app::FileListCommand::MoveDown:
                 selectRelativeRow(+1);
@@ -145,26 +124,10 @@ namespace dentry::ui {
             case app::FileListCommand::NavigateBack:
                 emit backRequested();
                 break;
+            case app::FileListCommand::FocusSidebar:
+                emit focusSidebarRequested();
+                break;
         }
-
-        event->accept();
-    }
-
-    // ── Selection ─────────────────────────────────────────────────────────────
-
-    void FileListView::onSelectionChanged() {
-        const auto *fsModel = qobject_cast<const model::AFileSystemModel *>(model());
-        if (!fsModel)
-            return;
-
-        QList<model::FileItem> selected;
-        const QModelIndexList indexes = selectionModel()->selectedRows();
-        selected.reserve(indexes.count());
-
-        for (const QModelIndex &index : indexes)
-            selected.append(fsModel->entries().at(index.row()));
-
-        emit selectionChanged(selected);
     }
 
     void FileListView::selectRow(int row) {

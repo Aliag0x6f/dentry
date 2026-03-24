@@ -6,24 +6,55 @@
  */
 
 #include "KeyboardController.h"
+#include "../../log/Logger.h"
 
 #include <QKeyEvent>
+#include <QKeySequence>
 
 namespace dentry::app {
+
+    const char *fileListCommandToString(const FileListCommand command) {
+        switch (command) {
+            case FileListCommand::MoveDown:
+                return "MoveDown";
+            case FileListCommand::MoveUp:
+                return "MoveUp";
+            case FileListCommand::FirstEntry:
+                return "FirstEntry";
+            case FileListCommand::LastEntry:
+                return "LastEntry";
+            case FileListCommand::Activate:
+                return "Activate";
+            case FileListCommand::NavigateBack:
+                return "NavigateBack";
+            case FileListCommand::FocusSidebar:
+                return "FocusSidebar";
+        }
+
+        return "Unknown";
+    }
 
     KeyboardController::KeyboardController() {
         installDefaultBindings();
     }
 
     bool KeyboardController::handleKeyPress(const QKeyEvent &event, FileListCommand &command) {
+        log::debug("Keyboard") << "Key press received"
+                               << "key=" << event.key()
+                               << "keyText=" << QKeySequence(event.key()).toString()
+                               << "text=" << event.text()
+                               << "modifiers=" << static_cast<int>(event.modifiers());
+
         const Qt::KeyboardModifiers blockedModifiers = Qt::ControlModifier | Qt::AltModifier | Qt::MetaModifier;
         if ((event.modifiers() & blockedModifiers) != Qt::NoModifier) {
+            log::debug("Keyboard") << "Ignoring key press: unsupported modifiers";
             resetSequence();
             return false;
         }
 
         const KeyStroke stroke = normalize(event);
         if (stroke.key == 0) {
+            log::debug("Keyboard") << "Ignoring key press: normalized key is 0";
             resetSequence();
             return false;
         }
@@ -32,12 +63,15 @@ namespace dentry::app {
 
         MatchState state = match(m_pending, command);
         if (state == MatchState::Exact) {
+            log::info("Keyboard") << "Keyboard action matched:" << fileListCommandToString(command);
             m_pending.clear();
             return true;
         }
 
-        if (state == MatchState::Prefix)
+        if (state == MatchState::Prefix) {
+            log::debug("Keyboard") << "Partial key sequence matched; waiting for next key";
             return false;
+        }
 
         if (m_pending.size() > 1) {
             const KeyStroke lastStroke = m_pending.back();
@@ -45,28 +79,24 @@ namespace dentry::app {
 
             state = match(m_pending, command);
             if (state == MatchState::Exact) {
+                log::info("Keyboard") << "Keyboard action matched:" << fileListCommandToString(command);
                 m_pending.clear();
                 return true;
             }
 
-            if (state == MatchState::Prefix)
+            if (state == MatchState::Prefix) {
+                log::debug("Keyboard") << "Partial key sequence matched after reset; waiting for next key";
                 return false;
+            }
         }
 
+        log::debug("Keyboard") << "No keyboard binding matched";
         m_pending.clear();
         return false;
     }
 
     void KeyboardController::resetSequence() {
         m_pending.clear();
-    }
-
-    void KeyboardController::setLeaderKey(Qt::Key key) {
-        m_leaderKey = key;
-    }
-
-    Qt::Key KeyboardController::leaderKey() const {
-        return m_leaderKey;
     }
 
     void KeyboardController::setBinding(const QList<QPair<int, Qt::KeyboardModifiers>> &sequence,
@@ -105,22 +135,6 @@ namespace dentry::app {
         }
 
         m_bindings.append(binding);
-    }
-
-    void KeyboardController::setLeaderBinding(const QList<int> &sequence, FileListCommand command) {
-        if (m_leaderKey == Qt::Key_unknown || sequence.isEmpty())
-            return;
-
-        QList<QPair<int, Qt::KeyboardModifiers>> fullSequence;
-        fullSequence.append({ m_leaderKey, Qt::NoModifier });
-
-        for (const int key : sequence) {
-            if (key == 0)
-                return;
-            fullSequence.append({ key, Qt::NoModifier });
-        }
-
-        setBinding(fullSequence, command);
     }
 
     KeyboardController::KeyStroke KeyboardController::normalize(const QKeyEvent &event) {
@@ -163,15 +177,13 @@ namespace dentry::app {
     }
 
     void KeyboardController::installDefaultBindings() {
-        setBinding({ { Qt::Key_J, Qt::NoModifier } }, FileListCommand::MoveDown);
-        setBinding({ { Qt::Key_K, Qt::NoModifier } }, FileListCommand::MoveUp);
-        setBinding({ { Qt::Key_G, Qt::NoModifier }, { Qt::Key_G, Qt::NoModifier } }, FileListCommand::FirstEntry);
-        setBinding({ { Qt::Key_G, Qt::ShiftModifier } }, FileListCommand::LastEntry);
-        setBinding({ { Qt::Key_L, Qt::NoModifier } }, FileListCommand::Activate);
-        setBinding({ { Qt::Key_Return, Qt::NoModifier } }, FileListCommand::Activate);
-        setBinding({ { Qt::Key_Enter, Qt::NoModifier } }, FileListCommand::Activate);
-        setBinding({ { Qt::Key_H, Qt::NoModifier } }, FileListCommand::NavigateBack);
-        setBinding({ { Qt::Key_Backspace, Qt::NoModifier } }, FileListCommand::NavigateBack);
+        for (const auto &binding : defaultBindings()) {
+            setBinding(binding.sequence, binding.command);
+        }
+    }
+
+    const QList<KeyBinding> &KeyboardController::defaultBindings() {
+        return DEFAULT_BINDINGS;
     }
 
 } // namespace dentry::app

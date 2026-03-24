@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <qevent.h>
 #include <QList>
 #include <QPair>
 #include <Qt>
@@ -24,14 +25,63 @@ enum class FileListCommand {
     FirstEntry,
     LastEntry,
     Activate,
-    NavigateBack
+    NavigateBack,
+    FocusSidebar
+};
+
+/** @brief Returns a stable string name for a FileListCommand. */
+[[nodiscard]] const char *fileListCommandToString(FileListCommand command);
+
+/**
+ * @brief Keybinding definition: associates a key sequence with a command and description.
+ */
+struct KeyBinding {
+    QList<QPair<int, Qt::KeyboardModifiers>> sequence;
+    FileListCommand command;
+    const char *description;
+};
+
+/**
+ * @brief Default keybindings: vim-inspired navigation.
+ *
+ * Easy to modify here - just change the list and recompile.
+ * The list follows this pattern:
+ * - Movement: j/k for down/up
+ * - Jump: gg/G for first/last
+ * - Activate: l/Return/Enter to open
+ * - Back: h/Backspace to go back
+ */
+inline static const QList<KeyBinding> DEFAULT_BINDINGS = {
+    // Movement
+    { { { Qt::Key_Down, Qt::NoModifier } }, FileListCommand::MoveDown, "Down: Move down" },
+    { { { Qt::Key_Up, Qt::NoModifier } }, FileListCommand::MoveUp, "Up: Move up" },
+    { { { Qt::Key_J, Qt::NoModifier } }, FileListCommand::MoveDown, "j: Move down" },
+    { { { Qt::Key_K, Qt::NoModifier } }, FileListCommand::MoveUp, "k: Move up" },
+
+    // Jump
+    { { { Qt::Key_G, Qt::NoModifier }, { Qt::Key_G, Qt::NoModifier } }, FileListCommand::FirstEntry, "gg: Jump to first" },
+    { { { Qt::Key_G, Qt::ShiftModifier } }, FileListCommand::LastEntry, "G: Jump to last" },
+
+    // Activation
+    { { { Qt::Key_Right, Qt::NoModifier } }, FileListCommand::Activate, "Right: Open/Activate" },
+    { { { Qt::Key_L, Qt::NoModifier } }, FileListCommand::Activate, "l: Open/Activate" },
+    { { { Qt::Key_Return, Qt::NoModifier } }, FileListCommand::Activate, "Return: Open/Activate" },
+    { { { Qt::Key_Enter, Qt::NoModifier } }, FileListCommand::Activate, "Enter: Open/Activate" },
+
+    // Navigation back
+    { { { Qt::Key_Left, Qt::NoModifier } }, FileListCommand::NavigateBack, "Left: Back" },
+    { { { Qt::Key_H, Qt::NoModifier } }, FileListCommand::NavigateBack, "h: Back" },
+    { { { Qt::Key_Backspace, Qt::NoModifier } }, FileListCommand::NavigateBack, "Backspace: Back" },
+
+    // Focus sidebar
+    { { { Qt::Key_P, Qt::NoModifier } }, FileListCommand::FocusSidebar, "p: Go to Places" },
 };
 
 /**
  * @brief Resolves key presses into semantic file list commands.
  *
  * Keeps key-sequence parsing state outside widgets so bindings can be
- * customized in one place (including a leader-based style in future).
+ * customized in one place.
  */
 class KeyboardController {
 public:
@@ -48,11 +98,6 @@ public:
     /** @brief Clears any pending partially typed sequence. */
     void resetSequence();
 
-    /** @brief Sets a leader key used for custom multi-key mappings. */
-    void setLeaderKey(Qt::Key key);
-
-    /** @brief Returns the currently configured leader key, or Key_unknown if disabled. */
-    [[nodiscard]] Qt::Key leaderKey() const;
 
     /**
      * @brief Registers or replaces a raw key sequence binding.
@@ -62,12 +107,13 @@ public:
      */
     void setBinding(const QList<QPair<int, Qt::KeyboardModifiers>> &sequence, FileListCommand command);
 
+
     /**
-     * @brief Registers a leader-based binding sequence.
+     * @brief Returns the list of default keybindings.
      *
-     * Example with leader set to Space: sequence {Qt::Key_H} maps to "Space h".
+     * Useful for documentation, remapping, or config file generation.
      */
-    void setLeaderBinding(const QList<int> &sequence, FileListCommand command);
+    [[nodiscard]] static const QList<KeyBinding> &defaultBindings();
 
 private:
     struct KeyStroke {
@@ -96,7 +142,6 @@ private:
 
     QList<Binding>   m_bindings;
     QList<KeyStroke> m_pending;
-    Qt::Key          m_leaderKey = Qt::Key_unknown;
 };
 
 } // namespace dentry::app
