@@ -6,7 +6,9 @@
  */
 
 #include "FileListView.h"
+#include "../../log/Logger.h"
 
+#include <QMetaObject>
 #include <utility>
 
 namespace dentry::ui {
@@ -51,7 +53,6 @@ namespace dentry::ui {
         m_events.installOn(this);
     }
 
-
     void FileListView::setupSize() {
         setSortingEnabled(true);
         sortByColumn(0, Qt::AscendingOrder);
@@ -78,12 +79,26 @@ namespace dentry::ui {
 
         QTreeView::setModel(model);
 
-        if (QItemSelectionModel *current = selectionModel()) {
-            connect(current, &QItemSelectionModel::selectionChanged,
-                    this, &FileListView::onSelectionChanged);
+        if (QItemSelectionModel *sel = selectionModel()) {
+            connect(sel, &QItemSelectionModel::selectionChanged, this, &FileListView::onSelectionChanged);
+        }
+
+        if (model) {
+            auto autoSelect = [this]() {
+                QMetaObject::invokeMethod(this, [this]() {
+                    if (!this->model()) return;
+                    if (this->model()->rowCount(rootIndex()) <= 0) return;
+                    if (selectionModel() && selectionModel()->hasSelection()) return;
+                    if (currentIndex().isValid()) return;
+                    selectFirstRow();
+                }, Qt::QueuedConnection);
+            };
+
+            connect(model, &QAbstractItemModel::modelReset, this, autoSelect);
+            connect(model, &QAbstractItemModel::rowsInserted, this, autoSelect);
+            autoSelect();
         }
     }
-
 
     // ── Selection ─────────────────────────────────────────────────────────────
 
@@ -142,7 +157,6 @@ namespace dentry::ui {
             return;
 
         setCurrentIndex(index);
-        selectionModel()->select(index, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
         scrollTo(index, QAbstractItemView::PositionAtCenter);
     }
 
