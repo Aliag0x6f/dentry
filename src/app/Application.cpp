@@ -5,10 +5,10 @@
  * @author Hugo Fabresse
  */
 
-#include "Application.h"
 #include "AppMetadata.h"
-#include "../ui/Style.h"
-#include "../log/Logger.h"
+#include "Application.h"
+#include "log/Logger.h"
+#include "ui/Style.h"
 
 namespace dentry {
 

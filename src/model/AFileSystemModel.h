@@ -8,6 +8,7 @@
 #pragma once
 
 #include "IFileSystemModel.h"
+
 #include <QAbstractItemModel>
 #include <QList>
 #include <QString>

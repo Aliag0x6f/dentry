@@ -8,6 +8,7 @@
 #pragma once
 
 #include "AFileSystemModel.h"
+
 #include <QString>
 
 namespace dentry::model {

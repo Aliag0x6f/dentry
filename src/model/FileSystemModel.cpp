@@ -6,8 +6,8 @@
  */
 
 #include "FileSystemModel.h"
-#include "../fs/FileInfo.h"
-#include "../log/Logger.h"
+#include "fs/FileInfo.h"
+#include "log/Logger.h"
 
 #include <QDir>
 

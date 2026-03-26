@@ -8,8 +8,10 @@
 #pragma once
 
 #include "IFileOperation.h"
+
 #include <QObject>
 #include <QString>
+
 #include <atomic>
 
 namespace dentry::fs {

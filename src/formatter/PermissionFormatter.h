@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <QFile>
+#include <QFileDevice>
 #include <QFileInfo>
 #include <QString>
 
@@ -32,7 +32,7 @@ namespace dentry::formatter {
 [[nodiscard]] QString formatPermissions(const QFileInfo &info);
 
 /**
- * @brief Formats raw QFile::Permissions flags as a 9-character string.
+ * @brief Formats raw QFileDevice::Permissions flags as a 9-character string.
  *
  * Does not include the file type character.
  * Useful when the type is already known and handled separately.
@@ -40,6 +40,6 @@ namespace dentry::formatter {
  * @param permissions The permission flags to format.
  * @return A 9-character string such as "rwxr-xr-x".
  */
-[[nodiscard]] QString formatPermissionsRaw(QFile::Permissions permissions);
+[[nodiscard]] QString formatPermissionsRaw(QFileDevice::Permissions permissions);
 
 } // namespace dentry::formatter

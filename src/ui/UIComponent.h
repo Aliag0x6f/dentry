@@ -11,9 +11,10 @@
 
 #pragma once
 
-#include <QWidget>
 #include <QLayout>
+#include <QWidget>
 #include <QtGlobal>
+
 #include <type_traits>
 
 namespace dentry::ui {

@@ -29,7 +29,7 @@ namespace dentry::formatter {
 	}
 
 
-	QString formatPermissionsRaw(QFile::Permissions permissions) {
+	QString formatPermissionsRaw(QFileDevice::Permissions permissions) {
 		QString result;
 
 		// Owner

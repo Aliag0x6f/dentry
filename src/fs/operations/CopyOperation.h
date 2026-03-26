@@ -7,10 +7,11 @@
 
 #pragma once
 
-#include "../AFileOperation.h"
+#include "fs/AFileOperation.h"
+
+#include <QFuture>
 #include <QString>
 #include <QStringList>
-#include <QFuture>
 
 namespace dentry::fs {
 

@@ -6,9 +6,12 @@
  */
 
 #include "MimeResolver.h"
-#include "../log/Logger.h"
+#include "log/Logger.h"
 
+#include <QFileInfo>
+#include <QMimeDatabase>
 #include <QMimeType>
+#include <QString>
 
 namespace dentry::fs {
 

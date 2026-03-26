@@ -6,7 +6,7 @@
  */
 
 #include "MainWindow.h"
-#include "../log/Logger.h"
+#include "log/Logger.h"
 
 #include <QApplication>
 

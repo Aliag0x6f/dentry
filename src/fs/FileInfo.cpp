@@ -7,10 +7,10 @@
 
 #include "FileInfo.h"
 #include "MimeResolver.h"
-#include "../formatter/DateFormatter.h"
-#include "../formatter/PermissionFormatter.h"
-#include "../formatter/SizeFormatter.h"
-#include "../log/Logger.h"
+#include "formatter/DateFormatter.h"
+#include "formatter/PermissionFormatter.h"
+#include "formatter/SizeFormatter.h"
+#include "log/Logger.h"
 
 namespace dentry::fs {
 

@@ -6,7 +6,7 @@
  */
 
 #include "MoveOperation.h"
-#include "../../log/Logger.h"
+#include "log/Logger.h"
 
 #include <QDir>
 #include <QFile>

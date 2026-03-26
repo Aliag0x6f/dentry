@@ -8,6 +8,7 @@
 #pragma once
 
 #include "FileItem.h"
+
 #include <QList>
 #include <QString>
 

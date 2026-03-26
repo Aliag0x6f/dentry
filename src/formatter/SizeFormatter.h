@@ -8,7 +8,6 @@
 #pragma once
 
 #include <QString>
-#include <QLocale>
 
 namespace dentry::formatter {
 

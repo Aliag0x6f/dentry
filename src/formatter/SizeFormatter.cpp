@@ -7,6 +7,8 @@
 
 #include "SizeFormatter.h"
 
+#include <QLocale>
+
 namespace dentry::formatter {
 
 	QString formatSize(qint64 bytes) {

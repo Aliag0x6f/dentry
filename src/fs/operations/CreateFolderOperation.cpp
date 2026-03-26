@@ -6,7 +6,7 @@
  */
 
 #include "CreateFolderOperation.h"
-#include "../../log/Logger.h"
+#include "log/Logger.h"
 
 #include <QDir>
 #include <QtConcurrent>

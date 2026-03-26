@@ -6,7 +6,7 @@
  */
 
 #include "AFileSystemModel.h"
-#include "../log/Logger.h"
+#include "log/Logger.h"
 
 namespace dentry::model {
 

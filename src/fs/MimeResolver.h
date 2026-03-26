@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <QFileInfo>
-#include <QMimeDatabase>
-#include <QString>
+class QFileInfo;
+class QMimeDatabase;
+class QString;
 
 namespace dentry::fs {
 
