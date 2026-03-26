@@ -14,7 +14,9 @@
 namespace dentry::model {
 
     FileSystemModel::FileSystemModel(QObject *parent)
-        : AFileSystemModel(parent) {}
+        : AFileSystemModel(parent) {
+        setDirectory(QDir::homePath());
+    }
 
     void FileSystemModel::setDirectory(const QString &path) {
         if (!QDir(path).exists()) {

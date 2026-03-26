@@ -66,10 +66,9 @@ protected:
 private:
     void setupWidgets();
 
-    QPointer<model::FileSystemModel> m_model;
-    QPointer<StatusBar>              m_statusbar;
-    QPointer<CentralWidget>          m_centralwidget;
-    QPointer<ToolBar>                m_toolbar;
+    QPointer<StatusBar>     m_statusbar;
+    QPointer<CentralWidget> m_centralWidget;
+    QPointer<ToolBar>       m_toolbar;
 };
 
 } // namespace dentry::ui

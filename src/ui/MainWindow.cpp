@@ -9,6 +9,7 @@
 #include "log/Logger.h"
 
 #include <QApplication>
+#include <QDir>
 
 namespace dentry::ui {
 
@@ -21,19 +22,17 @@ namespace dentry::ui {
     }
 
     void MainWindow::setupWidgets() {
-        m_model = new model::FileSystemModel(this);
 
         m_statusbar = new StatusBar(this);
         m_statusbar->setObjectName("StatusBar");
+        setStatusBar(m_statusbar);
 
-        m_centralwidget = new CentralWidget(m_model, this);
-        m_centralwidget->setObjectName("CentralWidget");
+        m_centralWidget = new CentralWidget(this);
+        m_centralWidget->setObjectName("CentralWidget");
+        setCentralWidget(m_centralWidget);
 
         m_toolbar = new ToolBar(this);
         m_toolbar->setObjectName("ToolBar");
-
-        setStatusBar(m_statusbar);
-        setCentralWidget(m_centralwidget);
         addToolBar(m_toolbar);
     }
 

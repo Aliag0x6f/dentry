@@ -5,9 +5,8 @@
 
 namespace dentry::ui {
 
-    CentralWidget::CentralWidget(model::FileSystemModel *model, QWidget *parent)
-        : UIComponent(parent)
-        , m_model(model) {
+    CentralWidget::CentralWidget(QWidget *parent)
+        : UIComponent(parent) {
         build();
 
         log::info("Ui") << "CentralWidget built";
@@ -18,12 +17,12 @@ namespace dentry::ui {
         m_splitter->setObjectName("mainSplitter");
 
         m_sidebar = new SideBar(m_splitter);
-        m_filelistview = new FileListView(m_splitter);
-        m_previewpanel = new PreviewPanel(m_splitter);
+        m_fileListView = new FileListView(m_splitter);
+        m_previewPanel = new PreviewPanel(m_splitter);
 
         m_splitter->addWidget(m_sidebar);
-        m_splitter->addWidget(m_filelistview);
-        m_splitter->addWidget(m_previewpanel);
+        m_splitter->addWidget(m_fileListView);
+        m_splitter->addWidget(m_previewPanel);
 
         layout.addWidget(m_splitter);
     }

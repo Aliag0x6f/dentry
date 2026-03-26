@@ -18,18 +18,17 @@ class CentralWidget : public UIComponent<QWidget, HLayout> {
     Q_OBJECT
 
 public:
-    explicit CentralWidget(model::FileSystemModel *model, QWidget *parent = nullptr);
+    explicit CentralWidget(QWidget *parent = nullptr);
     ~CentralWidget() override = default;
 
 protected:
     void setupLayout(HLayout &layout) override;
 
 private:
-    QPointer<model::FileSystemModel> m_model;
-    QPointer<QSplitter>              m_splitter;
-    QPointer<SideBar>                m_sidebar;
-    QPointer<FileListView>           m_filelistview;
-    QPointer<PreviewPanel>           m_previewpanel;
+    QPointer<QSplitter>    m_splitter;
+    QPointer<SideBar>      m_sidebar;
+    QPointer<FileListView> m_fileListView;
+    QPointer<PreviewPanel> m_previewPanel;
 };
 
 } // namespace dentry::ui
