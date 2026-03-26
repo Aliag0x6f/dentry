@@ -18,7 +18,7 @@ namespace dentry {
     }
 
     void Application::initialize() {
-        dentry::log::install();
+        log::install();
 
         setApplicationName(metadata::AppName);
         setApplicationDisplayName(metadata::AppDisplayName);
