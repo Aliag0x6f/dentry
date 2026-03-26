@@ -7,9 +7,14 @@
 
 #pragma once
 
-#include "UIComponent.h"
+#include "model/FileSystemModel.h"
+#include "ui/components/CentralWidget.h"
+#include "ui/components/StatusBar.h"
+#include "ui/components/Toolbar.h"
+#include "ui/UIComponent.h"
 
 #include <QMainWindow>
+#include <QPointer>
 
 namespace dentry::ui {
 
@@ -57,6 +62,14 @@ protected:
 
     /** @brief Connects cross-component signals/slots for navigation and file operations. */
     void setupConnections() override;
+
+private:
+    void setupWidgets();
+
+    QPointer<model::FileSystemModel> m_model;
+    QPointer<StatusBar>              m_statusbar;
+    QPointer<CentralWidget>          m_centralwidget;
+    QPointer<ToolBar>                m_toolbar;
 };
 
 } // namespace dentry::ui

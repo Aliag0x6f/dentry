@@ -15,7 +15,7 @@ QWidget {
 }
 
 /* ── Central widget ── */
-QWidget#centralWidget {
+QWidget#CentralWidget {
     background: #0a0a0a;
     padding: 6px;
 }
@@ -32,14 +32,14 @@ QSplitter#mainSplitter::handle:horizontal {
 }
 
 /* ── Sidebar zone ── */
-QFrame#sidebar {
+QFrame#SideBar {
     background: #111111;
     border: 1px solid #222222;
     border-radius: 8px;
     margin: 0px 3px 0px 0px;
 }
 
-QLabel#sidebarTitle {
+QLabel#SideBarTitle {
     background: transparent;
     color: #ffffff;
     font-size: 8pt;
@@ -48,7 +48,7 @@ QLabel#sidebarTitle {
     padding: 12px 10px 6px 10px;
 }
 
-QFrame#sidebarSeparator {
+QFrame#SideBarSeparator {
     background: #222222;
     border: none;
     max-height: 1px;
@@ -86,7 +86,7 @@ QListWidget::item:selected {
 }
 
 /* ── File list zone ── */
-QTreeView#fileList {
+QTreeView#FileListView {
     background: #111111;
     color: #c8c8c8;
     border: 1px solid #222222;
@@ -96,21 +96,21 @@ QTreeView#fileList {
     padding: 2px;
 }
 
-QTreeView#fileList::item {
+QTreeView#FileListView::item {
     padding: 3px 4px;
     border-left: 2px solid transparent;
     border-radius: 0px;
     margin: 0px 2px;
 }
 
-QTreeView#fileList::item:hover {
+QTreeView#FileListView::item:hover {
     background: #1a1a1a;
     color: #c8c8c8;
     padding-left: 18px;
     border-radius: 4px;
 }
 
-QTreeView#fileList::item:selected {
+QTreeView#FileListView::item:selected {
     background: #ffffff;
     color: #000000;
     border-left: 2px solid #ffffff;
@@ -118,27 +118,27 @@ QTreeView#fileList::item:selected {
     border-radius: 4px;
 }
 
-QTreeView#fileList::item:selected:hover {
+QTreeView#FileListView::item:selected:hover {
     background: #e8e8e8;
     color: #000000;
     border-left: 2px solid #ffffff;
 }
 
 /* ── Preview panel zone ── */
-QWidget#previewPanel {
+QFrame#PreviewPanel {
     background: #111111;
     border: 1px solid #222222;
     border-radius: 8px;
     margin: 0px 0px 0px 3px;
 }
 
-QWidget#previewPanel QLabel {
+QFrame#PreviewPanel QLabel {
     background: transparent;
     color: #c8c8c8;
     padding: 4px;
 }
 
-QWidget#previewPanel QTextEdit {
+QFrame#PreviewPanel QTextEdit {
     background: #0a0a0a;
     border: 1px solid #222222;
     border-radius: 4px;
@@ -146,7 +146,7 @@ QWidget#previewPanel QTextEdit {
     padding: 4px;
 }
 
-QWidget#previewPanel QStackedWidget {
+QFrame#PreviewPanel QStackedWidget {
     background: transparent;
 }
 

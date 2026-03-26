@@ -14,8 +14,27 @@ namespace dentry::ui {
 
     MainWindow::MainWindow(QWidget *parent)
         : UIComponent(parent) {
+        setupWidgets();
         build();
+
         log::info("Ui") << "MainWindow built";
+    }
+
+    void MainWindow::setupWidgets() {
+        m_model = new model::FileSystemModel(this);
+
+        m_statusbar = new StatusBar(this);
+        m_statusbar->setObjectName("StatusBar");
+
+        m_centralwidget = new CentralWidget(m_model, this);
+        m_centralwidget->setObjectName("CentralWidget");
+
+        m_toolbar = new ToolBar(this);
+        m_toolbar->setObjectName("ToolBar");
+
+        setStatusBar(m_statusbar);
+        setCentralWidget(m_centralwidget);
+        addToolBar(m_toolbar);
     }
 
     void MainWindow::setupStyle() {
