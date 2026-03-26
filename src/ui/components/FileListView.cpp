@@ -19,7 +19,13 @@ namespace dentry::ui {
 
         app::events::FileListEventCallbacks callbacks;
         callbacks.onCommand = [this](const app::FileListCommand command) {
-            executeKeyboardCommand(command);
+            app::KeyboardController::CommandContext context;
+            context.view = this;
+            context.onActivate = [this]() { activateCurrentItem(); };
+            context.onNavigateBack = [this]() { emit backRequested(); };
+            context.onFocusSidebar = [this]() { emit focusSidebarRequested(); };
+            context.onToggleHidden = [this]() { emit toggleHiddenRequested(); };
+            app::KeyboardController::executeCommand(command, context);
         };
         callbacks.onDirectoryRequested = [this](const QString &path) {
             emit directoryRequested(path);
@@ -90,7 +96,7 @@ namespace dentry::ui {
                     if (this->model()->rowCount(rootIndex()) <= 0) return;
                     if (selectionModel() && selectionModel()->hasSelection()) return;
                     if (currentIndex().isValid()) return;
-                    selectFirstRow();
+                    selectRow(0);
                 }, Qt::QueuedConnection);
             };
 
@@ -119,32 +125,6 @@ namespace dentry::ui {
         emit selectionChanged(selected);
     }
 
-    void FileListView::executeKeyboardCommand(const app::FileListCommand command) {
-        switch (command) {
-            case app::FileListCommand::MoveDown:
-                selectRelativeRow(+1);
-                break;
-            case app::FileListCommand::MoveUp:
-                selectRelativeRow(-1);
-                break;
-            case app::FileListCommand::FirstEntry:
-                selectFirstRow();
-                break;
-            case app::FileListCommand::LastEntry:
-                selectLastRow();
-                break;
-            case app::FileListCommand::Activate:
-                activateCurrentItem();
-                break;
-            case app::FileListCommand::NavigateBack:
-                emit backRequested();
-                break;
-            case app::FileListCommand::FocusSidebar:
-                emit focusSidebarRequested();
-                break;
-        }
-    }
-
     void FileListView::selectRow(int row) {
         if (!model() || !selectionModel())
             return;
@@ -160,34 +140,6 @@ namespace dentry::ui {
         scrollTo(index, QAbstractItemView::PositionAtCenter);
     }
 
-    void FileListView::selectRelativeRow(int delta) {
-        if (!model())
-            return;
-
-        const int rowCount = model()->rowCount(rootIndex());
-        if (rowCount <= 0)
-            return;
-
-        const QModelIndex current = currentIndex();
-        const int currentRow = current.isValid() ? current.row() : (delta > 0 ? -1 : rowCount);
-        const int targetRow = qBound(0, currentRow + delta, rowCount - 1);
-        selectRow(targetRow);
-    }
-
-    void FileListView::selectFirstRow() {
-        selectRow(0);
-    }
-
-    void FileListView::selectLastRow() {
-        if (!model())
-            return;
-
-        const int rowCount = model()->rowCount(rootIndex());
-        if (rowCount <= 0)
-            return;
-
-        selectRow(rowCount - 1);
-    }
 
     void FileListView::activateCurrentItem() {
         const auto *fsModel = qobject_cast<const model::AFileSystemModel *>(model());

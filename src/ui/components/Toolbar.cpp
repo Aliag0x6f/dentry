@@ -7,6 +7,7 @@
 
 #include "Toolbar.h"
 
+#include <QSignalBlocker>
 #include <QToolButton>
 
 namespace dentry::ui {
@@ -66,6 +67,14 @@ namespace dentry::ui {
 
     void Toolbar::setPath(const QString &path) {
         m_pathBar->setText(path);
+    }
+
+    void Toolbar::setShowHiddenChecked(const bool show) {
+        if (!m_hiddenAction)
+            return;
+
+        QSignalBlocker blocker(m_hiddenAction);
+        m_hiddenAction->setChecked(show);
     }
 
 } // namespace dentry::ui

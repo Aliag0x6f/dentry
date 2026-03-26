@@ -12,6 +12,9 @@
 #include <QPair>
 #include <Qt>
 
+#include <functional>
+
+class QAbstractItemView;
 class QKeyEvent;
 
 namespace dentry::app {
@@ -26,7 +29,8 @@ enum class FileListCommand {
     LastEntry,
     Activate,
     NavigateBack,
-    FocusSidebar
+    FocusSidebar,
+    ToggleHidden
 };
 
 /** @brief Returns a stable string name for a FileListCommand. */
@@ -75,6 +79,10 @@ inline static const QList<KeyBinding> DEFAULT_BINDINGS = {
 
     // Focus sidebar
     { { { Qt::Key_P, Qt::NoModifier } }, FileListCommand::FocusSidebar, "p: Go to Places" },
+
+    // Toggle Hidden
+    { { { Qt::Key_Period, Qt::NoModifier } }, FileListCommand::ToggleHidden, ".: Toggle Hidden" },
+
 };
 
 /**
@@ -85,6 +93,15 @@ inline static const QList<KeyBinding> DEFAULT_BINDINGS = {
  */
 class KeyboardController {
 public:
+    struct CommandContext {
+        QAbstractItemView *view = nullptr;
+        std::function<void()> onActivate;
+        std::function<void()> onNavigateBack;
+        std::function<void()> onFocusSidebar;
+        std::function<void()> onFocusFileListView;
+        std::function<void()> onToggleHidden;
+    };
+
     KeyboardController();
 
     /**
@@ -94,6 +111,12 @@ public:
      * @return True when a binding produced a command.
      */
     bool handleKeyPress(const QKeyEvent &event, FileListCommand &command);
+
+    /**
+     * @brief Parses a key event and executes the mapped command on a list context.
+     * @return True when a binding produced and executed a command.
+     */
+    bool handleKeyPress(const QKeyEvent &event, const CommandContext &context);
 
     /** @brief Clears any pending partially typed sequence. */
     void resetSequence();
@@ -115,6 +138,9 @@ public:
      */
     [[nodiscard]] static const QList<KeyBinding> &defaultBindings();
 
+    /** @brief Executes a semantic command against a list context. */
+    static void executeCommand(FileListCommand command, const CommandContext &context);
+
 private:
     struct KeyStroke {
         int key = 0;
@@ -135,6 +161,8 @@ private:
     static KeyStroke normalize(const QKeyEvent &event);
     static bool equals(const KeyStroke &left, const KeyStroke &right);
     static bool startsWith(const QList<KeyStroke> &sequence, const QList<KeyStroke> &prefix);
+    static void selectRow(QAbstractItemView *view, int row);
+    static void selectRelativeRow(QAbstractItemView *view, int delta);
 
     MatchState match(const QList<KeyStroke> &candidate, FileListCommand &command) const;
 

@@ -9,6 +9,8 @@
 #include "../log/Logger.h"
 
 #include <QApplication>
+#include <QItemSelectionModel>
+#include <QListWidget>
 
 namespace dentry::ui {
 
@@ -46,6 +48,15 @@ namespace dentry::ui {
     void MainWindow::setupConnections() {
         auto *sidebar      = m_central->sidebar();
         auto *fileListView = m_central->fileListView();
+        const auto applyShowHidden = [this](const bool show) {
+            m_model->setShowHidden(show);
+            m_central->setSidebarShowHidden(show);
+            m_toolbar->setShowHiddenChecked(show);
+        };
+
+        const auto toggleShowHidden = [this, applyShowHidden]() {
+            applyShowHidden(!m_model->showHidden());
+        };
 
         connect(m_navigationController, &app::NavigationController::pathChanged, m_toolbar, &Toolbar::setPath);
         connect(m_navigationController, &app::NavigationController::pathChanged, this, [this](const QString &) {
@@ -55,14 +66,60 @@ namespace dentry::ui {
         connect(m_toolbar, &Toolbar::backRequested, m_navigationController, &app::NavigationController::navigateBack);
         connect(m_toolbar, &Toolbar::homeRequested, m_navigationController, &app::NavigationController::navigateHome);
         connect(m_toolbar, &Toolbar::searchChanged, m_model, &model::FileSystemModel::setFilter);
-        connect(m_toolbar, &Toolbar::hiddenToggled, m_model, &model::FileSystemModel::setShowHidden);
-        connect(m_toolbar, &Toolbar::hiddenToggled, m_central, &CentralWidget::setSidebarShowHidden);
+        connect(m_toolbar, &Toolbar::hiddenToggled, this, [applyShowHidden](const bool show) {
+            applyShowHidden(show);
+        });
 
         connect(sidebar, &Sidebar::placeSelected, m_navigationController, &app::NavigationController::navigateTo);
+        connect(sidebar, &Sidebar::toggleHiddenRequested, this, [toggleShowHidden]() {
+            toggleShowHidden();
+        });
+        connect(sidebar, &Sidebar::focusFileListRequested, this, [fileListView, sidebar]() {
+            if (QListWidget *places = sidebar->placesList()) {
+                places->clearSelection();
+                places->setCurrentRow(-1);
+            }
+
+            fileListView->setFocus();
+            if (!fileListView->model())
+                return;
+
+            QItemSelectionModel *sm = fileListView->selectionModel();
+            if (!sm)
+                return;
+
+            QModelIndex target = fileListView->currentIndex();
+            if (!target.isValid()) {
+                const int rowCount = fileListView->model()->rowCount(fileListView->rootIndex());
+                if (rowCount <= 0)
+                    return;
+
+                target = fileListView->model()->index(0, 0, fileListView->rootIndex());
+            }
+
+            if (target.isValid()) {
+                fileListView->setCurrentIndex(target);
+                sm->select(target, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+            }
+        });
 
         connect(fileListView, &FileListView::directoryRequested,    m_navigationController, &app::NavigationController::navigateTo);
         connect(fileListView, &FileListView::backRequested,         m_navigationController, &app::NavigationController::navigateBack);
-        connect(fileListView, &FileListView::focusSidebarRequested, sidebar, QOverload<>::of(&QWidget::setFocus));
+        connect(fileListView, &FileListView::toggleHiddenRequested, this, [toggleShowHidden]() {
+            toggleShowHidden();
+        });
+        connect(fileListView, &FileListView::focusSidebarRequested, this, [fileListView, sidebar]() {
+            fileListView->clearSelection();
+            if (QItemSelectionModel *sm = fileListView->selectionModel()) {
+                sm->clearCurrentIndex();
+            }
+
+            if (QListWidget *places = sidebar->placesList()) {
+                places->setFocus();
+                if (places->count() > 0)
+                    places->setCurrentRow(0);
+            }
+        });
         connect(fileListView, &FileListView::selectionChanged,      m_central, &CentralWidget::updatePreviewFromSelection);
         connect(fileListView, &FileListView::selectionChanged,      m_statusBar, &StatusBar::setSelection);
         connect(fileListView, &FileListView::deleteRequested,       m_fileOperationController, &app::FileOperationController::onDeleteRequested);
@@ -90,6 +147,28 @@ namespace dentry::ui {
         }
 
         m_statusBar->setDirectoryStats(folders, files);
+
+        // Keep a visible row selection when file list has focus after sidebar actions.
+        auto *fileListView = m_central->fileListView();
+        if (!fileListView || !fileListView->hasFocus() || !fileListView->model())
+            return;
+
+        QItemSelectionModel *sm = fileListView->selectionModel();
+        if (!sm || sm->hasSelection())
+            return;
+
+        QModelIndex target = fileListView->currentIndex();
+        if (!target.isValid()) {
+            const int rowCount = fileListView->model()->rowCount(fileListView->rootIndex());
+            if (rowCount <= 0)
+                return;
+            target = fileListView->model()->index(0, 0, fileListView->rootIndex());
+        }
+
+        if (target.isValid()) {
+            fileListView->setCurrentIndex(target);
+            sm->select(target, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+        }
     }
 
 } // namespace dentry::ui

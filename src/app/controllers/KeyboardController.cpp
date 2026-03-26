@@ -8,8 +8,13 @@
 #include "KeyboardController.h"
 #include "../../log/Logger.h"
 
+#include <QAbstractItemView>
 #include <QKeyEvent>
 #include <QKeySequence>
+#include <QModelIndex>
+#include <QAbstractItemModel>
+
+#include <QtGlobal>
 
 namespace dentry::app {
 
@@ -29,6 +34,8 @@ namespace dentry::app {
                 return "NavigateBack";
             case FileListCommand::FocusSidebar:
                 return "FocusSidebar";
+            case FileListCommand::ToggleHidden:
+                return "ToggleHidden";
         }
 
         return "Unknown";
@@ -93,6 +100,15 @@ namespace dentry::app {
         log::debug("Keyboard") << "No keyboard binding matched";
         m_pending.clear();
         return false;
+    }
+
+    bool KeyboardController::handleKeyPress(const QKeyEvent &event, const CommandContext &context) {
+        FileListCommand command;
+        if (!handleKeyPress(event, command))
+            return false;
+
+        executeCommand(command, context);
+        return true;
     }
 
     void KeyboardController::resetSequence() {
@@ -184,6 +200,75 @@ namespace dentry::app {
 
     const QList<KeyBinding> &KeyboardController::defaultBindings() {
         return DEFAULT_BINDINGS;
+    }
+
+    void KeyboardController::executeCommand(const FileListCommand command, const CommandContext &context) {
+        switch (command) {
+            case FileListCommand::MoveDown:
+                selectRelativeRow(context.view, +1);
+                break;
+            case FileListCommand::MoveUp:
+                selectRelativeRow(context.view, -1);
+                break;
+            case FileListCommand::FirstEntry:
+                selectRow(context.view, 0);
+                break;
+            case FileListCommand::LastEntry:
+                if (context.view && context.view->model()) {
+                    const int rowCount = context.view->model()->rowCount(context.view->rootIndex());
+                    if (rowCount > 0)
+                        selectRow(context.view, rowCount - 1);
+                }
+                break;
+            case FileListCommand::Activate:
+                if (context.onActivate)
+                    context.onActivate();
+                break;
+            case FileListCommand::NavigateBack:
+                if (context.onNavigateBack)
+                    context.onNavigateBack();
+                break;
+            case FileListCommand::FocusSidebar:
+                if (context.onFocusSidebar)
+                    context.onFocusSidebar();
+                else if (context.onFocusFileListView)
+                    context.onFocusFileListView();
+                break;
+            case FileListCommand::ToggleHidden:
+                if (context.onToggleHidden)
+                    context.onToggleHidden();
+                break;
+        }
+    }
+
+    void KeyboardController::selectRow(QAbstractItemView *view, const int row) {
+        if (!view || !view->model())
+            return;
+
+        const int rowCount = view->model()->rowCount(view->rootIndex());
+        if (row < 0 || row >= rowCount)
+            return;
+
+        const QModelIndex index = view->model()->index(row, 0, view->rootIndex());
+        if (!index.isValid())
+            return;
+
+        view->setCurrentIndex(index);
+        view->scrollTo(index, QAbstractItemView::PositionAtCenter);
+    }
+
+    void KeyboardController::selectRelativeRow(QAbstractItemView *view, const int delta) {
+        if (!view || !view->model())
+            return;
+
+        const int rowCount = view->model()->rowCount(view->rootIndex());
+        if (rowCount <= 0)
+            return;
+
+        const QModelIndex current = view->currentIndex();
+        const int currentRow = current.isValid() ? current.row() : (delta > 0 ? -1 : rowCount);
+        const int targetRow = qBound(0, currentRow + delta, rowCount - 1);
+        selectRow(view, targetRow);
     }
 
 } // namespace dentry::app

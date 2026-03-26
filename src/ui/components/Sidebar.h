@@ -9,6 +9,7 @@
 
 #include "../DefaultLayout.h"
 #include "../UIComponent.h"
+#include "../../app/events/SidebarEvents.h"
 
 #include <QFrame>
 #include <QListWidget>
@@ -59,12 +60,21 @@ namespace dentry::ui {
          */
         void setShowHidden(bool show);
 
+        /** @brief Returns the places list widget used by the sidebar. */
+        [[nodiscard]] QListWidget *placesList() const;
+
         signals:
             /**
              * @brief Emitted when the user clicks a place.
              * @param path Absolute path of the selected place.
              */
             void placeSelected(const QString &path);
+
+            /** @brief Emitted when keyboard flow should return focus to file list view. */
+            void focusFileListRequested();
+
+            /** @brief Emitted when the user requests toggling hidden files visibility. */
+            void toggleHiddenRequested();
 
     protected:
         /** @brief Creates sidebar title, separator and list within the vertical layout. */
@@ -87,6 +97,7 @@ namespace dentry::ui {
         void onItemClicked(QListWidgetItem *item);
 
     private:
+
         /** @brief Builds and populates the list widget with standard places. */
         void buildPlaces();
 
@@ -96,6 +107,8 @@ namespace dentry::ui {
         /** @brief Whether hidden dot-files are shown. */
         bool m_showHidden = false;
 
+        /** @brief Dedicated event orchestrator for keyboard interactions on places list. */
+        app::events::SidebarEvents m_events;
     };
 
 } // namespace dentry::ui

@@ -11,11 +11,41 @@
 #include <QLabel>
 #include <QStandardPaths>
 
+#include <utility>
+
 namespace dentry::ui {
 
     Sidebar::Sidebar(QWidget *parent)
         : UIComponent(parent) {
         build();
+
+        app::events::SidebarEventCallbacks callbacks;
+        callbacks.onCommand = [this](const app::FileListCommand command) {
+            app::KeyboardController::CommandContext context;
+            context.view = m_list;
+            context.onActivate = [this]() {
+                if (!m_list)
+                    return;
+
+                QListWidgetItem *item = m_list->currentItem();
+                if (!item)
+                    return;
+
+                const QString path = item->data(Qt::UserRole).toString();
+                if (!path.isEmpty()) {
+                    emit placeSelected(path);
+                    emit focusFileListRequested();
+                }
+            };
+            context.onFocusFileListView = [this]() {
+                emit focusFileListRequested();
+            };
+            context.onToggleHidden = [this]() {
+                emit toggleHiddenRequested();
+            };
+            app::KeyboardController::executeCommand(command, context);
+        };
+        m_events.setCallbacks(std::move(callbacks));
     }
 
     void Sidebar::setupLayout(VLayout &layout) {
@@ -48,6 +78,7 @@ namespace dentry::ui {
 
     void Sidebar::setupConnections() {
         connect(m_list, &QListWidget::itemClicked, this, &Sidebar::onItemClicked);
+        m_events.installOn(m_list);
     }
 
     void Sidebar::buildPlaces() {
@@ -75,6 +106,10 @@ namespace dentry::ui {
         m_showHidden = show;
         m_list->clear();
         buildPlaces();
+    }
+
+    QListWidget *Sidebar::placesList() const {
+        return m_list;
     }
 
     void Sidebar::onItemClicked(QListWidgetItem *item) {

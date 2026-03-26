@@ -82,6 +82,9 @@ signals:
      */
     void focusSidebarRequested();
 
+    /** @brief Emitted when the user requests toggling hidden files visibility. */
+    void toggleHiddenRequested();
+
     // ── Operations ────────────────────────────────────────────────────────
 
     /**
@@ -141,20 +144,8 @@ private slots:
     void onSelectionChanged();
 
 private:
-    /** @brief Executes semantic keyboard command dispatching for the view. */
-    void executeKeyboardCommand(app::FileListCommand command);
-
     /** @brief Selects a specific row if it is valid. */
     void selectRow(int row);
-
-    /** @brief Moves selection by a row delta (positive: down, negative: up). */
-    void selectRelativeRow(int delta);
-
-    /** @brief Selects the first row in the current model. */
-    void selectFirstRow();
-
-    /** @brief Selects the last row in the current model. */
-    void selectLastRow();
 
     /** @brief Activates the current selection (navigate into folder / activate file). */
     void activateCurrentItem();

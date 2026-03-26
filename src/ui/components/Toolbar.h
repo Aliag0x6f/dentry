@@ -59,6 +59,9 @@ namespace dentry::ui {
          */
         void setPath(const QString &path);
 
+        /** @brief Updates hidden-files toggle checked state without re-emitting toggled. */
+        void setShowHiddenChecked(bool show);
+
         signals:
             /**
              * @brief Emitted when the user clicks the back button.
