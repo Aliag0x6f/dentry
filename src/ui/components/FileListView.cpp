@@ -28,17 +28,23 @@ namespace dentry::ui {
         setSelectionMode(QAbstractItemView::ExtendedSelection);
         setEditTriggers(QAbstractItemView::NoEditTriggers);
         setContextMenuPolicy(Qt::DefaultContextMenu);
+
+        log::debug("Ui") << "FileListView style is set up";
     }
 
     void FileListView::setupConnections() {
         if (m_model) {
             connect(m_model, &model::FileSystemModel::directoryLoaded, this, [this](){ sortByColumn(0, Qt::AscendingOrder); });
         }
+
+        log::debug("Ui") << "FileListView connections is set up";
     }
 
     void FileListView::setModel(model::FileSystemModel *model) {
         m_model = model;
         QTreeView::setModel(m_model);
+
+        log::debug("Ui") << "FileListView model is set up";
     }
 
 } // namespace dentry::ui

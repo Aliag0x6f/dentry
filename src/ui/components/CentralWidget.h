@@ -21,6 +21,10 @@ public:
     explicit CentralWidget(QWidget *parent = nullptr);
     ~CentralWidget() override = default;
 
+    [[nodiscard]] FileListView *fileListView() const { return m_fileListView; }
+    [[nodiscard]] SideBar      *sidebar()      const { return m_sidebar; }
+    [[nodiscard]] PreviewPanel *previewPanel() const { return m_previewPanel; }
+
 protected:
     void setupLayout(HLayout &layout) override;
 

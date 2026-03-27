@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "app/input/InputRegistry.h"
 #include "model/FileSystemModel.h"
 #include "ui/components/CentralWidget.h"
 #include "ui/components/StatusBar.h"
@@ -69,6 +70,8 @@ private:
     QPointer<StatusBar>     m_statusbar;
     QPointer<CentralWidget> m_centralWidget;
     QPointer<ToolBar>       m_toolbar;
+
+    QPointer<app::InputRegistry> m_inputRegistry = nullptr;
 };
 
 } // namespace dentry::ui
