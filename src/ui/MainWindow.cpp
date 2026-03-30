@@ -7,9 +7,10 @@
 
 #include "app/controllers/KeyboardController.h"
 #include "app/controllers/NavigationController.h"
-#include "app/bindings/FileListBindings.h"
 #include "ui/MainWindow.h"
 #include "log/Logger.h"
+#include "app/bindings/FileListBindings.h"
+#include "app/bindings/SidebarBindings.h"
 
 #include <QApplication>
 #include <QDir>
@@ -38,6 +39,10 @@ namespace dentry::ui {
         m_toolbar->setObjectName("ToolBar");
         addToolBar(m_toolbar);
 
+        if (m_centralWidget && m_centralWidget->fileListView()) {
+            m_centralWidget->fileListView()->setFocus();
+        }
+
         log::debug("Ui") << "MainWindow widgets is set up";
     }
 
@@ -58,7 +63,8 @@ namespace dentry::ui {
         m_inputRegistry = new app::InputRegistry(this);
 
         m_inputRegistry->installAll({
-            app::bindings::fileList(m_centralWidget->fileListView())
+            app::bindings::fileList(m_centralWidget->fileListView()),
+            app::bindings::sidebar(m_centralWidget->sidebar())
         });
 
         auto *view = m_centralWidget->fileListView();
@@ -66,6 +72,14 @@ namespace dentry::ui {
         if (view && mdl) {
             new app::NavigationController(view, mdl, this);
         }
+
+        connect(m_centralWidget->sidebar(), &SideBar::placeActivated, [this](const QString &path) {
+            if (auto *view = m_centralWidget->fileListView()) {
+                if (auto *model = qobject_cast<model::FileSystemModel *>(view->model())) {
+                    model->setDirectory(path);
+                }
+            }
+        });
     }
 
 } // namespace dentry::ui

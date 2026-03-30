@@ -1,6 +1,8 @@
 // src/ui/components/FileListView.cpp
 #include "log/Logger.h"
 #include "ui/components/FileListView.h"
+#include "app/events/EventBus.h"
+#include "app/input/InputMap.h"
 
 #include <QLabel>
 
@@ -36,6 +38,11 @@ namespace dentry::ui {
         if (m_model) {
             connect(m_model, &model::FileSystemModel::directoryLoaded, this, [this](){ sortByColumn(0, Qt::AscendingOrder); });
         }
+
+        connect(app::events::EventBus::instance(), &app::events::EventBus::focusWidget, this, [this](const QString& name) {
+            if (name == objectName())
+                this->setFocus();
+        });
 
         log::debug("Ui") << "FileListView connections is set up";
     }

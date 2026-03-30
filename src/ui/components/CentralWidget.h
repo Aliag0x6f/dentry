@@ -1,7 +1,7 @@
 // src/ui/components/CentralWidget.h
 #pragma once
 
-#include "model/FileSystemModel.h"
+#include "model/filesystem/FileSystemModel.h"
 #include "ui/DefaultLayout.h"
 #include "ui/UIComponent.h"
 #include "ui/components/FileListView.h"

@@ -55,7 +55,7 @@ QFrame#SideBarSeparator {
     margin: 0px 8px;
 }
 
-QListWidget {
+QListView {
     background: transparent;
     color: #ffffff;
     border: none;
@@ -63,21 +63,21 @@ QListWidget {
     padding: 2px;
 }
 
-QListWidget::item {
+QListView::item {
     padding: 4px 10px;
     border-radius: 0px;
     border-left: 2px solid transparent;
     margin: 1px 4px;
 }
 
-QListWidget::item:hover {
+QListView::item:hover {
     background: #1a1a1a;
     color: #c8c8c8;
     padding-left: 18px;
     border-radius: 4px;
 }
 
-QListWidget::item:selected {
+QListView::item:selected {
     background: #ffffff;
     color: #000000;
     border-left: 2px solid #ffffff;

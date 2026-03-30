@@ -8,7 +8,7 @@
 #pragma once
 
 #include "app/input/InputRegistry.h"
-#include "model/FileSystemModel.h"
+#include "model/filesystem/FileSystemModel.h"
 #include "ui/components/CentralWidget.h"
 #include "ui/components/StatusBar.h"
 #include "ui/components/Toolbar.h"

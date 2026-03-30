@@ -2,7 +2,7 @@
 #pragma once
 
 #include "ui/components/FileListView.h"
-#include "model/FileSystemModel.h"
+#include "model/filesystem/FileSystemModel.h"
 
 #include <QObject>
 #include <QPointer>
@@ -18,8 +18,8 @@ public:
                          QObject *parent = nullptr);
 
 private slots:
-    void onActivated(const QModelIndex &index);
-    void onDirectoryLoaded(const QString &path);
+    void onActivated(const QModelIndex &index) const;
+    void onDirectoryLoaded(const QString &path) const;
 
 private:
     QPointer<ui::FileListView> m_view;

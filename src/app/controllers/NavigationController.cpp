@@ -2,7 +2,6 @@
 
 #include "NavigationController.h"
 #include "ui/components/FileListView.h"
-#include "model/FileSystemModel.h"
 #include "log/Logger.h"
 #include <QDir>
 
@@ -23,7 +22,7 @@ namespace dentry::app {
         }
     }
 
-    void NavigationController::onActivated(const QModelIndex &index) {
+    void NavigationController::onActivated(const QModelIndex &index) const {
         if (!m_model)
             return;
 
@@ -47,7 +46,7 @@ namespace dentry::app {
             log::info("Ui") << "File activated:" << item.absolutePath;
     }
 
-    void NavigationController::onDirectoryLoaded(const QString & /*path*/) {
+    void NavigationController::onDirectoryLoaded(const QString & /*path*/) const {
         if (!m_view || !m_model)
             return;
 
