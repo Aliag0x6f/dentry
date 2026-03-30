@@ -14,7 +14,8 @@ namespace dentry::ui {
         m_model = new model::FileSystemModel(this);
         setModel(m_model);
         build();
-
+        if (m_model)
+            m_model->manageSelectionFocus(selectionModel(), this);
         log::info("Ui") << "FileListView built";
     }
 

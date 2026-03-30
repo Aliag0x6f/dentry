@@ -9,6 +9,7 @@
 
 #include "PlaceItem.h"
 
+#include <QItemSelectionModel>
 #include <QStandardItemModel>
 
 namespace dentry::model {
@@ -47,7 +48,7 @@ public:
     /** @brief Reloads places respecting the current showHidden flag. */
     void refresh();
 
-    [[nodiscard]] QModelIndex defaultIndex() const;
+    void manageSelectionFocus(QItemSelectionModel* selectionModel, QWidget* view);
 
 private:
     void populate();

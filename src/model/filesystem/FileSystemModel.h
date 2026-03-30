@@ -10,6 +10,7 @@
 #include "FileItem.h"
 
 #include <QAbstractItemModel>
+#include <QItemSelectionModel>
 #include <QList>
 #include <QString>
 
@@ -71,6 +72,8 @@ public:
     [[nodiscard]] int         columnCount(const QModelIndex &parent = {}) const override;
     [[nodiscard]] QVariant    data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     [[nodiscard]] QVariant    headerData(int section, Qt::Orientation, int role = Qt::DisplayRole) const override;
+
+    void manageSelectionFocus(QItemSelectionModel* selectionModel, QWidget* view);
 
 signals:
     void directoryLoaded(const QString &path);

@@ -13,7 +13,8 @@ namespace dentry::ui {
         setObjectName("SideBar");
         m_model = new model::PlacesModel(this);
         build();
-
+        if (m_model && m_list)
+            m_model->manageSelectionFocus(m_list->selectionModel(), m_list);
         log::info("Ui") << "SideBar built";
     }
 
@@ -40,7 +41,6 @@ namespace dentry::ui {
         m_list->setMinimumWidth(0);
         m_list->setFocusPolicy(Qt::StrongFocus);
         m_list->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
-        m_list->setCurrentIndex(model()->defaultIndex());
         layout.addWidget(m_list);
     }
 

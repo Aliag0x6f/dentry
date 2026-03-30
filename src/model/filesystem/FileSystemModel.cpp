@@ -9,7 +9,9 @@
 #include "fs/FileInfo.h"
 #include "log/Logger.h"
 
+#include <QApplication>
 #include <QDir>
+#include <QWidget>
 
 namespace dentry::model {
 
@@ -160,6 +162,20 @@ QVariant FileSystemModel::headerData(int section, Qt::Orientation orientation, i
         case Permissions:  return "Permissions";
         default:           return {};
     }
+}
+
+void FileSystemModel::manageSelectionFocus(QItemSelectionModel* selectionModel, QWidget* view) {
+    connect(qApp, &QApplication::focusChanged, this, [selectionModel, view, this](QWidget*, QWidget* now) {
+        if (!view->isAncestorOf(now)) {
+            selectionModel->clearSelection();
+        } else if (now == view) {
+            if (selectionModel->selectedIndexes().isEmpty() && rowCount() > 0) {
+                QModelIndex first = index(0, 0);
+                selectionModel->select(first, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+                selectionModel->setCurrentIndex(first, QItemSelectionModel::NoUpdate);
+            }
+        }
+    });
 }
 
 } // namespace dentry::model

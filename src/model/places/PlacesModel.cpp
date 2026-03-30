@@ -8,9 +8,11 @@
 #include "PlacesModel.h"
 #include "log/Logger.h"
 
+#include <QApplication>
 #include <QDir>
 #include <QStandardItem>
 #include <QStandardPaths>
+#include <QWidget>
 
 namespace dentry::model {
 
@@ -59,8 +61,18 @@ namespace dentry::model {
         log::debug("Model") << "PlacesModel populated:" << rowCount() << "entries";
     }
 
-    QModelIndex PlacesModel::defaultIndex() const {
-        return rowCount() > 0 ? index(0, 0) : QModelIndex();
+    void PlacesModel::manageSelectionFocus(QItemSelectionModel* selectionModel, QWidget* view) {
+        connect(qApp, &QApplication::focusChanged, this, [selectionModel, view, this](QWidget*, QWidget* now) {
+            if (!view->isAncestorOf(now)) {
+                selectionModel->clearSelection();
+            } else if (now == view) {
+                if (selectionModel->selectedIndexes().isEmpty() && rowCount() > 0) {
+                    QModelIndex first = index(0, 0);
+                    selectionModel->select(first, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+                    selectionModel->setCurrentIndex(first, QItemSelectionModel::NoUpdate);
+                }
+            }
+        });
     }
 
 } // namespace dentry::model
