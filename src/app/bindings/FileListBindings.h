@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "app/input/WidgetBindings.h"
+#include "app/bindings/WidgetBindings.h"
 #include "ui/components/FileListView.h"
 
 namespace dentry::app::bindings {

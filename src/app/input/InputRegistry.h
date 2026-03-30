@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "app/input/WidgetBindings.h"
+#include "app/bindings/WidgetBindings.h"
 
 #include <QList>
 #include <QObject>
