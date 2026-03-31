@@ -7,9 +7,10 @@
 
 #pragma once
 
+#include "app/controllers/FileOperationController.h"
 #include "app/input/InputRegistry.h"
-#include "model/filesystem/FileSystemModel.h"
 #include "ui/components/CentralWidget.h"
+#include "ui/components/FileListContextMenu.h"
 #include "ui/components/StatusBar.h"
 #include "ui/components/Toolbar.h"
 #include "ui/UIComponent.h"
@@ -70,8 +71,9 @@ private:
     QPointer<StatusBar>     m_statusbar;
     QPointer<CentralWidget> m_centralWidget;
     QPointer<ToolBar>       m_toolbar;
-
     QPointer<app::InputRegistry> m_inputRegistry = nullptr;
+    QPointer<app::FileOperationController>  m_fileOpController;
+    QPointer<FileListContextMenu>           m_contextMenu;
 };
 
 } // namespace dentry::ui

@@ -7,6 +7,8 @@
 
 #include "app/controllers/KeyboardController.h"
 #include "app/controllers/NavigationController.h"
+#include "app/controllers/FileOperationController.h"
+#include "model/context_menu/MenuItemDefinition.h"
 #include "ui/MainWindow.h"
 #include "log/Logger.h"
 #include "app/bindings/FileListBindings.h"
@@ -16,6 +18,56 @@
 #include <QDir>
 
 namespace dentry::ui {
+
+    static QList<model::MenuItemDefinition>
+    buildMenuDefinitions(app::FileOperationController *ctrl) {
+        using Ctx = model::ContextMenu;
+        using Def = model::MenuItemDefinition;
+
+        return {
+            Def{
+                "Copy", {}, false,
+                [](const Ctx &c) { return !c.selectedPaths.isEmpty(); },
+                [ctrl](const Ctx &c) { ctrl->onCopyRequested(c.selectedPaths); }
+            },
+            Def{
+                "Cut", {}, false,
+                [](const Ctx &c) { return !c.selectedPaths.isEmpty(); },
+                [ctrl](const Ctx &c) { ctrl->onCutRequested(c.selectedPaths); }
+            },
+            Def{
+                "Paste", {}, false,
+                [](const Ctx &c) { return !c.clipboardEmpty; },
+                [ctrl](const Ctx &c) { ctrl->onPasteRequested(c.currentDirectory); }
+            },
+
+            Def::separator(),
+
+            Def{
+                "Delete", {}, false,
+                [](const Ctx &c) { return !c.selectedPaths.isEmpty(); },
+                [ctrl](const Ctx &c) { ctrl->onDeleteRequested(c.selectedPaths); }
+            },
+            Def{
+                "Rename", {}, false,
+                [](const Ctx &c) { return c.selectedPaths.size() == 1; },
+                [ctrl](const Ctx &c) { ctrl->onRenameRequested(c.selectedPaths.first()); }
+            },
+
+            Def::separator(),
+
+            Def{
+                "New File", {}, false,
+                [](const Ctx &) { return true; },
+                [ctrl](const Ctx &c) { ctrl->onCreateFileRequested(c.currentDirectory); }
+            },
+            Def{
+                "New Folder", {}, false,
+                [](const Ctx &) { return true; },
+                [ctrl](const Ctx &c) { ctrl->onCreateFolderRequested(c.currentDirectory); }
+            },
+        };
+    }
 
     MainWindow::MainWindow(QWidget *parent)
         : UIComponent(parent) {
@@ -61,24 +113,45 @@ namespace dentry::ui {
 
     void MainWindow::setupConnections() {
         m_inputRegistry = new app::InputRegistry(this);
-
         m_inputRegistry->installAll({
             app::bindings::fileList(m_centralWidget->fileListView()),
             app::bindings::sidebar(m_centralWidget->sidebar())
         });
 
-        auto *view = m_centralWidget->fileListView();
-        auto *mdl = qobject_cast<model::FileSystemModel *>(view->model());
-        if (view && mdl) {
-            new app::NavigationController(view, mdl, this);
-        }
+        auto *view    = m_centralWidget->fileListView();
+        auto *fsModel = qobject_cast<model::FileSystemModel *>(view->model());
 
-        connect(m_centralWidget->sidebar(), &SideBar::placeActivated, [this](const QString &path) {
-            if (auto *view = m_centralWidget->fileListView()) {
-                if (auto *model = qobject_cast<model::FileSystemModel *>(view->model())) {
-                    model->setDirectory(path);
-                }
-            }
+        if (view && fsModel)
+            new app::NavigationController(view, fsModel, this);
+
+        connect(m_centralWidget->sidebar(), &SideBar::placeActivated,
+                this, [this](const QString &path) {
+            if (auto *v = m_centralWidget->fileListView())
+                if (auto *m = qobject_cast<model::FileSystemModel *>(v->model()))
+                    m->setDirectory(path);
+        });
+
+        // ── File operations ───────────────────────────────────────────────
+        m_fileOpController = new app::FileOperationController(fsModel, this, this);
+
+        m_contextMenu = new FileListContextMenu(
+            new model::ContextMenuModel(buildMenuDefinitions(m_fileOpController), this),
+            m_fileOpController->clipboard(),
+            this
+        );
+
+        view->setContextMenuPolicy(Qt::CustomContextMenu);
+        connect(view, &QWidget::customContextMenuRequested,
+                this, [this](const QPoint &pos) {
+            auto *v = m_centralWidget->fileListView();
+            auto *m = qobject_cast<model::FileSystemModel *>(v->model());
+            if (!v || !m) return;
+
+            m_contextMenu->popup(
+                v->viewport()->mapToGlobal(pos),
+                v->selectedPaths(),
+                m->currentPath()
+            );
         });
     }
 

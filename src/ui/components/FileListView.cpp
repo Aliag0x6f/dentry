@@ -5,17 +5,22 @@
 #include "app/input/InputMap.h"
 
 #include <QLabel>
+#include <QMenu>
+#include <QContextMenuEvent>
 
 namespace dentry::ui {
 
     FileListView::FileListView(QWidget *parent)
         : UIComponent(parent) {
         setObjectName("FileListView");
+
         m_model = new model::FileSystemModel(this);
         setModel(m_model);
-        build();
         if (m_model)
             m_model->manageSelectionFocus(selectionModel(), this);
+
+        build();
+
         log::info("Ui") << "FileListView built";
     }
 
@@ -53,6 +58,23 @@ namespace dentry::ui {
         QTreeView::setModel(m_model);
 
         log::debug("Ui") << "FileListView model is set up";
+    }
+
+    QStringList FileListView::selectedPaths() const {
+        if (!m_model)
+            return {};
+
+        QStringList paths;
+        const auto indexes = selectionModel()->selectedRows();
+        paths.reserve(indexes.size());
+
+        for (const QModelIndex &idx : indexes) {
+            const int row = idx.row();
+            if (row >= 0 && row < m_model->entries().count())
+                paths << m_model->entries().at(row).absolutePath;
+        }
+
+        return paths;
     }
 
 } // namespace dentry::ui

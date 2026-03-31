@@ -24,6 +24,11 @@ public:
 
     void setModel(model::FileSystemModel *model);
 
+    /**
+     * @brief Returns the absolute paths of all currently selected rows.
+     */
+    [[nodiscard]] QStringList selectedPaths() const;
+
 protected:
     void setupStyle() override;
     void setupConnections() override;
