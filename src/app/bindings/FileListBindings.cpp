@@ -11,10 +11,10 @@
 
 namespace dentry::app::bindings {
 
-    WidgetBindings fileList(ui::FileListView* view) {
+    WidgetBindings fileList(ui::FileListView* view, ui::ToolBar *toolbar) {
         return WidgetBindings{
             view,
-            [view](InputMap* map) {
+            [view, toolbar](InputMap* map) {
                 map->bind(Qt::Key_J, [view] {
                     auto *sm = view->selectionModel();
                     auto next = view->model()->index(sm->currentIndex().row() + 1, 0);
@@ -55,6 +55,26 @@ namespace dentry::app::bindings {
 
                 map->bind(Qt::Key_P, [] {
                     emit events::EventBus::instance()->focusWidget("SideBar");
+                });
+
+                map->bind(Qt::Key_AsciiTilde, [toolbar] {
+                    if (toolbar)
+                        toolbar->triggerHome();
+                });
+
+                map->bind(Qt::Key_QuoteLeft, [toolbar] {
+                    if (toolbar)
+                        toolbar->triggerHome();
+                }, Qt::ShiftModifier);
+
+                map->bind(Qt::Key_Period, [toolbar] {
+                    if (toolbar)
+                        toolbar->toggleHidden();
+                });
+
+                map->bind(Qt::Key_F, [toolbar] {
+                    if (toolbar)
+                        toolbar->focusSearch();
                 });
             }
         };

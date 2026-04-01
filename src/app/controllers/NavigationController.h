@@ -6,6 +6,7 @@
 
 #include <QObject>
 #include <QPointer>
+#include <QStack>
 
 namespace dentry::app {
 
@@ -17,13 +18,26 @@ public:
                          model::FileSystemModel *model,
                          QObject *parent = nullptr);
 
+    [[nodiscard]] bool canGoBack() const;
+    [[nodiscard]] QString currentPath() const;
+
+public slots:
+    void navigateBack();
+    void navigateHome();
+    void navigateTo(const QString &path);
+
+signals:
+    void pathChanged(const QString &path);
+    void canGoBackChanged(bool canGoBack);
+
 private slots:
-    void onActivated(const QModelIndex &index) const;
-    void onDirectoryLoaded(const QString &path) const;
+    void onActivated(const QModelIndex &index);
+    void onDirectoryLoaded(const QString &path);
 
 private:
     QPointer<ui::FileListView> m_view;
     QPointer<model::FileSystemModel> m_model;
+    QStack<QString> m_history;
 };
 
 } // namespace dentry::app

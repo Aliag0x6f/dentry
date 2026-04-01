@@ -114,22 +114,39 @@ namespace dentry::ui {
     void MainWindow::setupConnections() {
         m_inputRegistry = new app::InputRegistry(this);
         m_inputRegistry->installAll({
-            app::bindings::fileList(m_centralWidget->fileListView()),
-            app::bindings::sidebar(m_centralWidget->sidebar())
+            app::bindings::fileList(m_centralWidget->fileListView(), m_toolbar),
+            app::bindings::sidebar(m_centralWidget->sidebar(), m_toolbar)
         });
 
         auto *view    = m_centralWidget->fileListView();
         auto *fsModel = qobject_cast<model::FileSystemModel *>(view->model());
 
-        if (view && fsModel)
-            new app::NavigationController(view, fsModel, this);
+        // Show current directory immediately on startup.
+        if (m_toolbar && fsModel)
+            m_toolbar->setPath(fsModel->currentPath());
+
+        // ── Navigation ────────────────────────────────────────────────────
+        auto *navController = new app::NavigationController(view, fsModel, this);
+
+        connect(m_toolbar, &ToolBar::backRequested,
+                navController, &app::NavigationController::navigateBack);
+
+        connect(m_toolbar, &ToolBar::homeRequested,
+                navController, &app::NavigationController::navigateHome);
 
         connect(m_centralWidget->sidebar(), &SideBar::placeActivated,
-                this, [this](const QString &path) {
-            if (auto *v = m_centralWidget->fileListView())
-                if (auto *m = qobject_cast<model::FileSystemModel *>(v->model()))
-                    m->setDirectory(path);
-        });
+                navController, &app::NavigationController::navigateTo);
+
+        connect(navController, &app::NavigationController::pathChanged,
+                m_toolbar, &ToolBar::setPath);
+
+        if (m_toolbar && fsModel) {
+            connect(m_toolbar, &ToolBar::toggleHiddenRequested,
+                    fsModel, &model::FileSystemModel::setShowHidden);
+
+            connect(m_toolbar, &ToolBar::searchChanged,
+                    fsModel, &model::FileSystemModel::setFilter);
+        }
 
         // ── File operations ───────────────────────────────────────────────
         m_fileOpController = new app::FileOperationController(fsModel, this, this);

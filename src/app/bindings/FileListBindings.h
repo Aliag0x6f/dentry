@@ -9,7 +9,8 @@
 
 #include "app/bindings/WidgetBindings.h"
 #include "ui/components/FileListView.h"
+#include "ui/components/Toolbar.h"
 
 namespace dentry::app::bindings {
-    WidgetBindings fileList(ui::FileListView* view);
+    WidgetBindings fileList(ui::FileListView* view, ui::ToolBar *toolbar);
 }
